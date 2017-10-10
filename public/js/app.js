@@ -43059,14 +43059,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         deleteRow: function deleteRow(primaryKey) {
             var _this6 = this;
 
-            this.processing = true;
-            var sql = 'DELETE FROM ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey;
-            this.executeQuery(sql).then(function () {
-                _this6.getRecords(_this6.currentPage()).then(function () {
-                    _this6.editingRow = null;
-                    _this6.processing = false;
+            if (confirm('Delete this row?')) {
+                this.processing = true;
+                var sql = 'DELETE FROM ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey;
+                this.executeQuery(sql).then(function () {
+                    _this6.getRecords(_this6.currentPage()).then(function () {
+                        _this6.editingRow = null;
+                        _this6.processing = false;
+                    });
                 });
-            });
+            }
         },
         beforeCustomQuery: function beforeCustomQuery(sql) {
             this.customQuery = true;

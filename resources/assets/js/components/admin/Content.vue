@@ -257,14 +257,16 @@
                 this.editingRow = null
             },
             deleteRow(primaryKey) {
-                this.processing = true
-                let sql = 'DELETE FROM ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey;
-                this.executeQuery(sql).then(() => {
-                    this.getRecords(this.currentPage()).then(() => {
-                        this.editingRow = null
-                        this.processing = false
+                if (confirm('Delete this row?')) {
+                    this.processing = true
+                    let sql = 'DELETE FROM ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey;
+                    this.executeQuery(sql).then(() => {
+                        this.getRecords(this.currentPage()).then(() => {
+                            this.editingRow = null
+                            this.processing = false
+                        })
                     })
-                })
+                }
             },
             beforeCustomQuery(sql) {
                 this.customQuery = true
