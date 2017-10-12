@@ -16,9 +16,9 @@ Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin', 'AdminController@index')->name('home');
-    Route::post('/query', 'QueryController@execute');
-//    Route::get('change-password', function () {
-//        return view('auth.change-password', ['title' => 'Change Password']);
-//    });
-//    Route::post('change-password', 'Auth\UpdatePasswordController@update');
+    Route::post('/select', 'QueryController@select');
+    Route::post('/insert', 'QueryController@insert');
+    Route::post('/update', 'QueryController@update');
+    Route::post('/delete', 'QueryController@delete');
+    Route::post('/execute', 'QueryController@execute');
 });

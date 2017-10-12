@@ -1,22 +1,14 @@
 <template>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">Console</div>
-
-                <div class="panel-body">
-                    <textarea v-model="query" class="form-control" rows="2" id="query_input"></textarea>
-                    <button @click="executeQuery" type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Query
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div>
+        <textarea v-model="query" class="form-control" rows="2" id="query_input">{{ sql }}</textarea>
+        <button @click="executeQuery" type="button" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Query
+        </button>
     </div>
 </template>
 <script>
     export default {
-//        props: [ 'tables' ],
+        props: [ 'sql' ],
         data() {
             return {
                 query: null
@@ -27,18 +19,20 @@
         methods: {
             executeQuery() {
                 this.$emit('customQuery', this.query)
-                this.$emit('beforeQuery', this.query)
-                axios.post('http://postgres:5433/query', {
-                    input: this.query
-                }).then(response => {
-                    this.$emit('afterQuery')
-                    this.$emit('success', response)
-                }).catch(error => {
-                    if (error.message === "Request failed with status code 419") {
-                        window.location = '/'
-                    }
-                    this.$emit('error', error)
-                })
+                if (this.query) {
+                    this.$emit('beforeQuery', this.query)
+                    axios.post('http://postgres:5433/query', {
+                        input: this.query
+                    }).then(response => {
+                        this.$emit('afterQuery')
+                        this.$emit('success', response)
+                    }).catch(error => {
+                        if (error.message === "Request failed with status code 419") {
+                            window.location = '/'
+                        }
+                        this.$emit('error', error)
+                    })
+                }
             }
         }
     }

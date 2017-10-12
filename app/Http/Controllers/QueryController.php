@@ -22,24 +22,108 @@ class QueryController extends Controller
         $this->middleware('auth');
     }
 
+    /*
+    Route::post('/select', 'QueryController@select');
+    Route::post('/insert', 'QueryController@insert');
+    Route::post('/update', 'QueryController@update');
+    Route::post('/delete', 'QueryController@delete');
+    Route::post('/execute', 'QueryController@execute');
+     */
+
     /**
-     * Show the application dashboard.
+     * Run a select statement
      *
      * @return \Illuminate\Http\Response
      */
-    public function execute(Request $request)
+    public function select(Request $request)
     {
         $perPage = $request->perPage ?: 30;
-        $sql = $request->input;
-        $page = $request->page;
-        $this->collection = collect(DB::select($sql));
+        $sql = $request->sql;
+
+        if ($bindings = $request->bindings) {
+            $this->collection = collect(DB::select($sql), $bindings);
+        } else {
+            $this->collection = collect(DB::select($sql));
+        }
 
         if ($pluck = $request->pluck) {
             $this->collection = $this->collection->pluck($pluck);
         }
 
-        $pagination = $this->paginate($this->collection, $perPage, $page);
-        return response()->json($pagination);
+        if ($page = $request->page) {
+            $pagination = $this->paginate($this->collection, $perPage, $page);
+            return response()->json($pagination);
+        }
+
+        return response()->json($this->collection);
+    }
+
+    /**
+     * Run an insert statement
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function insert(Request $request)
+    {
+        $sql = $request->sql;
+
+        if ($bindings = $request->bindings) {
+            $result = DB::insert($sql, $bindings);
+        } else {
+            $result = DB::insert($sql);
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Run an update statement
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        $sql = $request->sql;
+
+        if ($bindings = $request->bindings) {
+//            if (false !== strpos($sql, '?')) {
+//                $bindings = array_values($bindings);
+//            }
+            $affected = DB::update($sql, $bindings);
+        } else {
+            $affected = DB::update($sql);
+        }
+
+        return response()->json($affected);
+    }
+
+    /**
+     * Run a delete statement
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(Request $request)
+    {
+        $sql = $request->sql;
+
+        if ($bindings = $request->bindings) {
+            $deleted = DB::delete($sql, $bindings);
+        } else {
+            $deleted = DB::delete($sql);
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Run a statement
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function execute(Request $request)
+    {
+        $result = DB::statement($request->sql);
+        return response()->json($result);
     }
 
     /**

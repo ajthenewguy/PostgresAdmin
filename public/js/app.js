@@ -781,6 +781,9 @@ module.exports = __webpack_require__(40);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -792,71 +795,25 @@ __webpack_require__(10);
 
 window.Vue = __webpack_require__(35);
 
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// Mixins
+// Vue.mixin(require('./mixins/PostgresMixin.vue'))
+
 Vue.component('primary-content', __webpack_require__(50));
 Vue.component('admin-content', __webpack_require__(53));
 
+Vue.prototype._ = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a;
 Vue.prototype.$http = axios;
 
 window.App = new Vue({
     el: '#app',
-    methods: {
-        parsePagination: function parsePagination(response) {
-            var pagination = function (_ref) {
-                var current_page = _ref.current_page,
-                    first_page_url = _ref.first_page_url,
-                    from = _ref.from,
-                    last_page = _ref.last_page,
-                    last_page_url = _ref.last_page_url,
-                    next_page_url = _ref.next_page_url,
-                    path = _ref.path,
-                    per_page = _ref.per_page,
-                    prev_page_url = _ref.prev_page_url,
-                    to = _ref.to,
-                    total = _ref.total;
-                return {
-                    current_page: current_page,
-                    first_page_url: first_page_url,
-                    from: from,
-                    last_page: last_page,
-                    last_page_url: last_page_url,
-                    next_page_url: next_page_url,
-                    path: path,
-                    per_page: per_page,
-                    prev_page_url: prev_page_url,
-                    to: to,
-                    total: total
-                };
-            }(response.data);
-
-            return pagination;
-        },
-        handleError: function handleError(error) {
-            var errorText = 'Unknown Error';
-            if (error) {
-                errorText = error;
-                if (error.response) {
-                    errorText = error.response.statusText;
-                    if (error.response.status === 419) {
-                        window.location = '/';
-                    }
-                    if (error.response.data) {
-                        errorText = error.response.data;
-                        if (error.response.data.message) {
-                            errorText = error.response.data.message;
-                        }
-                    }
-                }
-            }
-            console.log(errorText);
-            return errorText;
-        }
-    },
     created: function created() {
         // setup axios
         var _document$getElementB = document.getElementById('axiosConfig'),
@@ -42744,7 +42701,7 @@ if (false) {
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(66)
+  __webpack_require__(253)
 }
 var normalizeComponent = __webpack_require__(37)
 /* script */
@@ -42892,9 +42849,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables'],
@@ -42903,12 +42857,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             customQuery: false,
             primaryPanelTitle: '',
             table: null,
-            schema: null,
+            //                schema: null,
             tablePrimaryKey: '',
             tablePrimaryKeyFormat: '',
             editingRow: null,
             records: [],
-            sql: '',
+            recordsCustom: [],
+            //                sql: '',
+            tab: 'query',
             tableQuery: '',
             pagination: {
                 current_page: 1,
@@ -42922,36 +42878,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 prev_page_url: '',
                 to: null,
                 total: 0
-            },
-            processing: false
+            }
+            //                processing: false
         };
     },
-    mounted: function mounted() {
-        //            this.getTables()
-    },
 
+    mixins: [__webpack_require__(264)],
     components: {
-        List: __webpack_require__(56),
-        Query: __webpack_require__(59)
-    },
-    computed: {
-        classMainPanel: function classMainPanel() {
-            //                console.log(this.recordCount())
-            return {
-                'col-md-9': true
-            };
-        },
-        classSidePanel: function classSidePanel() {
-            //                console.log(this.recordCount())
-            return {
-                'col-md-3': true, //this.recordCount() > 0 || this.processing,
-                'col-md-12': false //this.recordCount() < 1 && ! this.processing
-            };
-        }
+        'list': __webpack_require__(56),
+        'query': __webpack_require__(59),
+        'structure-table': __webpack_require__(258),
+        'results-table': __webpack_require__(255)
     },
     methods: {
         recordCount: function recordCount() {
-            console.log(this.records);
             return this.records ? this.records.length : 0;
         },
         openTable: function openTable(table) {
@@ -42959,7 +42899,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.clearTable();
             this.customQuery = false;
+            this.setEditingRow(null);
             this.table = table;
+            if (this.tab === "query") {
+                this.tab = 'content';
+            }
             this.sql = 'SELECT * FROM ' + this.table;
             this.getPrimaryKey(this.table).then(function () {
                 _this.getSchema(_this.table).then(function () {
@@ -42967,142 +42911,86 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             });
         },
-        getPrimaryKey: function getPrimaryKey(table) {
-            var _this2 = this;
 
-            var sql = "SELECT \
-                pg_attribute.attname, \
-                    format_type(pg_attribute.atttypid, pg_attribute.atttypmod) \
-                FROM pg_index, pg_class, pg_attribute, pg_namespace \
-                WHERE \
-                pg_class.oid = '" + (table || this.table) + "'::regclass AND \
-                indrelid = pg_class.oid AND \
-                nspname = 'public' AND \
-                pg_class.relnamespace = pg_namespace.oid AND \
-                pg_attribute.attrelid = pg_class.oid AND \
-                pg_attribute.attnum = any(pg_index.indkey) \
-                AND indisprimary";
-            return this.executeQuery(sql).then(function (response) {
-                _this2.processing = false;
-                var data = _this2.parseResponse(response);
-                if (data.length) {
-                    console.log(data);
-                    _this2.tablePrimaryKey = data[0].attname || 'id';
-                    _this2.tablePrimaryKeyFormat = data[0].format_type || '';
-                }
-            });
-        },
-        getSchema: function getSchema(table) {
-            var _this3 = this;
-
-            var sql = "SELECT " + "column_name, table_name, data_type, udt_name, is_nullable, is_updatable " + "FROM INFORMATION_SCHEMA.COLUMNS WHERE " + "table_name = '" + (table || this.table) + "'";
-            return this.executeQuery(sql).then(function (response) {
-                _this3.processing = false;
-                _this3.schema = _this3.parseResponse(response);
-            });
-        },
-        executeQuery: function executeQuery(sql, page) {
-            var _this4 = this;
-
-            this.processing = true;
-            var data = {
-                input: sql || this.sql
-            };
-            if (page) {
-                data.page = page;
-            }
-            return axios.post('http://postgres:5433/query', data).catch(function (error) {
-                _this4.queryError(error);
-            });
-        },
-
-        //            getTables() {
-        //                axios.post('http://postgres:5433/query', {
-        //                    input: 'SELECT * FROM pg_catalog.pg_tables WHERE schemaname = \'public\'',
-        //                    pluck: 'tablename'
-        //                }).then(response => {
-        //                    this.results = response.data
-        //                }).catch(error => {
-        //                    console.log(error)
-        //                })
+        //            executeQuery(sql, page) {
+        //                this.processing = true
+        //                let data = {
+        //                    sql: sql || this.sql
+        //                }
+        //                if (page) {
+        //                    data.page = page
+        //                }
+        //                if (bindings) {
+        //                    data.bindings = bindings
+        //                }
+        //                return axios.post('http://postgres:5433/select', data)
+        //                    .catch(error => {
+        //                        this.queryError(error)
+        //                    })
         //            },
+        changeTab: function changeTab(tab) {
+            this.tab = tab;
+            if (tab === "content" && this.table && this.recordCount() < 1) {
+                this.getRecords();
+            }
+        },
         currentPage: function currentPage() {
             return this.pagination.current_page;
         },
         getRecords: function getRecords(page) {
-            var _this5 = this;
+            var _this2 = this;
 
-            this.processing = true;
+            var sql = this.makeSelect(this.table);
             if (typeof page === "undefined") {
                 page = this.currentPage();
             }
-
             this.primaryPanelTitle = 'Records in table "' + this.table + '"';
-
-            //                this.records = []
-            return this.executeQuery(null, page).then(function (response) {
-                _this5.querySuccess(response, 'Records in table "' + _this5.table + '"');
+            return this.selectQuery(sql, page).then(function (response) {
+                if (_this2.tab === 'content') {
+                    _this2.records = _this2.result;
+                } else {
+                    _this2.recordsCustom = _this2.result;
+                }
             });
         },
-        updateRow: function updateRow(primaryKey) {
-            this.processing = true;
-            console.log('NOT IMPLEMENTED: UPDATE ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey);
+        setEditingRow: function setEditingRow(row) {
+            this.editingRow = row;
+        },
+        updateRow: function updateRow(payload) {
+            var _this3 = this;
 
-            // get edited fields
-
-            // submit patch request
-
-            // refresh table
-
-            this.editingRow = null;
+            var where = {};
+            where[this.tablePrimaryKey] = payload.primaryKey;
+            return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(function () {
+                _this3.editingRow = null;
+                _this3.getRecords();
+            });
         },
         deleteRow: function deleteRow(primaryKey) {
-            var _this6 = this;
+            var _this4 = this;
 
             if (confirm('Delete this row?')) {
-                this.processing = true;
-                var sql = 'DELETE FROM ' + this.table + ' WHERE ' + this.tablePrimaryKey + ' = ' + primaryKey;
-                this.executeQuery(sql).then(function () {
-                    _this6.getRecords(_this6.currentPage()).then(function () {
-                        _this6.editingRow = null;
-                        _this6.processing = false;
+                var where = {};
+                where[this.tablePrimaryKey] = primaryKey;
+                this.deleteQuery(this.makeDelete(this.table, where)).then(function () {
+                    _this4.getRecords(_this4.currentPage()).then(function () {
+                        _this4.editingRow = null;
+                        _this4.processing = false;
                     });
                 });
             }
         },
         beforeCustomQuery: function beforeCustomQuery(sql) {
-            this.customQuery = true;
-            this.primaryPanelTitle = sql;
-            this.clearTable();
-        },
-        beforeQuery: function beforeQuery(sql) {
-            this.sql = sql;
-            this.processing = true;
-            //                this.records = []
+            if (sql) {
+                this.customQuery = true;
+                this.primaryPanelTitle = sql;
+                //                    this.clearTable()
+            } else {
+                this.recordsCustom = [];
+            }
         },
         afterCustomQuery: function afterCustomQuery() {
             //                this.customQuery = false
-        },
-        parseResponse: function parseResponse(response) {
-            var data = null;
-            if (response.data && response.data.data) {
-                data = response.data.data;
-                if (data !== Array) {
-                    data = Object.values(data);
-                }
-            }
-            return data;
-        },
-        querySuccess: function querySuccess(response, table) {
-            this.processing = false;
-            //                this.primaryPanelTitle = table || 'User Query'
-            this.records = this.parseResponse(response);
-            this.pagination = this.$parent.parsePagination(response);
-        },
-        queryError: function queryError(error) {
-            this.processing = false;
-            var message = this.$parent.handleError(error);
-            alert(message);
         },
         clearTable: function clearTable() {
             this.table = null;
@@ -43124,360 +43012,254 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid" }, [
     _c("div", { staticClass: "row" }, [
-      _c("div", { class: _vm.classSidePanel }, [
-        _c(
-          "div",
-          { staticClass: "panel panel-default" },
-          [
-            _c("div", { staticClass: "panel-heading" }, [_vm._v("Tables")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "panel-body input-group" }, [
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.tableQuery,
-                    expression: "tableQuery"
+      _c(
+        "div",
+        { staticClass: "col-sm-3 col-md-2 sidebar" },
+        [
+          _c("div", { staticClass: "input-group" }, [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.tableQuery,
+                  expression: "tableQuery"
+                }
+              ],
+              staticClass: "form-control input-sm",
+              attrs: { placeholder: "Search Tables" },
+              domProps: { value: _vm.tableQuery },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
                   }
-                ],
-                staticClass: "form-control input-sm",
-                attrs: { placeholder: "Search Tables" },
-                domProps: { value: _vm.tableQuery },
+                  _vm.tableQuery = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("div", { staticClass: "input-group-addon" }, [
+              _c("span", {
+                staticClass: "glyphicon glyphicon-remove-circle",
+                attrs: { id: "searchclear" },
                 on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.tableQuery = $event.target.value
+                  click: function($event) {
+                    _vm.tableQuery = ""
                   }
                 }
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "input-group-addon" }, [
-                _c("span", {
-                  staticClass: "glyphicon glyphicon-remove-circle",
-                  attrs: { id: "searchclear" },
-                  on: {
-                    click: function($event) {
-                      _vm.tableQuery = ""
-                    }
-                  }
-                })
-              ])
-            ]),
-            _vm._v(" "),
-            _c("List", {
-              attrs: {
-                tables: _vm.tables,
-                table: _vm.table,
-                query: _vm.tableQuery
-              },
-              on: { openTable: _vm.openTable }
-            })
-          ],
-          1
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", { class: _vm.classMainPanel }, [
-        _c("div", { staticClass: "panel panel-default" }, [
-          _c("div", { staticClass: "panel-heading" }, [
-            _vm._v(_vm._s(_vm.primaryPanelTitle))
+              })
+            ])
           ]),
           _vm._v(" "),
+          _c("list", {
+            attrs: {
+              tables: _vm.tables,
+              table: _vm.table,
+              query: _vm.tableQuery
+            },
+            on: { openTable: _vm.openTable }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"
+        },
+        [
           _c(
-            "div",
-            { staticClass: "panel-body" },
+            "ul",
+            {
+              staticClass: "nav nav-tabs",
+              attrs: { id: "primaryTabContainer" }
+            },
             [
-              _c("div", { staticClass: "row" }, [
+              _c("li", { class: { active: _vm.tab === "query" } }, [
                 _c(
-                  "div",
-                  { staticClass: "col-sm-12 text-right" },
-                  [
-                    _vm.records && _vm.records.length
-                      ? _c("el-pagination", {
-                          attrs: {
-                            layout: "total, prev, pager, next",
-                            currentPage: _vm.pagination.current_page,
-                            total: _vm.pagination.total,
-                            pageCount: _vm.pagination.last_page,
-                            pageSize: _vm.pagination.per_page
-                          },
-                          on: { "current-change": _vm.getRecords }
-                        })
-                      : _vm._e()
-                  ],
-                  1
-                )
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "results table-responsive" },
-                [
-                  _c("transition", { attrs: { name: "fade" } }, [
-                    _vm.records && _vm.records.length
-                      ? _c(
-                          "table",
-                          {
-                            staticClass: "table table-hover table-condensed",
-                            class: { processing: _vm.processing }
-                          },
-                          [
-                            _c("thead", [
-                              _c(
-                                "tr",
-                                [
-                                  _vm._l(_vm.records[0], function(value, name) {
-                                    return _c("th", [
-                                      name === _vm.tablePrimaryKey
-                                        ? _c("span", {
-                                            staticClass:
-                                              "glyphicon glyphicon-star",
-                                            attrs: { "aria-hidden": "true" }
-                                          })
-                                        : _vm._e(),
-                                      _vm._v(_vm._s(name))
-                                    ])
-                                  }),
-                                  _vm._v(" "),
-                                  _vm.table && _vm.tablePrimaryKey
-                                    ? _c("th")
-                                    : _vm._e()
-                                ],
-                                2
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "tbody",
-                              _vm._l(_vm.records, function(fields) {
-                                return _c(
-                                  "tr",
-                                  {
-                                    class: {
-                                      active:
-                                        _vm.editingRow ===
-                                        fields[_vm.tablePrimaryKey]
-                                    }
-                                  },
-                                  [
-                                    _vm._l(fields, function(value, name) {
-                                      return _c("td", [_vm._v(_vm._s(value))])
-                                    }),
-                                    _vm._v(" "),
-                                    _vm.table && _vm.tablePrimaryKey
-                                      ? _c(
-                                          "td",
-                                          { staticClass: "rowButtons" },
-                                          [
-                                            _c("transition", [
-                                              _vm.editingRow ==
-                                              fields[_vm.tablePrimaryKey]
-                                                ? _c("span", [
-                                                    _c(
-                                                      "button",
-                                                      {
-                                                        key: "cancel",
-                                                        staticClass:
-                                                          "btn btn-default btn-xs",
-                                                        attrs: {
-                                                          type: "button"
-                                                        },
-                                                        on: {
-                                                          click: function(
-                                                            $event
-                                                          ) {
-                                                            _vm.editingRow = null
-                                                          }
-                                                        }
-                                                      },
-                                                      [
-                                                        _c("span", {
-                                                          staticClass:
-                                                            "glyphicon glyphicon-remove",
-                                                          attrs: {
-                                                            "aria-hidden":
-                                                              "true"
-                                                          }
-                                                        })
-                                                      ]
-                                                    ),
-                                                    _vm._v(" "),
-                                                    _c(
-                                                      "button",
-                                                      {
-                                                        key: "save",
-                                                        staticClass:
-                                                          "btn btn-default btn-xs",
-                                                        attrs: {
-                                                          type: "button"
-                                                        },
-                                                        on: {
-                                                          click: function(
-                                                            $event
-                                                          ) {
-                                                            _vm.updateRow(
-                                                              fields[
-                                                                _vm
-                                                                  .tablePrimaryKey
-                                                              ]
-                                                            )
-                                                          }
-                                                        }
-                                                      },
-                                                      [
-                                                        _c("span", {
-                                                          staticClass:
-                                                            "glyphicon glyphicon-ok",
-                                                          attrs: {
-                                                            "aria-hidden":
-                                                              "true"
-                                                          }
-                                                        })
-                                                      ]
-                                                    ),
-                                                    _vm._v(" "),
-                                                    _c(
-                                                      "button",
-                                                      {
-                                                        key: "delete",
-                                                        staticClass:
-                                                          "btn btn-default btn-xs",
-                                                        attrs: {
-                                                          type: "button"
-                                                        },
-                                                        on: {
-                                                          click: function(
-                                                            $event
-                                                          ) {
-                                                            _vm.deleteRow(
-                                                              fields[
-                                                                _vm
-                                                                  .tablePrimaryKey
-                                                              ]
-                                                            )
-                                                          }
-                                                        }
-                                                      },
-                                                      [
-                                                        _c("span", {
-                                                          staticClass:
-                                                            "glyphicon glyphicon-trash",
-                                                          attrs: {
-                                                            "aria-hidden":
-                                                              "true"
-                                                          }
-                                                        })
-                                                      ]
-                                                    )
-                                                  ])
-                                                : _c("span", [
-                                                    _c(
-                                                      "button",
-                                                      {
-                                                        key: "edit",
-                                                        staticClass:
-                                                          "btn btn-default btn-xs",
-                                                        attrs: {
-                                                          type: "button"
-                                                        },
-                                                        on: {
-                                                          click: function(
-                                                            $event
-                                                          ) {
-                                                            _vm.editingRow =
-                                                              fields[
-                                                                _vm.tablePrimaryKey
-                                                              ]
-                                                          }
-                                                        }
-                                                      },
-                                                      [
-                                                        _c("span", {
-                                                          staticClass:
-                                                            "glyphicon glyphicon-pencil",
-                                                          attrs: {
-                                                            "aria-hidden":
-                                                              "true"
-                                                          }
-                                                        })
-                                                      ]
-                                                    )
-                                                  ])
-                                            ])
-                                          ],
-                                          1
-                                        )
-                                      : _vm._e()
-                                  ],
-                                  2
-                                )
-                              })
-                            )
-                          ]
-                        )
-                      : _c("div", [
-                          (_vm.table || _vm.customQuery) && !_vm.processing
-                            ? _c("div", { staticClass: "empty" }, [
-                                _vm._v(
-                                  "\n                                    No records found\n                                "
-                                )
-                              ])
-                            : _vm._e()
-                        ])
-                  ])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "row" }, [
-                _c(
-                  "div",
-                  { staticClass: "col-sm-12 text-right" },
-                  [
-                    _vm.records && _vm.records.length
-                      ? _c("el-pagination", {
-                          attrs: {
-                            layout: "total, prev, pager, next",
-                            currentPage: _vm.pagination.current_page,
-                            total: _vm.pagination.total,
-                            pageCount: _vm.pagination.last_page,
-                            pageSize: _vm.pagination.per_page
-                          },
-                          on: { "current-change": _vm.getRecords }
-                        })
-                      : _vm._e()
-                  ],
-                  1
-                )
-              ]),
-              _vm._v(" "),
-              _vm.processing
-                ? _c("span", [
-                    _c("span", {
-                      staticClass: "glyphicon glyphicon-refresh spinning"
-                    })
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              !_vm.processing || _vm.customQuery
-                ? _c("Query", {
+                  "a",
+                  {
+                    attrs: { href: "#query", "data-toggle": "pill" },
                     on: {
-                      beforeQuery: _vm.beforeQuery,
-                      customQuery: _vm.beforeCustomQuery,
-                      success: _vm.querySuccess,
-                      afterQuery: _vm.afterCustomQuery,
-                      error: _vm.queryError
+                      click: function($event) {
+                        _vm.changeTab("query")
+                      }
                     }
-                  })
-                : _vm._e()
-            ],
-            1
-          )
-        ])
-      ])
+                  },
+                  [_vm._v("Query")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("li", { class: { active: _vm.tab === "structure" } }, [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#structure", "data-toggle": "pill" },
+                    on: {
+                      click: function($event) {
+                        _vm.changeTab("structure")
+                      }
+                    }
+                  },
+                  [_vm._v("Structure")]
+                )
+              ]),
+              _vm._v(" "),
+              _c("li", { class: { active: _vm.tab === "content" } }, [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#content", "data-toggle": "pill" },
+                    on: {
+                      click: function($event) {
+                        _vm.changeTab("content")
+                      }
+                    }
+                  },
+                  [_vm._v("Content")]
+                )
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "tab-content" }, [
+            _c(
+              "div",
+              {
+                staticClass: "tab-pane",
+                class: { active: _vm.tab === "structure" },
+                attrs: { id: "structure" }
+              },
+              [
+                _c("structure-table", {
+                  attrs: {
+                    table: _vm.table,
+                    schema: _vm.schema,
+                    processing: _vm.processing
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "tab-pane",
+                class: { active: _vm.tab === "content" },
+                attrs: { id: "content" }
+              },
+              [
+                _c(
+                  "div",
+                  { staticClass: "results table-responsive" },
+                  [
+                    _c("results-table", {
+                      attrs: {
+                        tab: _vm.tab,
+                        table: _vm.table,
+                        schema: _vm.schema,
+                        "table-primary-key": _vm.tablePrimaryKey,
+                        records: _vm.records,
+                        processing: _vm.processing,
+                        "editing-row": _vm.editingRow,
+                        "custom-query": _vm.customQuery
+                      },
+                      on: {
+                        editingRow: _vm.setEditingRow,
+                        updateRow: _vm.updateRow,
+                        deleteRow: _vm.deleteRow
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c(
+                    "div",
+                    { staticClass: "col-sm-12 text-right" },
+                    [
+                      _vm.records && _vm.records.length
+                        ? _c("el-pagination", {
+                            attrs: {
+                              layout: "total, prev, pager, next",
+                              currentPage: _vm.pagination.current_page,
+                              total: _vm.pagination.total,
+                              pageCount: _vm.pagination.last_page,
+                              pageSize: _vm.pagination.per_page
+                            },
+                            on: { "current-change": _vm.getRecords }
+                          })
+                        : _vm._e()
+                    ],
+                    1
+                  )
+                ]),
+                _vm._v(" "),
+                _vm.processing
+                  ? _c("span", [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-refresh spinning"
+                      })
+                    ])
+                  : _vm._e()
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "tab-pane",
+                class: { active: _vm.tab === "query" },
+                attrs: { id: "query" }
+              },
+              [
+                _c("div", { staticClass: "panel panel-default" }, [
+                  _c(
+                    "div",
+                    { staticClass: "panel-body" },
+                    [
+                      !_vm.processing || _vm.customQuery
+                        ? _c("query", {
+                            attrs: { sql: _vm.customQuery },
+                            on: {
+                              beforeQuery: _vm.beforeQuery,
+                              customQuery: _vm.beforeCustomQuery,
+                              success: _vm.querySuccess,
+                              afterQuery: _vm.afterCustomQuery,
+                              error: _vm.queryError
+                            }
+                          })
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("results-table", {
+                        attrs: {
+                          tab: _vm.tab,
+                          table: _vm.table,
+                          "table-primary-key": false,
+                          records: _vm.recordsCustom,
+                          processing: _vm.processing,
+                          "editing-row": false,
+                          "custom-query": _vm.customQuery
+                        },
+                        on: {
+                          editingRow: _vm.setEditingRow,
+                          updateRow: _vm.updateRow,
+                          deleteRow: _vm.deleteRow
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ])
+              ]
+            )
+          ])
+        ]
+      )
     ])
   ])
 }
@@ -43707,17 +43489,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    //        props: [ 'tables' ],
+    props: ['sql'],
     data: function data() {
         return {
             query: null
@@ -43730,18 +43504,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.$emit('customQuery', this.query);
-            this.$emit('beforeQuery', this.query);
-            axios.post('http://postgres:5433/query', {
-                input: this.query
-            }).then(function (response) {
-                _this.$emit('afterQuery');
-                _this.$emit('success', response);
-            }).catch(function (error) {
-                if (error.message === "Request failed with status code 419") {
-                    window.location = '/';
-                }
-                _this.$emit('error', error);
-            });
+            if (this.query) {
+                this.$emit('beforeQuery', this.query);
+                axios.post('http://postgres:5433/query', {
+                    input: this.query
+                }).then(function (response) {
+                    _this.$emit('afterQuery');
+                    _this.$emit('success', response);
+                }).catch(function (error) {
+                    if (error.message === "Request failed with status code 419") {
+                        window.location = '/';
+                    }
+                    _this.$emit('error', error);
+                });
+            }
         }
     }
 });
@@ -43754,52 +43530,48 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col-md-12" }, [
-      _c("div", { staticClass: "panel panel-default" }, [
-        _c("div", { staticClass: "panel-heading" }, [_vm._v("Console")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "panel-body" }, [
-          _c("textarea", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.query,
-                expression: "query"
-              }
-            ],
-            staticClass: "form-control",
-            attrs: { rows: "2", id: "query_input" },
-            domProps: { value: _vm.query },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.query = $event.target.value
-              }
+  return _c("div", [
+    _c(
+      "textarea",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.query,
+            expression: "query"
+          }
+        ],
+        staticClass: "form-control",
+        attrs: { rows: "2", id: "query_input" },
+        domProps: { value: _vm.query },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
             }
-          }),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-default btn-sm",
-              attrs: { type: "button" },
-              on: { click: _vm.executeQuery }
-            },
-            [
-              _c("span", {
-                staticClass: "glyphicon glyphicon-flash",
-                attrs: { "aria-hidden": "true" }
-              }),
-              _vm._v(" Query\n                ")
-            ]
-          )
-        ])
-      ])
-    ])
+            _vm.query = $event.target.value
+          }
+        }
+      },
+      [_vm._v(_vm._s(_vm.sql))]
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-default btn-sm",
+        attrs: { type: "button" },
+        on: { click: _vm.executeQuery }
+      },
+      [
+        _c("span", {
+          staticClass: "glyphicon glyphicon-flash",
+          attrs: { "aria-hidden": "true" }
+        }),
+        _vm._v(" Query\n    ")
+      ]
+    )
   ])
 }
 var staticRenderFns = []
@@ -44107,46 +43879,8 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(67);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(64)("2a5c6914", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3c85ad3c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Content.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3c85ad3c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Content.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(42)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n    transition: opacity .5s\n}\n.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {\n    opacity: 0\n}\n.glyphicon-star, .glyphicon-star-empty {\n    margin-right: 2px;\n}\n.rowButtons {\n    width: 90px;\n}\n.glyphicon.spinning {\n    animation: spin 1s infinite linear;\n    -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom { transform: scale(1) rotate(0deg);\n}\nto { transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom { -webkit-transform: rotate(0deg);\n}\nto { -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n    opacity: 0.8;\n}\n.list-group-item {\n    padding: 3px 10px\n}\n.empty {\n    color: #bcbcbc;\n    font-size: 1.5em;\n    padding: 15px;\n    text-align: center;\n}\n#searchinput {\n    width: 200px;\n}\n#searchclear {\n    position: absolute;\n    right: 21px;\n    top: 0;\n    bottom: 0;\n    height: 14px;\n    margin: auto;\n    font-size: 14px;\n    cursor: pointer;\n    color: #bbb;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
+/* 66 */,
+/* 67 */,
 /* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -99170,6 +98904,1178 @@ return zhTw;
 
 })));
 
+
+/***/ }),
+/* 253 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(254);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(64)("6f56c43a", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3c85ad3c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Content.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3c85ad3c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Content.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(42)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom {\n    transform: scale(1) rotate(0deg);\n}\nto {\n    transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 50px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 51px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n@media (min-width: 768px) {\n.main {\n    padding-right: 40px;\n    padding-left: 40px;\n}\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 255 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(256)
+/* template */
+var __vue_template__ = __webpack_require__(257)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/ResultsTable.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ResultsTable.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4f5acf76", Component.options)
+  } else {
+    hotAPI.reload("data-v-4f5acf76", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 256 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['tab', 'table', 'schema', 'records', 'tablePrimaryKey', 'processing', 'editingRow', 'customQuery'],
+    components: {
+        'result-table-row': __webpack_require__(261)
+    },
+    methods: {
+        getColumn: function getColumn(column) {
+            return this.$parent.getColumn(column);
+        },
+        getDataTypeDisplay: function getDataTypeDisplay(input) {
+            var output = input;
+            if (input.includes('timestamp ')) {
+                output = output.split(' ')[0];
+            }
+            return output;
+        },
+        saveRow: function saveRow(data) {
+            this.$emit('updateRow', data);
+        }
+    }
+});
+
+/***/ }),
+/* 257 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "fade" } }, [
+    _c(
+      "table",
+      { staticClass: "table table-hover table-striped table-condensed" },
+      [
+        _c("thead", [
+          _vm.tab === "query"
+            ? _c(
+                "tr",
+                _vm._l(_vm.records[0], function(value, name) {
+                  return _c("th", [
+                    name === _vm.tablePrimaryKey
+                      ? _c("span", {
+                          staticClass: "glyphicon glyphicon-star",
+                          attrs: { "aria-hidden": "true" }
+                        })
+                      : _vm._e(),
+                    _vm._v(
+                      "\n                " + _vm._s(name) + "\n            "
+                    )
+                  ])
+                })
+              )
+            : _c(
+                "tr",
+                [
+                  _vm._l(_vm.schema, function(value, name) {
+                    return _c("th", [
+                      value["column_name"] === _vm.tablePrimaryKey
+                        ? _c("span", {
+                            staticClass: "glyphicon glyphicon-star",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        : _vm._e(),
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(value["column_name"]) +
+                          "\n                "
+                      ),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c("small", [
+                        _vm._v(
+                          _vm._s(_vm.getDataTypeDisplay(value["data_type"]))
+                        )
+                      ])
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c("th")
+                ],
+                2
+              )
+        ]),
+        _vm._v(" "),
+        _vm.records && _vm.records.length > 0
+          ? _c(
+              "tbody",
+              _vm._l(_vm.records, function(row) {
+                return _c("result-table-row", {
+                  key: row[_vm.tablePrimaryKey],
+                  attrs: {
+                    tab: _vm.tab,
+                    table: _vm.table,
+                    schema: _vm.schema,
+                    "table-primary-key": _vm.tablePrimaryKey,
+                    row: row,
+                    processing: _vm.processing,
+                    "editing-row": _vm.editingRow
+                  },
+                  on: {
+                    editingRow: function($event) {
+                      _vm.$emit("editingRow", row[_vm.tablePrimaryKey])
+                    },
+                    cancelEditingRow: function($event) {
+                      _vm.$emit("editingRow", null)
+                    },
+                    updateRow: _vm.saveRow,
+                    deleteRow: function($event) {
+                      _vm.$emit("deleteRow", row[_vm.tablePrimaryKey])
+                    }
+                  }
+                })
+              })
+            )
+          : _c("tbody", [
+              !_vm.processing &&
+              ((_vm.records && _vm.records.length > 0) ||
+                _vm.table ||
+                _vm.customQuery)
+                ? _c("tr", [
+                    _c(
+                      "td",
+                      {
+                        attrs: {
+                          colspan: _vm.schema
+                            ? Object.keys(_vm.schema).length +
+                              (_vm.tab === "query" ? 1 : 0)
+                            : 2
+                        }
+                      },
+                      [
+                        _c("div", { staticClass: "empty" }, [
+                          _vm.table || _vm.tab === "query"
+                            ? _c("span", [_vm._v("No records found")])
+                            : _c("span", [_vm._v("No table selected")])
+                        ])
+                      ]
+                    )
+                  ])
+                : _vm._e()
+            ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4f5acf76", module.exports)
+  }
+}
+
+/***/ }),
+/* 258 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(259)
+/* template */
+var __vue_template__ = __webpack_require__(260)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/StructureTable.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] StructureTable.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-452aca28", Component.options)
+  } else {
+    hotAPI.reload("data-v-452aca28", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 259 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['table', 'schema', 'processing']
+});
+
+/***/ }),
+/* 260 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "fade" } }, [
+    _vm.table && _vm.schema
+      ? _c(
+          "table",
+          { staticClass: "table table-hover table-striped table-condensed" },
+          [
+            _c("thead", [
+              _c(
+                "tr",
+                _vm._l(_vm.schema[0], function(value, name) {
+                  return _c("th", [_vm._v(_vm._s(name))])
+                })
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(_vm.schema, function(fields) {
+                return _c(
+                  "tr",
+                  _vm._l(fields, function(value, name) {
+                    return _c("td", [_vm._v(_vm._s(value))])
+                  })
+                )
+              })
+            )
+          ]
+        )
+      : _c("div", [
+          !_vm.processing
+            ? _c("div", { staticClass: "empty" }, [
+                _vm._v("\n                No table selected\n            ")
+              ])
+            : _vm._e()
+        ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-452aca28", module.exports)
+  }
+}
+
+/***/ }),
+/* 261 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(262)
+/* template */
+var __vue_template__ = __webpack_require__(263)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/ResultTableRow.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ResultTableRow.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-18b7ef76", Component.options)
+  } else {
+    hotAPI.reload("data-v-18b7ef76", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 262 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['tab', 'table', 'schema', 'row', 'tablePrimaryKey', 'processing', 'editingRow'],
+    data: function data() {
+        return {
+            newValues: {}
+        };
+    },
+    mounted: function mounted() {
+        this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
+    },
+
+    methods: {
+        editRow: function editRow() {
+            this.$emit('editingRow', this.row[this.tablePrimaryKey]);
+        },
+        saveRow: function saveRow() {
+            this.$emit('updateRow', {
+                primaryKey: this.row[this.tablePrimaryKey],
+                data: this.updatedValues()
+            });
+        },
+        getFieldDefault: function getFieldDefault(column) {
+            var config = this.$parent.getColumn(column);
+            return config.column_default ? config.column_default : "";
+        },
+        getColumn: function getColumn(column) {
+            return this.$parent.getColumn(column);
+        },
+        getFormComponent: function getFormComponent(column) {
+            var config = this.$parent.getColumn(column);
+            var data_type = this.$parent.getDataTypeDisplay(config.data_type);
+            switch (data_type) {
+                case "uuid":
+                case "integer":
+                case "character varying":
+                    {
+                        return 'el-input';
+                        break;
+                    }
+                case "date":
+                case "timestamp":
+                    {
+                        return 'el-date-picker';
+                        break;
+                    }
+            }
+        },
+        getTypeAttr: function getTypeAttr(column) {
+            var config = this.$parent.getColumn(column);
+            var data_type = this.$parent.getDataTypeDisplay(config.data_type);
+            switch (data_type) {
+                case "date":
+                    {
+                        return 'date';
+                        break;
+                    }
+                case "timestamp":
+                    {
+                        return 'datetime';
+                        break;
+                    }
+            }
+        },
+        updatedValues: function updatedValues() {
+            var original = this.row;
+            var changed = {};
+            __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.newValues, function (val, attr) {
+                if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEqual(original[attr], val)) {
+                    changed[attr] = val;
+                }
+            });
+            return changed;
+        }
+    }
+});
+
+/***/ }),
+/* 263 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "tr",
+    { class: { info: _vm.editingRow === _vm.row[_vm.tablePrimaryKey] } },
+    [
+      _vm._l(_vm.row, function(value, name) {
+        return _c("td", [
+          _vm.editingRow === _vm.row[_vm.tablePrimaryKey]
+            ? _c(
+                "span",
+                [
+                  _c(_vm.getFormComponent(name), {
+                    tag: "component",
+                    attrs: {
+                      placeholder: _vm.getFieldDefault(name),
+                      type: _vm.getTypeAttr(name)
+                    },
+                    model: {
+                      value: _vm.newValues[name],
+                      callback: function($$v) {
+                        _vm.$set(_vm.newValues, name, $$v)
+                      },
+                      expression: "newValues[name]"
+                    }
+                  })
+                ],
+                1
+              )
+            : _c("span", [
+                _vm._v("\n            " + _vm._s(value) + "\n        ")
+              ])
+        ])
+      }),
+      _vm._v(" "),
+      _vm.tab !== "query"
+        ? _c(
+            "td",
+            { staticClass: "rowButtons" },
+            [
+              _c("transition", [
+                _vm.editingRow === _vm.row[_vm.tablePrimaryKey]
+                  ? _c("span", [
+                      _c(
+                        "button",
+                        {
+                          key: "cancel",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.$emit("cancelEditingRow", null)
+                            }
+                          }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-remove",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          key: "save",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: { click: _vm.saveRow }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-ok",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          key: "delete",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.$emit(
+                                "deleteRow",
+                                _vm.row[_vm.tablePrimaryKey]
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-trash",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      )
+                    ])
+                  : _c("span", [
+                      _c(
+                        "button",
+                        {
+                          key: "edit",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: { click: _vm.editRow }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-pencil",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      )
+                    ])
+              ])
+            ],
+            1
+          )
+        : _vm._e()
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-18b7ef76", module.exports)
+  }
+}
+
+/***/ }),
+/* 264 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(265)
+/* template */
+var __vue_template__ = null
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/mixins/PostgresMixin.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0da81887", Component.options)
+  } else {
+    hotAPI.reload("data-v-0da81887", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 265 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            errors: [],
+            history: [],
+            pagination: {
+                current_page: 1,
+                first_page_url: '',
+                from: null,
+                last_page: null,
+                last_page_url: '',
+                next_page_url: '',
+                path: '',
+                per_page: null,
+                prev_page_url: '',
+                to: null,
+                total: 0
+            },
+            processing: false,
+            result: null,
+            schema: null,
+            server: 'http://postgres:5433',
+            sql: ''
+        };
+    },
+
+    methods: {
+        makeBindingsWhere: function makeBindingsWhere(bindings, conjunction) {
+            var sql = '';
+            if (!conjunction) {
+                conjunction = 'AND';
+            }
+            conjunction = ' ' + conjunction.trim() + ' ';
+            if (bindings) {
+                sql += 'WHERE ';
+                for (var property in bindings) {
+                    if (bindings.hasOwnProperty(property)) {
+                        sql += ' ' + property + ' = :' + property;
+                        //                            sql += ' ' + property + ' = ?'
+                        sql += conjunction;
+                    }
+                }
+                if (sql.endsWith(conjunction)) {
+                    sql = sql.substr(0, sql.lastIndexOf(conjunction));
+                }
+            }
+            return sql.trim();
+        },
+        makeWhere: function makeWhere(bindings, conjunction) {
+            var sql = '';
+            if (!conjunction) {
+                conjunction = 'AND';
+            }
+            conjunction = ' ' + conjunction.trim() + ' ';
+            if (bindings) {
+                sql += 'WHERE ';
+                for (var property in bindings) {
+                    if (bindings.hasOwnProperty(property)) {
+                        if (isNaN(bindings[property])) {
+                            sql += ' ' + property + ' = "' + bindings[property] + '"';
+                        } else {
+                            sql += ' ' + property + ' = ' + bindings[property];
+                        }
+                        sql += conjunction;
+                    }
+                }
+                if (sql.endsWith(conjunction)) {
+                    sql = sql.substr(0, sql.lastIndexOf(conjunction));
+                }
+            }
+            return sql.trim();
+        },
+        getKeysValues: function getKeysValues(data) {
+            var keys = [];
+            var values = [];
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) {
+                    keys.push(property);
+                    values.push(data[property]);
+                }
+            }
+            return [keys, values];
+        },
+        makeSelect: function makeSelect(table, bindings, conjunction) {
+            var sql = 'SELECT * FROM ' + table;
+            if (bindings) {
+                sql += ' ' + this.makeBindingsWhere(bindings, conjunction);
+            }
+            return sql.trim();
+        },
+        makeInsert: function makeInsert(table, data) {
+            var sql = 'INSERT INTO ' + table;
+            if (data) {
+                var keysValues = this.getKeysValues(data);
+                sql += ' (' + keysValues[0].join(', ') + ') ';
+                sql += 'VALUES';
+                sql += ' (:' + keysValues[0].join(', :') + ') ';
+                //                    sql += ' (' + '?, '.repeat(keysValues[1].length).slice(0, -2) + ') '
+                if (sql.endsWith(', :')) {
+                    sql = sql.substr(0, sql.lastIndexOf(', :'));
+                }
+            } else {
+                this.validationError('INSERT statements require data');
+            }
+            return sql.trim();
+        },
+        makeUpdate: function makeUpdate(table, data, where, conjunction) {
+            var sql = 'UPDATE ' + table + ' SET';
+            if (data) {
+                var keysValues = this.getKeysValues(data);
+                sql += ' (' + keysValues[0].join(', ') + ') ';
+                sql += '=';
+                sql += ' (:' + keysValues[0].join(', :') + ') ';
+                //                    sql += ' (' + '?, '.repeat(keysValues[1].length).slice(0, -2) + ') '
+                if (sql.endsWith(', :')) {
+                    sql = sql.substr(0, sql.lastIndexOf(', :'));
+                }
+            } else {
+                this.validationError('UPDATE statements require data');
+            }
+            if (where) {
+                sql += ' ' + this.makeWhere(where, conjunction);
+            }
+            return sql.trim();
+        },
+        makeDelete: function makeDelete(table, where, conjunction) {
+            var sql = 'DELETE FROM ' + table;
+            if (where) {
+                sql += ' ' + this.makeBindingsWhere(where, conjunction);
+            } else {
+                this.validationError('DELETE statements require a WHERE condition object');
+            }
+            return sql.trim();
+        },
+        selectQuery: function selectQuery(sql, page, bindings, perPage, pluck) {
+            var _this = this;
+
+            this.beforeQuery(sql);
+            var data = {
+                sql: this.sql
+            };
+            if (page) {
+                data.page = page;
+            }
+            if (bindings) {
+                data.bindings = bindings;
+            }
+            if (perPage) {
+                data.perPage = perPage;
+            }
+            if (pluck) {
+                data.pluck = pluck;
+            }
+            return axios.post(this.server + '/select', data).then(function (response) {
+                _this.querySuccess(response);
+            }).catch(function (error) {
+                _this.queryError(error);
+            }).then(function () {
+                _this.afterQuery();
+            });
+        },
+        insertQuery: function insertQuery(sql, bindings) {
+            var _this2 = this;
+
+            this.beforeQuery(sql);
+            var data = {
+                sql: this.sql
+            };
+            if (bindings) {
+                data.bindings = bindings;
+            }
+            return axios.post(this.server + '/insert', data).then(function (response) {
+                _this2.querySuccess(response);
+            }).catch(function (error) {
+                _this2.queryError(error);
+            }).then(function () {
+                _this2.afterQuery();
+            });
+        },
+        updateQuery: function updateQuery(sql, bindings) {
+            var _this3 = this;
+
+            this.beforeQuery(sql);
+            var data = {
+                sql: this.sql
+            };
+            if (bindings) {
+                data.bindings = bindings;
+            }
+            return axios.post(this.server + '/update', data).then(function (response) {
+                _this3.querySuccess(response);
+            }).catch(function (error) {
+                _this3.queryError(error);
+            }).then(function () {
+                _this3.afterQuery();
+            });
+        },
+        deleteQuery: function deleteQuery(sql, bindings) {
+            var _this4 = this;
+
+            this.beforeQuery(sql);
+            var data = {
+                sql: this.sql
+            };
+            if (bindings) {
+                data.bindings = bindings;
+            }
+            return axios.post(this.server + '/delete', data).then(function (response) {
+                _this4.querySuccess(response);
+            }).catch(function (error) {
+                _this4.queryError(error);
+            }).then(function () {
+                _this4.afterQuery();
+            });
+        },
+        executeQuery: function executeQuery(sql) {
+            var _this5 = this;
+
+            this.beforeQuery(sql);
+            return axios.post(this.server + '/execute', {
+                sql: this.sql
+            }).then(function (response) {
+                _this5.querySuccess(response);
+            }).catch(function (error) {
+                _this5.queryError(error);
+            }).then(function () {
+                _this5.afterQuery();
+            });
+        },
+        getPrimaryKey: function getPrimaryKey(table) {
+            var _this6 = this;
+
+            var sql = "SELECT \
+                    pg_attribute.attname, \
+                    pg_attribute.attlen, \
+                    format_type(pg_attribute.atttypid, pg_attribute.atttypmod) \
+                FROM pg_index, pg_class, pg_attribute, pg_namespace \
+                WHERE \
+                pg_class.oid = '" + table + "'::regclass AND \
+                indrelid = pg_class.oid AND \
+                nspname = 'public' AND \
+                pg_class.relnamespace = pg_namespace.oid AND \
+                pg_attribute.attrelid = pg_class.oid AND \
+                pg_attribute.attnum = any(pg_index.indkey) \
+                AND indisprimary";
+            return this.selectQuery(sql).then(function () {
+                if (_this6.result.length) {
+                    _this6.tablePrimaryKey = _this6.result[0].attname || 'id';
+                    _this6.tablePrimaryKeyFormat = _this6.result[0].format_type || '';
+                }
+            });
+        },
+        getSchema: function getSchema(table) {
+            var _this7 = this;
+
+            var sql = "SELECT " + "column_name, table_name, data_type, udt_name, column_default, is_nullable, is_updatable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
+            return this.selectQuery(sql).then(function () {
+                _this7.schema = _.clone(_this7.result);
+                _this7.result = null;
+            });
+        },
+        getColumn: function getColumn(column) {
+            var info = {};
+            if (this.schema) {
+                var length = this.schema.length;
+                for (var i = 0; i < length; i++) {
+                    if (this.schema[i].column_name === column) {
+                        info = this.schema[i];
+                    }
+                }
+            }
+            return info;
+        },
+        beforeQuery: function beforeQuery(sql) {
+            this.processing = true;
+            this.sql = sql;
+        },
+        afterQuery: function afterQuery() {
+            this.processing = false;
+            this.history.push(this.sql);
+            if (this.history.length > 15) {
+                this.history = this.history.slice(0, 16);
+            }
+        },
+        querySuccess: function querySuccess(response) {
+            this.result = this.parseResponse(response);
+        },
+        queryError: function queryError(error) {
+            var message = this.parseError(error);
+            this.errors.push(message);
+            console.error(message);
+            alert(message);
+        },
+        validationError: function validationError(message) {
+            this.errors.push(message);
+            console.error(message);
+            alert(message);
+        },
+        parseError: function parseError(error) {
+            var errorText = 'Unknown Error';
+            if (error) {
+                errorText = error;
+                if (error.response) {
+                    errorText = error.response.statusText;
+                    if (error.response.status === 419) {
+                        window.location = '/';
+                    }
+                    if (error.response.data) {
+                        errorText = error.response.data;
+                        if (error.response.data.message) {
+                            errorText = error.response.data.message;
+                        }
+                    }
+                }
+            }
+            return errorText;
+        },
+        parsePagination: function parsePagination(response) {
+            var pagination = function (_ref) {
+                var current_page = _ref.current_page,
+                    first_page_url = _ref.first_page_url,
+                    from = _ref.from,
+                    last_page = _ref.last_page,
+                    last_page_url = _ref.last_page_url,
+                    next_page_url = _ref.next_page_url,
+                    path = _ref.path,
+                    per_page = _ref.per_page,
+                    prev_page_url = _ref.prev_page_url,
+                    to = _ref.to,
+                    total = _ref.total;
+                return {
+                    current_page: current_page,
+                    first_page_url: first_page_url,
+                    from: from,
+                    last_page: last_page,
+                    last_page_url: last_page_url,
+                    next_page_url: next_page_url,
+                    path: path,
+                    per_page: per_page,
+                    prev_page_url: prev_page_url,
+                    to: to,
+                    total: total
+                };
+            }(response.data);
+            return pagination;
+        },
+        parseResponse: function parseResponse(response) {
+            var data = null;
+            if (response) {
+                if (response.data) {
+                    data = response.data;
+                    if (response.data.current_page) {
+                        this.pagination = this.parsePagination(response);
+                    }
+                    if (response.data.data) {
+                        data = response.data.data;
+                    }
+                    if (data !== Array) {
+                        data = Object.values(data);
+                    }
+                }
+            }
+            return data;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);
