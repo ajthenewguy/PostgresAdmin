@@ -42980,7 +42980,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         afterCustomQuery: function afterCustomQuery() {
-            this.recordsCustom = this.result;
+            if (this.result) {
+                this.recordsCustom = this.result;
+            }
         },
         clearTable: function clearTable() {
             this.table = null;
@@ -43617,7 +43619,7 @@ var render = function() {
         ? _c(
             "ul",
             { staticClass: "dropdown-menu" },
-            _vm._l(_vm.history, function(priorQuery) {
+            _vm._l(_vm.history.reverse(), function(priorQuery) {
               return _c("li", [
                 _c(
                   "a",
@@ -100014,6 +100016,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return axios.post(this.server + '/select', data).then(function (response) {
                 _this.querySuccess(response);
             }).catch(function (error) {
+                _this.result = null;
                 _this.queryError(error);
             }).then(function () {
                 _this.afterQuery();

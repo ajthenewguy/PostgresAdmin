@@ -179,6 +179,7 @@
                 return axios.post(this.server + '/select', data).then(response => {
                     this.querySuccess(response)
                 }).catch(error => {
+                    this.result = null
                     this.queryError(error)
                 }).then(() => {
                     this.afterQuery()

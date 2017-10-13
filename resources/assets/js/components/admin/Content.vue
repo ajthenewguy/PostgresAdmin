@@ -219,7 +219,9 @@
                 }
             },
             afterCustomQuery() {
-                this.recordsCustom = this.result
+                if (this.result) {
+                    this.recordsCustom = this.result
+                }
             },
             clearTable() {
                 this.table = null
