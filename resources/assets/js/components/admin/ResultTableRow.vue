@@ -68,39 +68,50 @@
             },
             getFieldDefault(column) {
                 let config = this.$parent.getColumn(column)
-                return config.column_default ? config.column_default : ""
+                return config.default_value ? config.default_value : ""
             },
             getColumn(column) {
                 return this.$parent.getColumn(column)
             },
             getFormComponent(column) {
                 let config = this.$parent.getColumn(column)
-                let data_type = this.$parent.getDataTypeDisplay(config.data_type)
+                let data_type = this.$parent.getDataTypeDisplay(config.type)
                 switch(data_type) {
+                    case "boolean": {
+                        return 'el-checkbox'
+                        break
+                    }
+                    case "int":
+                    case "text":
                     case "uuid":
                     case "integer":
+                    case "varchar":
                     case "character varying": {
                         return 'el-input'
-                        break;
+                        break
                     }
                     case "date":
                     case "timestamp": {
                         return 'el-date-picker'
-                        break;
+                        break
                     }
                 }
             },
             getTypeAttr(column) {
                 let config = this.$parent.getColumn(column)
-                let data_type = this.$parent.getDataTypeDisplay(config.data_type)
+                let data_type = this.$parent.getDataTypeDisplay(config.type)
                 switch(data_type) {
                     case "date": {
                         return 'date'
-                        break;
+                        break
+                    }
+                    case "text": {
+                        return 'text'
+                        break
                     }
                     case "timestamp": {
                         return 'datetime'
-                        break;
+                        break
                     }
                 }
             },
@@ -109,9 +120,12 @@
                 var changed = {}
                 _.each(this.newValues, function(val, attr) {
                     if (!_.isEqual(original[attr], val)) {
-                        changed[attr] = val
+                        if (typeof val !== "undefined") {
+                            changed[attr] = val
+                        }
                     }
                 })
+                console.log('1.', changed)
                 return changed
             }
         }

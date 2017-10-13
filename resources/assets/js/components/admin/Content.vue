@@ -32,21 +32,21 @@
                         />
                     </div>
                     <div class="tab-pane" :class="{ active: tab === 'content' }" id="content">
-                        <div class="results table-responsive">
-                            <results-table
-                                    :tab="tab"
-                                    :table="table"
-                                    :schema="schema"
-                                    :table-primary-key="tablePrimaryKey"
-                                    :records="records"
-                                    :processing="processing"
-                                    :editing-row="editingRow"
-                                    :custom-query="customQuery"
-                                    @editingRow="setEditingRow"
-                                    @updateRow="updateRow"
-                                    @deleteRow="deleteRow"
-                            />
-                        </div>
+                        <results-table
+                                :tab="tab"
+                                :table="table"
+                                :order="order"
+                                :schema="schema"
+                                :table-primary-key="tablePrimaryKey"
+                                :records="records"
+                                :processing="processing"
+                                :editing-row="editingRow"
+                                :custom-query="customQuery"
+                                @sortColumn="sortColumn"
+                                @editingRow="setEditingRow"
+                                @updateRow="updateRow"
+                                @deleteRow="deleteRow"
+                        />
                         <div class="row">
                             <div class="col-sm-12 text-right">
                                 <el-pagination
@@ -65,31 +65,28 @@
                         </span>
                     </div>
                     <div class="tab-pane" :class="{ active: tab === 'query' }" id="query">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <query
-                                        v-if="!processing || customQuery"
-                                        :sql="customQuery"
-                                        @beforeQuery="beforeQuery"
-                                        @customQuery="beforeCustomQuery"
-                                        @success="querySuccess"
-                                        @afterQuery="afterCustomQuery"
-                                        @error="queryError"
-                                />
-                                <results-table
-                                        :tab="tab"
-                                        :table="table"
-                                        :table-primary-key="false"
-                                        :records="recordsCustom"
-                                        :processing="processing"
-                                        :editing-row="false"
-                                        :custom-query="customQuery"
-                                        @editingRow="setEditingRow"
-                                        @updateRow="updateRow"
-                                        @deleteRow="deleteRow"
-                                />
-                            </div>
-                        </div>
+                        <query
+                                v-if="!processing || customQuery"
+                                :sql="customQuery"
+                                :history="history"
+                                @beforeQuery="beforeQuery"
+                                @customQuery="beforeCustomQuery"
+                                @success="querySuccess"
+                                @afterQuery="afterCustomQuery"
+                                @error="queryError"
+                        />
+                        <results-table
+                                :tab="tab"
+                                :table="table"
+                                :table-primary-key="false"
+                                :records="recordsCustom"
+                                :processing="processing"
+                                :editing-row="false"
+                                :custom-query="customQuery"
+                                @editingRow="setEditingRow"
+                                @updateRow="updateRow"
+                                @deleteRow="deleteRow"
+                        />
                     </div>
                 </div>
             </div>
@@ -102,18 +99,15 @@
         props: [ 'tables' ],
         data() {
             return {
-                customQuery: false,
                 primaryPanelTitle: '',
                 table: null,
-//                schema: null,
-                tablePrimaryKey: '',
-                tablePrimaryKeyFormat: '',
                 editingRow: null,
+                filter: null,
                 records: [],
                 recordsCustom: [],
-//                sql: '',
                 tab: 'query',
                 tableQuery: '',
+                order: null,
                 pagination: {
                     current_page: 1,
                     first_page_url: '',
@@ -126,8 +120,7 @@
                     prev_page_url: '',
                     to: null,
                     total: 0
-                },
-//                processing: false
+                }
             }
         },
         mixins: [ require( '../../mixins/PostgresMixin.vue') ],
@@ -136,6 +129,11 @@
             'query': require('./Query'),
             'structure-table': require('./StructureTable'),
             'results-table': require('./ResultsTable')
+        },
+        watch: {
+            order: function(column) {
+                this.getRecords()
+            }
         },
         methods: {
             recordCount() {
@@ -149,29 +147,14 @@
                 if (this.tab === "query") {
                     this.tab = 'content'
                 }
-                this.sql = 'SELECT * FROM ' + this.table
+//                this.sql = 'SELECT * FROM ' + this.table
                 this.getPrimaryKey(this.table).then(() => {
+                    this.order = this.primaryKey
                     this.getSchema(this.table).then(() => {
                         this.getRecords()
                     })
                 })
             },
-//            executeQuery(sql, page) {
-//                this.processing = true
-//                let data = {
-//                    sql: sql || this.sql
-//                }
-//                if (page) {
-//                    data.page = page
-//                }
-//                if (bindings) {
-//                    data.bindings = bindings
-//                }
-//                return axios.post('http://postgres:5433/select', data)
-//                    .catch(error => {
-//                        this.queryError(error)
-//                    })
-//            },
             changeTab(tab) {
                 this.tab = tab
                 if (tab === "content" && (this.table && this.recordCount() < 1)) {
@@ -181,8 +164,17 @@
             currentPage() {
                 return this.pagination.current_page
             },
+            sortColumn(column) {
+                if (typeof this.order === "string" && this.order === column) {
+                    this.order = [column, 'DESC']
+                } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                    this.order = this.primaryKey
+                } else {
+                    this.order = column
+                }
+            },
             getRecords(page) {
-                let sql = this.makeSelect(this.table)
+                let sql = this.makeSelect(this.table, null, null, this.order)
                 if (typeof page === "undefined") {
                     page = this.currentPage()
                 }
@@ -222,19 +214,20 @@
                 if (sql) {
                     this.customQuery = true
                     this.primaryPanelTitle = sql
-//                    this.clearTable()
                 } else {
                     this.recordsCustom = []
                 }
             },
             afterCustomQuery() {
-//                this.customQuery = false
+                this.recordsCustom = this.result
             },
             clearTable() {
                 this.table = null
                 this.schema = null
                 this.tablePrimaryKey = ''
                 this.tablePrimaryKeyFormat = ''
+                this.order = null
+                this.filer = null
                 this.records = []
             }
         }
@@ -377,12 +370,6 @@
 
     .main {
         padding: 20px;
-    }
-    @media (min-width: 768px) {
-        .main {
-            padding-right: 40px;
-            padding-left: 40px;
-        }
     }
     .main .page-header {
         margin-top: 0;

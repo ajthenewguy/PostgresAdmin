@@ -1,32 +1,33 @@
 <template>
-    <transition name="fade">
-<!--
-        | Column Name | Type | Length | Not Null | Default Value |
-        ----------------------------------------------------------
-        | id          | int8 | 19     | true     | nextval()     |
--->
-        <table v-if="table && schema" class="table table-hover table-striped table-condensed">
-            <thead>
-                <tr>
-                    <th v-for="(value, name) in schema[0]">{{ name }}</th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr v-for="fields in schema">
-                <td v-for="(value, name) in fields">{{ value }}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div>
+        <br>
+        <el-table
+                v-if="table && schema"
+                :data="schema"
+                border
+                style="width: 100%">
+            <el-table-column
+                    v-for="(value, name) in schema[0]"
+                    :key="name"
+                    :prop="name"
+                    :label="titleCase(name)"
+            />
+        </el-table>
         <div v-else>
             <div v-if="!processing" class="empty">
                 No table selected
             </div>
         </div>
-    </transition>
+    </div>
 </template>
 
 <script>
     export default {
-        props: [ 'table', 'schema', 'processing' ]
+        props: [ 'table', 'schema', 'processing' ],
+        methods: {
+            titleCase(string) {
+                return string.replace('_', ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+            }
+        }
     }
 </script>

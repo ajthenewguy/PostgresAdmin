@@ -42846,26 +42846,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables'],
     data: function data() {
         return {
-            customQuery: false,
             primaryPanelTitle: '',
             table: null,
-            //                schema: null,
-            tablePrimaryKey: '',
-            tablePrimaryKeyFormat: '',
             editingRow: null,
+            filter: null,
             records: [],
             recordsCustom: [],
-            //                sql: '',
             tab: 'query',
             tableQuery: '',
+            order: null,
             pagination: {
                 current_page: 1,
                 first_page_url: '',
@@ -42879,7 +42873,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 to: null,
                 total: 0
             }
-            //                processing: false
         };
     },
 
@@ -42889,6 +42882,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         'query': __webpack_require__(59),
         'structure-table': __webpack_require__(258),
         'results-table': __webpack_require__(255)
+    },
+    watch: {
+        order: function order(column) {
+            this.getRecords();
+        }
     },
     methods: {
         recordCount: function recordCount() {
@@ -42904,30 +42902,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (this.tab === "query") {
                 this.tab = 'content';
             }
-            this.sql = 'SELECT * FROM ' + this.table;
+            //                this.sql = 'SELECT * FROM ' + this.table
             this.getPrimaryKey(this.table).then(function () {
+                _this.order = _this.primaryKey;
                 _this.getSchema(_this.table).then(function () {
                     _this.getRecords();
                 });
             });
         },
-
-        //            executeQuery(sql, page) {
-        //                this.processing = true
-        //                let data = {
-        //                    sql: sql || this.sql
-        //                }
-        //                if (page) {
-        //                    data.page = page
-        //                }
-        //                if (bindings) {
-        //                    data.bindings = bindings
-        //                }
-        //                return axios.post('http://postgres:5433/select', data)
-        //                    .catch(error => {
-        //                        this.queryError(error)
-        //                    })
-        //            },
         changeTab: function changeTab(tab) {
             this.tab = tab;
             if (tab === "content" && this.table && this.recordCount() < 1) {
@@ -42937,10 +42919,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         currentPage: function currentPage() {
             return this.pagination.current_page;
         },
+        sortColumn: function sortColumn(column) {
+            if (typeof this.order === "string" && this.order === column) {
+                this.order = [column, 'DESC'];
+            } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                this.order = this.primaryKey;
+            } else {
+                this.order = column;
+            }
+        },
         getRecords: function getRecords(page) {
             var _this2 = this;
 
-            var sql = this.makeSelect(this.table);
+            var sql = this.makeSelect(this.table, null, null, this.order);
             if (typeof page === "undefined") {
                 page = this.currentPage();
             }
@@ -42984,19 +42975,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (sql) {
                 this.customQuery = true;
                 this.primaryPanelTitle = sql;
-                //                    this.clearTable()
             } else {
                 this.recordsCustom = [];
             }
         },
         afterCustomQuery: function afterCustomQuery() {
-            //                this.customQuery = false
+            this.recordsCustom = this.result;
         },
         clearTable: function clearTable() {
             this.table = null;
             this.schema = null;
             this.tablePrimaryKey = '';
             this.tablePrimaryKeyFormat = '';
+            this.order = null;
+            this.filer = null;
             this.records = [];
         }
     }
@@ -43152,30 +43144,25 @@ var render = function() {
                 attrs: { id: "content" }
               },
               [
-                _c(
-                  "div",
-                  { staticClass: "results table-responsive" },
-                  [
-                    _c("results-table", {
-                      attrs: {
-                        tab: _vm.tab,
-                        table: _vm.table,
-                        schema: _vm.schema,
-                        "table-primary-key": _vm.tablePrimaryKey,
-                        records: _vm.records,
-                        processing: _vm.processing,
-                        "editing-row": _vm.editingRow,
-                        "custom-query": _vm.customQuery
-                      },
-                      on: {
-                        editingRow: _vm.setEditingRow,
-                        updateRow: _vm.updateRow,
-                        deleteRow: _vm.deleteRow
-                      }
-                    })
-                  ],
-                  1
-                ),
+                _c("results-table", {
+                  attrs: {
+                    tab: _vm.tab,
+                    table: _vm.table,
+                    order: _vm.order,
+                    schema: _vm.schema,
+                    "table-primary-key": _vm.tablePrimaryKey,
+                    records: _vm.records,
+                    processing: _vm.processing,
+                    "editing-row": _vm.editingRow,
+                    "custom-query": _vm.customQuery
+                  },
+                  on: {
+                    sortColumn: _vm.sortColumn,
+                    editingRow: _vm.setEditingRow,
+                    updateRow: _vm.updateRow,
+                    deleteRow: _vm.deleteRow
+                  }
+                }),
                 _vm._v(" "),
                 _c("div", { staticClass: "row" }, [
                   _c(
@@ -43206,7 +43193,8 @@ var render = function() {
                       })
                     ])
                   : _vm._e()
-              ]
+              ],
+              1
             ),
             _vm._v(" "),
             _c(
@@ -43217,45 +43205,37 @@ var render = function() {
                 attrs: { id: "query" }
               },
               [
-                _c("div", { staticClass: "panel panel-default" }, [
-                  _c(
-                    "div",
-                    { staticClass: "panel-body" },
-                    [
-                      !_vm.processing || _vm.customQuery
-                        ? _c("query", {
-                            attrs: { sql: _vm.customQuery },
-                            on: {
-                              beforeQuery: _vm.beforeQuery,
-                              customQuery: _vm.beforeCustomQuery,
-                              success: _vm.querySuccess,
-                              afterQuery: _vm.afterCustomQuery,
-                              error: _vm.queryError
-                            }
-                          })
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("results-table", {
-                        attrs: {
-                          tab: _vm.tab,
-                          table: _vm.table,
-                          "table-primary-key": false,
-                          records: _vm.recordsCustom,
-                          processing: _vm.processing,
-                          "editing-row": false,
-                          "custom-query": _vm.customQuery
-                        },
-                        on: {
-                          editingRow: _vm.setEditingRow,
-                          updateRow: _vm.updateRow,
-                          deleteRow: _vm.deleteRow
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ])
-              ]
+                !_vm.processing || _vm.customQuery
+                  ? _c("query", {
+                      attrs: { sql: _vm.customQuery, history: _vm.history },
+                      on: {
+                        beforeQuery: _vm.beforeQuery,
+                        customQuery: _vm.beforeCustomQuery,
+                        success: _vm.querySuccess,
+                        afterQuery: _vm.afterCustomQuery,
+                        error: _vm.queryError
+                      }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("results-table", {
+                  attrs: {
+                    tab: _vm.tab,
+                    table: _vm.table,
+                    "table-primary-key": false,
+                    records: _vm.recordsCustom,
+                    processing: _vm.processing,
+                    "editing-row": false,
+                    "custom-query": _vm.customQuery
+                  },
+                  on: {
+                    editingRow: _vm.setEditingRow,
+                    updateRow: _vm.updateRow,
+                    deleteRow: _vm.deleteRow
+                  }
+                })
+              ],
+              1
             )
           ])
         ]
@@ -43489,9 +43469,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['sql'],
+    props: ['sql', 'history'],
     data: function data() {
         return {
             query: null
@@ -43500,24 +43495,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mounted: function mounted() {},
 
     methods: {
-        executeQuery: function executeQuery() {
-            var _this = this;
-
+        run: function run() {
             this.$emit('customQuery', this.query);
             if (this.query) {
                 this.$emit('beforeQuery', this.query);
-                axios.post('http://postgres:5433/query', {
-                    input: this.query
-                }).then(function (response) {
-                    _this.$emit('afterQuery');
-                    _this.$emit('success', response);
-                }).catch(function (error) {
-                    if (error.message === "Request failed with status code 419") {
-                        window.location = '/';
-                    }
-                    _this.$emit('error', error);
-                });
+
+                var parsedQuery = this.$parent.parseSql(this.query);
+                // eslint-disable-next-line
+                console.log(parsedQuery);
+
+                switch (parsedQuery.verb) {
+                    case 'SELECT':
+                        {
+                            return this.$parent.selectQuery(this.query).then(this.afterRun);
+                            break;
+                        }
+                    case 'INSERT':
+                        {
+                            return this.$parent.insertQuery(this.query).then(this.afterRun);
+                            break;
+                        }
+                    case 'UPDATE':
+                        {
+                            return this.$parent.updateQuery(this.query).then(this.afterRun);
+                            break;
+                        }
+                    case 'DELETE':
+                        {
+                            return this.$parent.deleteQuery(this.query).then(this.afterRun);
+                            break;
+                        }
+                    default:
+                        {
+                            return this.$parent.executeQuery(this.query).then(this.afterRun);
+                            break;
+                        }
+                }
             }
+        },
+        afterRun: function afterRun() {
+            this.$emit('afterQuery');
+            this.$emit('success', this.response);
         }
     }
 });
@@ -43531,6 +43549,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
+    _c("br"),
+    _vm._v(" "),
     _c(
       "textarea",
       {
@@ -43557,21 +43577,66 @@ var render = function() {
       [_vm._v(_vm._s(_vm.sql))]
     ),
     _vm._v(" "),
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-default btn-sm",
-        attrs: { type: "button" },
-        on: { click: _vm.executeQuery }
-      },
-      [
-        _c("span", {
-          staticClass: "glyphicon glyphicon-flash",
-          attrs: { "aria-hidden": "true" }
-        }),
-        _vm._v(" Query\n    ")
-      ]
-    )
+    _c("div", { staticClass: "btn-group" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-default btn-sm",
+          attrs: { type: "button" },
+          on: { click: _vm.run }
+        },
+        [
+          _c("span", {
+            staticClass: "glyphicon glyphicon-flash",
+            attrs: { "aria-hidden": "true" }
+          }),
+          _vm._v(" Run Query\n        ")
+        ]
+      ),
+      _vm._v(" "),
+      _vm.history.length > 1
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-default btn-sm dropdown-toggle",
+              attrs: {
+                type: "button",
+                "data-toggle": "dropdown",
+                "aria-haspopup": "true",
+                "aria-expanded": "false"
+              }
+            },
+            [
+              _vm._v("\n            History "),
+              _c("span", { staticClass: "caret" })
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.history.length > 1
+        ? _c(
+            "ul",
+            { staticClass: "dropdown-menu" },
+            _vm._l(_vm.history, function(priorQuery) {
+              return _c("li", [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        _vm.query = priorQuery
+                      }
+                    }
+                  },
+                  [_vm._v(_vm._s(priorQuery))]
+                )
+              ])
+            })
+          )
+        : _vm._e()
+    ])
   ])
 }
 var staticRenderFns = []
@@ -98940,7 +99005,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom {\n    transform: scale(1) rotate(0deg);\n}\nto {\n    transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 50px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 51px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n@media (min-width: 768px) {\n.main {\n    padding-right: 40px;\n    padding-left: 40px;\n}\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom {\n    transform: scale(1) rotate(0deg);\n}\nto {\n    transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 50px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 51px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
 
 // exports
 
@@ -99048,9 +99113,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['tab', 'table', 'schema', 'records', 'tablePrimaryKey', 'processing', 'editingRow', 'customQuery'],
+    props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'editingRow', 'customQuery'],
     components: {
         'result-table-row': __webpack_require__(261)
     },
@@ -99059,14 +99126,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return this.$parent.getColumn(column);
         },
         getDataTypeDisplay: function getDataTypeDisplay(input) {
-            var output = input;
-            if (input.includes('timestamp ')) {
+            var output = input || '_';
+            if (output.includes('timestamp ')) {
                 output = output.split(' ')[0];
+            }
+            if (output === "character varying") {
+                output = "varchar";
             }
             return output;
         },
         saveRow: function saveRow(data) {
+            console.log('2.', data);
             this.$emit('updateRow', data);
+        },
+        sortIcon: function sortIcon(column) {
+            var icon = '';
+            if (typeof this.order === "string" && this.order === column) {
+                icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>';
+            } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                icon = '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>';
+            }
+            return icon;
         }
     }
 });
@@ -99079,121 +99159,150 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "fade" } }, [
-    _c(
-      "table",
-      { staticClass: "table table-hover table-striped table-condensed" },
-      [
-        _c("thead", [
-          _vm.tab === "query"
-            ? _c(
-                "tr",
-                _vm._l(_vm.records[0], function(value, name) {
-                  return _c("th", [
-                    name === _vm.tablePrimaryKey
-                      ? _c("span", {
-                          staticClass: "glyphicon glyphicon-star",
-                          attrs: { "aria-hidden": "true" }
-                        })
-                      : _vm._e(),
-                    _vm._v(
-                      "\n                " + _vm._s(name) + "\n            "
-                    )
-                  ])
-                })
-              )
-            : _c(
-                "tr",
-                [
-                  _vm._l(_vm.schema, function(value, name) {
-                    return _c("th", [
-                      value["column_name"] === _vm.tablePrimaryKey
-                        ? _c("span", {
-                            staticClass: "glyphicon glyphicon-star",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        : _vm._e(),
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(value["column_name"]) +
-                          "\n                "
-                      ),
-                      _c("br"),
-                      _vm._v(" "),
-                      _c("small", [
+  return _c(
+    "div",
+    { staticClass: "results table-responsive" },
+    [
+      _c("transition", { attrs: { name: "fade" } }, [
+        _c(
+          "table",
+          { staticClass: "table table-hover table-striped table-condensed" },
+          [
+            _c("thead", [
+              _vm.tab === "query"
+                ? _c(
+                    "tr",
+                    _vm._l(_vm.records[0], function(value, name) {
+                      return _c("th", [
+                        name === _vm.tablePrimaryKey
+                          ? _c("span", {
+                              staticClass: "glyphicon glyphicon-star",
+                              attrs: { "aria-hidden": "true" }
+                            })
+                          : _vm._e(),
                         _vm._v(
-                          _vm._s(_vm.getDataTypeDisplay(value["data_type"]))
+                          "\n                    " +
+                            _vm._s(name) +
+                            "\n                "
                         )
                       ])
-                    ])
-                  }),
-                  _vm._v(" "),
-                  _c("th")
-                ],
-                2
-              )
-        ]),
-        _vm._v(" "),
-        _vm.records && _vm.records.length > 0
-          ? _c(
-              "tbody",
-              _vm._l(_vm.records, function(row) {
-                return _c("result-table-row", {
-                  key: row[_vm.tablePrimaryKey],
-                  attrs: {
-                    tab: _vm.tab,
-                    table: _vm.table,
-                    schema: _vm.schema,
-                    "table-primary-key": _vm.tablePrimaryKey,
-                    row: row,
-                    processing: _vm.processing,
-                    "editing-row": _vm.editingRow
-                  },
-                  on: {
-                    editingRow: function($event) {
-                      _vm.$emit("editingRow", row[_vm.tablePrimaryKey])
-                    },
-                    cancelEditingRow: function($event) {
-                      _vm.$emit("editingRow", null)
-                    },
-                    updateRow: _vm.saveRow,
-                    deleteRow: function($event) {
-                      _vm.$emit("deleteRow", row[_vm.tablePrimaryKey])
-                    }
-                  }
-                })
-              })
-            )
-          : _c("tbody", [
-              !_vm.processing &&
-              ((_vm.records && _vm.records.length > 0) ||
-                _vm.table ||
-                _vm.customQuery)
-                ? _c("tr", [
-                    _c(
-                      "td",
-                      {
-                        attrs: {
-                          colspan: _vm.schema
-                            ? Object.keys(_vm.schema).length +
-                              (_vm.tab === "query" ? 1 : 0)
-                            : 2
-                        }
-                      },
-                      [
-                        _c("div", { staticClass: "empty" }, [
-                          _vm.table || _vm.tab === "query"
-                            ? _c("span", [_vm._v("No records found")])
-                            : _c("span", [_vm._v("No table selected")])
+                    })
+                  )
+                : _c(
+                    "tr",
+                    [
+                      _vm._l(_vm.schema, function(value, name) {
+                        return _c("th", [
+                          value["column_name"] === _vm.tablePrimaryKey
+                            ? _c("span", {
+                                staticClass: "glyphicon glyphicon-star",
+                                attrs: { "aria-hidden": "true" }
+                              })
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              attrs: { href: "#" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.$emit("sortColumn", value["column_name"])
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(_vm._s(value["column_name"])),
+                              _c("span", {
+                                staticStyle: { "margin-left": "5px" },
+                                domProps: {
+                                  innerHTML: _vm._s(
+                                    _vm.sortIcon(value["column_name"])
+                                  )
+                                }
+                              })
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("small", [
+                            _vm._v(
+                              _vm._s(_vm.getDataTypeDisplay(value["type"]))
+                            )
+                          ])
                         ])
-                      ]
-                    )
-                  ])
-                : _vm._e()
-            ])
-      ]
-    )
-  ])
+                      }),
+                      _vm._v(" "),
+                      _c("th")
+                    ],
+                    2
+                  )
+            ]),
+            _vm._v(" "),
+            _vm.records && _vm.records.length > 0
+              ? _c(
+                  "tbody",
+                  _vm._l(_vm.records, function(row) {
+                    return _c("result-table-row", {
+                      key: row[_vm.tablePrimaryKey],
+                      attrs: {
+                        tab: _vm.tab,
+                        table: _vm.table,
+                        schema: _vm.schema,
+                        "table-primary-key": _vm.tablePrimaryKey,
+                        row: row,
+                        processing: _vm.processing,
+                        "editing-row": _vm.editingRow
+                      },
+                      on: {
+                        editingRow: function($event) {
+                          _vm.$emit("editingRow", row[_vm.tablePrimaryKey])
+                        },
+                        cancelEditingRow: function($event) {
+                          _vm.$emit("editingRow", null)
+                        },
+                        updateRow: _vm.saveRow,
+                        deleteRow: function($event) {
+                          _vm.$emit("deleteRow", row[_vm.tablePrimaryKey])
+                        }
+                      }
+                    })
+                  })
+                )
+              : _c("tbody", [
+                  !_vm.processing &&
+                  ((_vm.records && _vm.records.length > 0) ||
+                    _vm.table ||
+                    _vm.customQuery)
+                    ? _c("tr", [
+                        _c(
+                          "td",
+                          {
+                            attrs: {
+                              colspan: _vm.schema
+                                ? Object.keys(_vm.schema).length +
+                                  (_vm.tab === "query" ? 1 : 0)
+                                : 2
+                            }
+                          },
+                          [
+                            _c("div", { staticClass: "empty" }, [
+                              _vm.table || _vm.tab === "query"
+                                ? _c("span", [_vm._v("No records found")])
+                                : _c("span", [_vm._v("No table selected")])
+                            ])
+                          ]
+                        )
+                      ])
+                    : _vm._e()
+                ])
+          ]
+        )
+      ])
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -99280,13 +99389,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['table', 'schema', 'processing']
+    props: ['table', 'schema', 'processing'],
+    methods: {
+        titleCase: function titleCase(string) {
+            return string.replace('_', ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
+                return txt.toUpperCase();
+            });
+        }
+    }
 });
 
 /***/ }),
@@ -99297,42 +99409,35 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "fade" } }, [
-    _vm.table && _vm.schema
-      ? _c(
-          "table",
-          { staticClass: "table table-hover table-striped table-condensed" },
-          [
-            _c("thead", [
-              _c(
-                "tr",
-                _vm._l(_vm.schema[0], function(value, name) {
-                  return _c("th", [_vm._v(_vm._s(name))])
-                })
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.schema, function(fields) {
-                return _c(
-                  "tr",
-                  _vm._l(fields, function(value, name) {
-                    return _c("td", [_vm._v(_vm._s(value))])
-                  })
-                )
+  return _c(
+    "div",
+    [
+      _c("br"),
+      _vm._v(" "),
+      _vm.table && _vm.schema
+        ? _c(
+            "el-table",
+            {
+              staticStyle: { width: "100%" },
+              attrs: { data: _vm.schema, border: "" }
+            },
+            _vm._l(_vm.schema[0], function(value, name) {
+              return _c("el-table-column", {
+                key: name,
+                attrs: { prop: name, label: _vm.titleCase(name) }
               })
-            )
-          ]
-        )
-      : _c("div", [
-          !_vm.processing
-            ? _c("div", { staticClass: "empty" }, [
-                _vm._v("\n                No table selected\n            ")
-              ])
-            : _vm._e()
-        ])
-  ])
+            })
+          )
+        : _c("div", [
+            !_vm.processing
+              ? _c("div", { staticClass: "empty" }, [
+                  _vm._v("\n            No table selected\n        ")
+                ])
+              : _vm._e()
+          ])
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -99461,17 +99566,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         getFieldDefault: function getFieldDefault(column) {
             var config = this.$parent.getColumn(column);
-            return config.column_default ? config.column_default : "";
+            return config.default_value ? config.default_value : "";
         },
         getColumn: function getColumn(column) {
             return this.$parent.getColumn(column);
         },
         getFormComponent: function getFormComponent(column) {
             var config = this.$parent.getColumn(column);
-            var data_type = this.$parent.getDataTypeDisplay(config.data_type);
+            var data_type = this.$parent.getDataTypeDisplay(config.type);
             switch (data_type) {
+                case "boolean":
+                    {
+                        return 'el-checkbox';
+                        break;
+                    }
+                case "int":
+                case "text":
                 case "uuid":
                 case "integer":
+                case "varchar":
                 case "character varying":
                     {
                         return 'el-input';
@@ -99487,11 +99600,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         getTypeAttr: function getTypeAttr(column) {
             var config = this.$parent.getColumn(column);
-            var data_type = this.$parent.getDataTypeDisplay(config.data_type);
+            var data_type = this.$parent.getDataTypeDisplay(config.type);
             switch (data_type) {
                 case "date":
                     {
                         return 'date';
+                        break;
+                    }
+                case "text":
+                    {
+                        return 'text';
                         break;
                     }
                 case "timestamp":
@@ -99506,9 +99624,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var changed = {};
             __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.newValues, function (val, attr) {
                 if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEqual(original[attr], val)) {
-                    changed[attr] = val;
+                    if (typeof val !== "undefined") {
+                        changed[attr] = val;
+                    }
                 }
             });
+            console.log('1.', changed);
             return changed;
         }
     }
@@ -99713,6 +99834,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            customQuery: false,
             errors: [],
             history: [],
             pagination: {
@@ -99729,14 +99851,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 total: 0
             },
             processing: false,
+            response: null,
             result: null,
             schema: null,
             server: 'http://postgres:5433',
-            sql: ''
+            sql: '',
+            tablePrimaryKey: '',
+            tablePrimaryKeyFormat: ''
         };
     },
 
     methods: {
+        getKeysValues: function getKeysValues(data) {
+            var keys = [];
+            var values = [];
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) {
+                    keys.push(property);
+                    values.push(data[property]);
+                }
+            }
+            return [keys, values];
+        },
         makeBindingsWhere: function makeBindingsWhere(bindings, conjunction) {
             var sql = '';
             if (!conjunction) {
@@ -99769,7 +99905,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 for (var property in bindings) {
                     if (bindings.hasOwnProperty(property)) {
                         if (isNaN(bindings[property])) {
-                            sql += ' ' + property + ' = "' + bindings[property] + '"';
+                            sql += ' ' + property + ' = \'' + bindings[property] + '\'';
                         } else {
                             sql += ' ' + property + ' = ' + bindings[property];
                         }
@@ -99782,21 +99918,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             return sql.trim();
         },
-        getKeysValues: function getKeysValues(data) {
-            var keys = [];
-            var values = [];
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) {
-                    keys.push(property);
-                    values.push(data[property]);
-                }
-            }
-            return [keys, values];
-        },
-        makeSelect: function makeSelect(table, bindings, conjunction) {
+        makeSelect: function makeSelect(table, where, conjunction, order) {
             var sql = 'SELECT * FROM ' + table;
-            if (bindings) {
-                sql += ' ' + this.makeBindingsWhere(bindings, conjunction);
+            if (where) {
+                sql += ' ' + this.makeBindingsWhere(where, conjunction);
+            }
+            if (!order) {
+                order = this.tablePrimaryKey;
+            }
+            if (order) {
+                sql += ' ORDER BY ' + this.makeOrderBy(order);
             }
             return sql.trim();
         },
@@ -99843,6 +99974,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.validationError('DELETE statements require a WHERE condition object');
             }
             return sql.trim();
+        },
+        makeOrderBy: function makeOrderBy(order) {
+            if (!order) {
+                order = '';
+            }
+            if (order.constructor === Array) {
+                if (order[0].constructor === Array) {
+                    var ordering_count = order.length;
+                    for (var i = 0; i < ordering_count; i++) {
+                        order[i] = order[i].join(' ');
+                    }
+                    order = order.join(', ');
+                } else {
+                    order = order.join(' ');
+                }
+            }
+            return order;
         },
         selectQuery: function selectQuery(sql, page, bindings, perPage, pluck) {
             var _this = this;
@@ -99955,6 +100103,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 pg_attribute.attrelid = pg_class.oid AND \
                 pg_attribute.attnum = any(pg_index.indkey) \
                 AND indisprimary";
+            this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 if (_this6.result.length) {
                     _this6.tablePrimaryKey = _this6.result[0].attname || 'id';
@@ -99965,7 +100114,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getSchema: function getSchema(table) {
             var _this7 = this;
 
-            var sql = "SELECT " + "column_name, table_name, data_type, udt_name, column_default, is_nullable, is_updatable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
+            var sql = "SELECT " + "column_name, data_type AS type, character_maximum_length AS length, column_default AS default_value, is_nullable AS nullable, is_updatable AS mutable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
+            this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 _this7.schema = _.clone(_this7.result);
                 _this7.result = null;
@@ -99989,19 +100139,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         afterQuery: function afterQuery() {
             this.processing = false;
-            this.history.push(this.sql);
+            if (this.customQuery) {
+                this.history.push(this.sql);
+            }
             if (this.history.length > 15) {
                 this.history = this.history.slice(0, 16);
             }
         },
         querySuccess: function querySuccess(response) {
+            this.response = response;
             this.result = this.parseResponse(response);
         },
         queryError: function queryError(error) {
             var message = this.parseError(error);
             this.errors.push(message);
             console.error(message);
-            alert(message);
+            if (typeof message === "string") {
+                alert(message);
+            }
         },
         validationError: function validationError(message) {
             this.errors.push(message);
@@ -100073,6 +100228,184 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
             return data;
+        },
+        parseSql: function parseSql(sql) {
+            var query = null;
+            var flags = {
+                table: false,
+                values: false,
+                where: false,
+                order: false
+            };
+            var lastFlag = null;
+            var skip = false;
+            var subQuery = [];
+            var token = '';
+            var tokens = [];
+            var tokenLength = 0;
+            if (sql) {
+                tokens = sql.split(' ');
+                tokenLength = tokens.length;
+                query = {
+                    verb: '',
+                    columns: [],
+                    table: '',
+                    values: [],
+                    where: [],
+                    order: [],
+                    sub: null
+                };
+                query.verb = tokens.shift().toUpperCase();
+                tokenLength = tokens.length;
+                //                    switch(query.verb) {
+                //                        case 'SELECT': {
+                for (var i = 0; i < tokenLength; i++) {
+                    token = tokens[i];
+
+                    // SELECT * FROM table WHERE id=2 AND id<>1 ORDER BY id LIMIT 1
+
+
+                    // DELETE FROM films WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
+
+                    if (query.verb == 'UPDATE') {
+                        flags.table = true;
+                        lastFlag = 'table';
+                        skip = true;
+                    }
+
+                    switch (token.toUpperCase()) {
+                        case 'INTO':
+                        case 'FROM':
+                            {
+                                flags.table = true;
+                                lastFlag = 'table';
+                                skip = true;
+                                break;
+                            }
+                        case 'SET':
+                            {
+                                flags.values = true;
+                                lastFlag = 'set';
+                                skip = true;
+                                break;
+                            }
+                        case 'VALUES':
+                            {
+                                flags.values = true;
+                                lastFlag = 'values';
+                                skip = true;
+                                break;
+                            }
+                        case 'WHERE':
+                            {
+                                flags.where = true;
+                                lastFlag = 'where';
+                                skip = true;
+                                break;
+                            }
+                        case 'ORDER':
+                            {
+                                flags.order = true;
+                                lastFlag = 'order';
+                                i++;
+                                skip = true;
+                                break;
+                            }
+                        case 'IN':
+                            {
+                                var j = i;
+                                skip = true;
+                                i++;
+                                j++;
+                                if (tokens[j] === '(') {
+                                    for (; j < tokens.length; j++, i++) {
+                                        if (token !== ')') {
+                                            subQuery.push(tokens[j]);
+                                        } else {
+                                            query.sub = this.parseSql(subQuery.join(' '));
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    this.validationError('Sub queries must be enclosed in parentheses');
+                                    return;
+                                }
+                                break;
+                            }
+                    }
+
+                    if (skip) {
+                        skip = false;
+                        continue;
+                    }
+
+                    // INSERT INTO films
+                    //                                    VALUES ('UA502', 'Bananas', 105, DEFAULT, 'Comedy', '82 minutes');
+
+
+                    // INSERT INTO films (code, title, did, date_prod, kind)
+                    //                                    VALUES ('T_601', 'Yojimbo', 106, DEFAULT, 'Drama');
+
+
+                    // UPDATE weather SET (temp_lo, temp_hi, prcp) = (temp_lo+1, temp_lo+15, DEFAULT)
+                    //                                    WHERE city = 'San Francisco' AND date = '2003-07-03';
+
+                    switch (lastFlag) {
+                        case null:
+                            {
+                                query.columns.push(token);
+                                break;
+                            }
+                        case 'table':
+                            {
+                                query.table = token;
+
+                                if (tokens[i + 1] === '(') {
+                                    var _j = i;
+                                    i++;
+                                    _j++;
+                                    for (; _j < tokens.length; _j++, i++) {
+                                        if (token !== ')') {
+                                            query.columns.push(tokens[_j]);
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        case 'set':
+                        case 'values':
+                            {
+                                var _j2 = i;
+                                if (tokens[_j2] === '(') {
+                                    i++;
+                                    _j2++;
+                                }
+                                for (; _j2 < tokens.length; _j2++, i++) {
+                                    if (token !== ')') {
+                                        query.values.push(tokens[_j2]);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        case 'where':
+                            {
+                                console.log(query);
+                                query.where.push(token);
+                                break;
+                            }
+                        case 'order':
+                            {
+                                query.order.push(token);
+                                break;
+                            }
+                    }
+                }
+            }
+            return query;
         }
     }
 });
