@@ -1,4 +1,5 @@
 <script>
+    import moment from 'moment'
     export default {
         data() {
             return {
@@ -19,13 +20,16 @@
                     total: 0
                 },
                 processing: false,
+                requestTime: {},
+                requestTimeStart: {},
                 response: null,
                 result: null,
                 schema: null,
                 server: 'http://postgres:5433',
                 sql: '',
                 tablePrimaryKey: '',
-                tablePrimaryKeyFormat: ''
+                tablePrimaryKeyFormat: '',
+                tableForeignKeys: null
             }
         },
         methods: {
@@ -161,6 +165,7 @@
             },
             selectQuery(sql, page, bindings, perPage, pluck) {
                 this.beforeQuery(sql)
+                this.beforeRequest()
                 let data = {
                     sql: this.sql
                 }
@@ -177,6 +182,7 @@
                     data.pluck = pluck
                 }
                 return axios.post(this.server + '/select', data).then(response => {
+                    this.afterRequest()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.result = null
@@ -187,6 +193,7 @@
             },
             insertQuery(sql, bindings) {
                 this.beforeQuery(sql)
+                this.beforeRequest()
                 let data = {
                     sql: this.sql
                 }
@@ -194,6 +201,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/insert', data).then(response => {
+                    this.afterRequest()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -203,6 +211,7 @@
             },
             updateQuery(sql, bindings) {
                 this.beforeQuery(sql)
+                this.beforeRequest()
                 let data = {
                     sql: this.sql
                 }
@@ -210,6 +219,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/update', data).then(response => {
+                    this.afterRequest()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -219,6 +229,7 @@
             },
             deleteQuery(sql, bindings) {
                 this.beforeQuery(sql)
+                this.beforeRequest()
                 let data = {
                     sql: this.sql
                 }
@@ -226,6 +237,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/delete', data).then(response => {
+                    this.afterRequest()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -235,9 +247,11 @@
             },
             executeQuery(sql) {
                 this.beforeQuery(sql)
+                this.beforeRequest()
                 return axios.post(this.server + '/execute', {
                     sql: this.sql
                 }).then(response => {
+                    this.afterRequest()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -277,6 +291,25 @@
                 return this.selectQuery(sql)
                     .then(() => {
                         this.schema = _.clone(this.result)
+                        this.getForeignKeys(table)
+                    })
+            },
+            getForeignKeys(table) {
+                let sql = "SELECT \
+                tc.constraint_name, kcu.column_name, \
+                    ccu.table_name AS foreign_table_name, \
+                    ccu.column_name AS foreign_column_name \
+                FROM \
+                information_schema.table_constraints AS tc \
+                JOIN information_schema.key_column_usage AS kcu \
+                ON tc.constraint_name = kcu.constraint_name \
+                JOIN information_schema.constraint_column_usage AS ccu \
+                ON ccu.constraint_name = tc.constraint_name \
+                WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'"
+                this.customQuery = false
+                return this.selectQuery(sql)
+                    .then(() => {
+                        this.tableForeignKeys = _.clone(this.result)
                         this.result = null
                     })
             },
@@ -292,12 +325,44 @@
                 }
                 return info
             },
-            beforeQuery(sql) {
+            getColumnForeignKey(column) {
+                let foreign_key = false
+                if (this.tableForeignKeys) {
+                    let length = this.tableForeignKeys.length
+                    for (let i = 0; i < length; i++) {
+                        if (this.tableForeignKeys[i].column_name === column) {
+                            foreign_key = {
+                                name: this.tableForeignKeys[i].constraint_name,
+                                table: this.tableForeignKeys[i].foreign_table_name,
+                                column: this.tableForeignKeys[i].foreign_column_name
+                            }
+                        }
+                    }
+                }
+                return foreign_key
+            },
+            beforeRequest() {
                 this.processing = true
+                if (this.customQuery) {
+                    this.requestTime.query = 0
+                    this.requestTimeStart.query = new Date().getTime()
+                } else {
+                    this.requestTime.content = 0
+                    this.requestTimeStart.content = new Date().getTime()
+                }
+            },
+            afterRequest() {
+                if (this.customQuery) {
+                    this.requestTime.query = (new Date().getTime() - this.requestTimeStart.query)
+                } else {
+                    this.requestTime.content = (new Date().getTime() - this.requestTimeStart.content)
+                }
+                this.processing = false
+            },
+            beforeQuery(sql) {
                 this.sql = sql
             },
             afterQuery() {
-                this.processing = false
                 if (this.customQuery) {
                     this.history.push(this.sql)
                 }
@@ -415,23 +480,13 @@
                     }
                     query.verb = tokens.shift().toUpperCase()
                     tokenLength = tokens.length
-//                    switch(query.verb) {
-//                        case 'SELECT': {
                     for (let i = 0; i < tokenLength; i++) {
                         token = tokens[i]
-
-
-                        // SELECT * FROM table WHERE id=2 AND id<>1 ORDER BY id LIMIT 1
-
-
-                        // DELETE FROM films WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
-
                         if (query.verb == 'UPDATE') {
                             flags.table = true
                             lastFlag = 'table'
                             skip = true
                         }
-
                         switch(token.toUpperCase()) {
                             case 'INTO':
                             case 'FROM': {
@@ -486,23 +541,10 @@
                                 break
                             }
                         }
-
                         if (skip) {
                             skip = false
                             continue
                         }
-
-                        // INSERT INTO films
-//                                    VALUES ('UA502', 'Bananas', 105, DEFAULT, 'Comedy', '82 minutes');
-
-
-                        // INSERT INTO films (code, title, did, date_prod, kind)
-//                                    VALUES ('T_601', 'Yojimbo', 106, DEFAULT, 'Drama');
-
-
-                        // UPDATE weather SET (temp_lo, temp_hi, prcp) = (temp_lo+1, temp_lo+15, DEFAULT)
-//                                    WHERE city = 'San Francisco' AND date = '2003-07-03';
-
                         switch(lastFlag) {
                             case null: {
                                 query.columns.push(token)
@@ -554,6 +596,17 @@
                     }
                 }
                 return query
+            },
+            requestTimeStr(tab) {
+                let time = ""
+                if (this.requestTime[tab]) {
+                    if (this.requestTime[tab] > 999) {
+                        time = moment.duration(this.requestTime[tab], 'seconds').format("ss") + " s"
+                    } else {
+                        time = moment.duration(this.requestTime[tab]) + " ms"
+                    }
+                }
+                return time
             }
         }
     }

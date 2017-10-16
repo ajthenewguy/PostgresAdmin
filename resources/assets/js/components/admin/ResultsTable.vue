@@ -5,13 +5,13 @@
                 <thead>
                 <tr v-if="tab === 'query'">
                     <th v-for="(value, name) in records[0]">
-                        <span v-if="name === tablePrimaryKey" class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        <!--<span v-html="keyIcon(name)"></span>-->
                         {{ name }}
                     </th>
                 </tr>
                 <tr v-else>
                     <th v-for="(value, name) in schema">
-                        <span v-if="value['column_name'] === tablePrimaryKey" class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        <span v-html="keyIcon(value['column_name'])"></span>
                         <a href="#" @click.prevent="$emit('sortColumn', value['column_name'])">{{ value['column_name'] }}<span v-html="sortIcon(value['column_name'])" style="margin-left:5px"></span></a>
                         <br>
                         <small>{{ getDataTypeDisplay(value['type']) }}</small>
@@ -71,6 +71,9 @@
             getColumn(column) {
                 return this.$parent.getColumn(column)
             },
+            getColumnForeignKey(column) {
+                return this.$parent.getColumnForeignKey(column)
+            },
             getDataTypeDisplay(input) {
                 let output = input || '_'
                 if (output.includes('timestamp ')) {
@@ -85,15 +88,31 @@
                 console.log('2.', data)
                 this.$emit('updateRow', data)
             },
+            keyIcon(column) {
+                let icon = ''
+                let foreign_key = this.getColumnForeignKey(column)
+                if (column === this.tablePrimaryKey) {
+                    icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
+                } else if (foreign_key) {
+                    icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
+                }
+                return icon
+            },
             sortIcon(column) {
                 let icon = ''
                 if (typeof this.order === "string" && this.order === column) {
-                    icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>'
-                } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
                     icon = '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>'
+                } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                    icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>'
                 }
                 return icon
             }
         }
     }
 </script>
+
+<style>
+    .table th {
+        white-space:nowrap;
+    }
+</style>

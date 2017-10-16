@@ -2,12 +2,12 @@
     <div>
         <br>
         <el-table
-                v-if="table && schema"
-                :data="schema"
+                v-if="table && tableForeignKeys"
+                :data="tableForeignKeys"
                 border
                 style="width: 100%">
             <el-table-column
-                    v-for="(value, name) in schema[0]"
+                    v-for="(value, name) in tableForeignKeys[0]"
                     :key="name"
                     :prop="name"
                     :label="$parent.titleCase(name)"
@@ -18,6 +18,6 @@
 
 <script>
     export default {
-        props: [ 'table', 'schema', 'processing' ]
+        props: [ 'table', 'tableForeignKeys', 'processing' ]
     }
 </script>

@@ -25,11 +25,24 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane" :class="{ active: tab === 'structure' }" id="structure">
-                        <structure-table
-                                :table="table"
-                                :schema="schema"
-                                :processing="processing"
-                        />
+                        <div v-if="table && schema">
+                            <structure-table
+                                    :table="table"
+                                    :schema="schema"
+                                    :processing="processing"
+                            />
+                            <indices-table
+                                    :table="table"
+                                    :table-foreign-keys="tableForeignKeys"
+                                    :processing="processing"
+                            />
+                        </div>
+
+                        <div v-else>
+                            <div v-if="!processing" class="empty">
+                                No table selected
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane" :class="{ active: tab === 'content' }" id="content">
                         <results-table
@@ -48,7 +61,18 @@
                                 @deleteRow="deleteRow"
                         />
                         <div class="row">
-                            <div class="col-sm-12 text-right">
+                            <div class="col-sm-2">
+                                <span v-if="processing">
+                                    <span class="glyphicon glyphicon-refresh spinning"></span>
+                                </span>
+                                <span v-else>
+                                    <a @click.prevent="refresh" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
+                                </span>
+                                <span v-if="requestTime[tab]" class="request-time">
+                                    {{ requestTimeStr(tab) }}
+                                </span>
+                            </div>
+                            <div class="col-sm-10 text-right">
                                 <el-pagination
                                         v-if="records && records.length"
                                         layout="total, prev, pager, next"
@@ -60,9 +84,6 @@
                                 />
                             </div>
                         </div>
-                        <span v-if="processing">
-                            <span class="glyphicon glyphicon-refresh spinning"></span>
-                        </span>
                     </div>
                     <div class="tab-pane" :class="{ active: tab === 'query' }" id="query">
                         <query
@@ -87,6 +108,19 @@
                                 @updateRow="updateRow"
                                 @deleteRow="deleteRow"
                         />
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <span v-if="requestTime[tab]">
+                                    {{ requestTimeStr(tab) }}
+                                </span>
+                                <span v-if="processing">
+                                    <span class="glyphicon glyphicon-refresh spinning"></span>
+                                </span>
+                            </div>
+                            <div class="col-sm-10 text-right">
+                                <!-- no pagination -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,8 +161,9 @@
         components: {
             'list': require('./TableList'),
             'query': require('./Query'),
+            'results-table': require('./ResultsTable'),
             'structure-table': require('./StructureTable'),
-            'results-table': require('./ResultsTable')
+            'indices-table': require('./IndicesTable')
         },
         watch: {
             order: function(column) {
@@ -147,7 +182,6 @@
                 if (this.tab === "query") {
                     this.tab = 'content'
                 }
-//                this.sql = 'SELECT * FROM ' + this.table
                 this.getPrimaryKey(this.table).then(() => {
                     this.order = this.primaryKey
                     this.getSchema(this.table).then(() => {
@@ -157,7 +191,7 @@
             },
             changeTab(tab) {
                 this.tab = tab
-                if (tab === "content" && (this.table && this.recordCount() < 1)) {
+                if (tab === "content" && (this.table && this.recordCount() < 1 && !this.processing)) {
                     this.getRecords()
                 }
             },
@@ -172,6 +206,9 @@
                 } else {
                     this.order = column
                 }
+            },
+            refresh() {
+                this.getRecords()
             },
             getRecords(page) {
                 let sql = this.makeSelect(this.table, null, null, this.order)
@@ -228,9 +265,13 @@
                 this.schema = null
                 this.tablePrimaryKey = ''
                 this.tablePrimaryKeyFormat = ''
+                this.tableForeignKeys = null
                 this.order = null
                 this.filer = null
                 this.records = []
+            },
+            titleCase(string) {
+                return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
             }
         }
     }
@@ -292,6 +333,10 @@
             padding-left: 0 !important;
             padding-right: 0 !important;
         }
+    }
+
+    .request-time {
+        margin-left: 5px;
     }
 
 

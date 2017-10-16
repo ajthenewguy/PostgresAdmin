@@ -54,20 +54,30 @@
             }
         },
         mounted() {
-            this.newValues = _.clone(this.row)
+            this.refreshRow()
+        },
+        watch: {
+            row: function (newData) {
+                this.newValues = _.clone(newData)
+            }
         },
         methods: {
             editRow() {
+                this.refreshRow()
                 this.$emit('editingRow', this.row[this.tablePrimaryKey])
             },
             saveRow() {
+                let data = this.updatedValues()
                 this.$emit('updateRow', {
                     primaryKey: this.row[this.tablePrimaryKey],
-                    data: this.updatedValues()
+                    data: data
                 })
             },
+            refreshRow() {
+                this.newValues = _.clone(this.row)
+            },
             getFieldDefault(column) {
-                let config = this.$parent.getColumn(column)
+                let config = this.getColumn(column)
                 return config.default_value ? config.default_value : ""
             },
             getColumn(column) {
@@ -118,9 +128,16 @@
             updatedValues() {
                 var original = this.row
                 var changed = {}
+                var $this = this
                 _.each(this.newValues, function(val, attr) {
                     if (!_.isEqual(original[attr], val)) {
                         if (typeof val !== "undefined") {
+                            if (val === "") {
+                                let config = $this.getColumn(attr)
+                                if (config.nullable === "YES" || config.nullable === true) {
+                                    val = null
+                                }
+                            }
                             changed[attr] = val
                         }
                     }

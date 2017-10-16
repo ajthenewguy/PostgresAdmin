@@ -42846,6 +42846,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables'],
@@ -42880,8 +42914,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     components: {
         'list': __webpack_require__(56),
         'query': __webpack_require__(59),
+        'results-table': __webpack_require__(255),
         'structure-table': __webpack_require__(258),
-        'results-table': __webpack_require__(255)
+        'indices-table': __webpack_require__(266)
     },
     watch: {
         order: function order(column) {
@@ -42902,7 +42937,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (this.tab === "query") {
                 this.tab = 'content';
             }
-            //                this.sql = 'SELECT * FROM ' + this.table
             this.getPrimaryKey(this.table).then(function () {
                 _this.order = _this.primaryKey;
                 _this.getSchema(_this.table).then(function () {
@@ -42912,7 +42946,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         changeTab: function changeTab(tab) {
             this.tab = tab;
-            if (tab === "content" && this.table && this.recordCount() < 1) {
+            if (tab === "content" && this.table && this.recordCount() < 1 && !this.processing) {
                 this.getRecords();
             }
         },
@@ -42927,6 +42961,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             } else {
                 this.order = column;
             }
+        },
+        refresh: function refresh() {
+            this.getRecords();
         },
         getRecords: function getRecords(page) {
             var _this2 = this;
@@ -42989,9 +43026,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.schema = null;
             this.tablePrimaryKey = '';
             this.tablePrimaryKeyFormat = '';
+            this.tableForeignKeys = null;
             this.order = null;
             this.filer = null;
             this.records = [];
+        },
+        titleCase: function titleCase(string) {
+            return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
+                return txt.toUpperCase();
+            });
         }
     }
 });
@@ -43127,15 +43170,38 @@ var render = function() {
                 attrs: { id: "structure" }
               },
               [
-                _c("structure-table", {
-                  attrs: {
-                    table: _vm.table,
-                    schema: _vm.schema,
-                    processing: _vm.processing
-                  }
-                })
-              ],
-              1
+                _vm.table && _vm.schema
+                  ? _c(
+                      "div",
+                      [
+                        _c("structure-table", {
+                          attrs: {
+                            table: _vm.table,
+                            schema: _vm.schema,
+                            processing: _vm.processing
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("indices-table", {
+                          attrs: {
+                            table: _vm.table,
+                            "table-foreign-keys": _vm.tableForeignKeys,
+                            processing: _vm.processing
+                          }
+                        })
+                      ],
+                      1
+                    )
+                  : _c("div", [
+                      !_vm.processing
+                        ? _c("div", { staticClass: "empty" }, [
+                            _vm._v(
+                              "\n                            No table selected\n                        "
+                            )
+                          ])
+                        : _vm._e()
+                    ])
+              ]
             ),
             _vm._v(" "),
             _c(
@@ -43167,9 +43233,47 @@ var render = function() {
                 }),
                 _vm._v(" "),
                 _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-sm-2" }, [
+                    _vm.processing
+                      ? _c("span", [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-refresh spinning"
+                          })
+                        ])
+                      : _c("span", [
+                          _c(
+                            "a",
+                            {
+                              attrs: { href: "#" },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.refresh($event)
+                                }
+                              }
+                            },
+                            [
+                              _c("span", {
+                                staticClass: "glyphicon glyphicon-refresh"
+                              })
+                            ]
+                          )
+                        ]),
+                    _vm._v(" "),
+                    _vm.requestTime[_vm.tab]
+                      ? _c("span", { staticClass: "request-time" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
+                              "\n                            "
+                          )
+                        ])
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
                   _c(
                     "div",
-                    { staticClass: "col-sm-12 text-right" },
+                    { staticClass: "col-sm-10 text-right" },
                     [
                       _vm.records && _vm.records.length
                         ? _c("el-pagination", {
@@ -43186,15 +43290,7 @@ var render = function() {
                     ],
                     1
                   )
-                ]),
-                _vm._v(" "),
-                _vm.processing
-                  ? _c("span", [
-                      _c("span", {
-                        staticClass: "glyphicon glyphicon-refresh spinning"
-                      })
-                    ])
-                  : _vm._e()
+                ])
               ],
               1
             ),
@@ -43235,7 +43331,31 @@ var render = function() {
                     updateRow: _vm.updateRow,
                     deleteRow: _vm.deleteRow
                   }
-                })
+                }),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-sm-2" }, [
+                    _vm.requestTime[_vm.tab]
+                      ? _c("span", [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
+                              "\n                            "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.processing
+                      ? _c("span", [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-refresh spinning"
+                          })
+                        ])
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-10 text-right" })
+                ])
               ],
               1
             )
@@ -99007,7 +99127,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom {\n    transform: scale(1) rotate(0deg);\n}\nto {\n    transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 50px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 51px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@keyframes spin {\nfrom {\n    transform: scale(1) rotate(0deg);\n}\nto {\n    transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 50px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 51px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
 
 // exports
 
@@ -99017,13 +99137,17 @@ exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transitio
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(269)
+}
 var normalizeComponent = __webpack_require__(37)
 /* script */
 var __vue_script__ = __webpack_require__(256)
 /* template */
 var __vue_template__ = __webpack_require__(257)
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -99127,6 +99251,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getColumn: function getColumn(column) {
             return this.$parent.getColumn(column);
         },
+        getColumnForeignKey: function getColumnForeignKey(column) {
+            return this.$parent.getColumnForeignKey(column);
+        },
         getDataTypeDisplay: function getDataTypeDisplay(input) {
             var output = input || '_';
             if (output.includes('timestamp ')) {
@@ -99141,12 +99268,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             console.log('2.', data);
             this.$emit('updateRow', data);
         },
+        keyIcon: function keyIcon(column) {
+            var icon = '';
+            var foreign_key = this.getColumnForeignKey(column);
+            if (column === this.tablePrimaryKey) {
+                icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>';
+            } else if (foreign_key) {
+                icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>';
+            }
+            return icon;
+        },
         sortIcon: function sortIcon(column) {
             var icon = '';
             if (typeof this.order === "string" && this.order === column) {
-                icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>';
-            } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
                 icon = '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>';
+            } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>';
             }
             return icon;
         }
@@ -99176,12 +99313,6 @@ var render = function() {
                     "tr",
                     _vm._l(_vm.records[0], function(value, name) {
                       return _c("th", [
-                        name === _vm.tablePrimaryKey
-                          ? _c("span", {
-                              staticClass: "glyphicon glyphicon-star",
-                              attrs: { "aria-hidden": "true" }
-                            })
-                          : _vm._e(),
                         _vm._v(
                           "\n                    " +
                             _vm._s(name) +
@@ -99195,12 +99326,13 @@ var render = function() {
                     [
                       _vm._l(_vm.schema, function(value, name) {
                         return _c("th", [
-                          value["column_name"] === _vm.tablePrimaryKey
-                            ? _c("span", {
-                                staticClass: "glyphicon glyphicon-star",
-                                attrs: { "aria-hidden": "true" }
-                              })
-                            : _vm._e(),
+                          _c("span", {
+                            domProps: {
+                              innerHTML: _vm._s(
+                                _vm.keyIcon(value["column_name"])
+                              )
+                            }
+                          }),
                           _vm._v(" "),
                           _c(
                             "a",
@@ -99386,21 +99518,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['table', 'schema', 'processing'],
-    methods: {
-        titleCase: function titleCase(string) {
-            return string.replace('_', ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
-                return txt.toUpperCase();
-            });
-        }
-    }
+    props: ['table', 'schema', 'processing']
 });
 
 /***/ }),
@@ -99426,17 +99546,11 @@ var render = function() {
             _vm._l(_vm.schema[0], function(value, name) {
               return _c("el-table-column", {
                 key: name,
-                attrs: { prop: name, label: _vm.titleCase(name) }
+                attrs: { prop: name, label: _vm.$parent.titleCase(name) }
               })
             })
           )
-        : _c("div", [
-            !_vm.processing
-              ? _c("div", { staticClass: "empty" }, [
-                  _vm._v("\n            No table selected\n        ")
-                ])
-              : _vm._e()
-          ])
+        : _vm._e()
     ],
     1
   )
@@ -99553,21 +99667,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
+        this.refreshRow();
     },
 
+    watch: {
+        row: function row(newData) {
+            this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(newData);
+        }
+    },
     methods: {
         editRow: function editRow() {
+            this.refreshRow();
             this.$emit('editingRow', this.row[this.tablePrimaryKey]);
         },
         saveRow: function saveRow() {
+            var data = this.updatedValues();
             this.$emit('updateRow', {
                 primaryKey: this.row[this.tablePrimaryKey],
-                data: this.updatedValues()
+                data: data
             });
         },
+        refreshRow: function refreshRow() {
+            this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
+        },
         getFieldDefault: function getFieldDefault(column) {
-            var config = this.$parent.getColumn(column);
+            var config = this.getColumn(column);
             return config.default_value ? config.default_value : "";
         },
         getColumn: function getColumn(column) {
@@ -99624,9 +99748,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         updatedValues: function updatedValues() {
             var original = this.row;
             var changed = {};
+            var $this = this;
             __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.newValues, function (val, attr) {
                 if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEqual(original[attr], val)) {
                     if (typeof val !== "undefined") {
+                        if (val === "") {
+                            var config = $this.getColumn(attr);
+                            if (config.nullable === "YES" || config.nullable === true) {
+                                val = null;
+                            }
+                        }
                         changed[attr] = val;
                     }
                 }
@@ -99832,6 +99963,9 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -99853,13 +99987,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 total: 0
             },
             processing: false,
+            requestTime: {},
+            requestTimeStart: {},
             response: null,
             result: null,
             schema: null,
             server: 'http://postgres:5433',
             sql: '',
             tablePrimaryKey: '',
-            tablePrimaryKeyFormat: ''
+            tablePrimaryKeyFormat: '',
+            tableForeignKeys: null
         };
     },
 
@@ -99998,6 +100135,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.beforeQuery(sql);
+            this.beforeRequest();
             var data = {
                 sql: this.sql
             };
@@ -100014,6 +100152,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.pluck = pluck;
             }
             return axios.post(this.server + '/select', data).then(function (response) {
+                _this.afterRequest();
                 _this.querySuccess(response);
             }).catch(function (error) {
                 _this.result = null;
@@ -100026,6 +100165,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.beforeQuery(sql);
+            this.beforeRequest();
             var data = {
                 sql: this.sql
             };
@@ -100033,6 +100173,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/insert', data).then(function (response) {
+                _this2.afterRequest();
                 _this2.querySuccess(response);
             }).catch(function (error) {
                 _this2.queryError(error);
@@ -100044,6 +100185,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             this.beforeQuery(sql);
+            this.beforeRequest();
             var data = {
                 sql: this.sql
             };
@@ -100051,6 +100193,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/update', data).then(function (response) {
+                _this3.afterRequest();
                 _this3.querySuccess(response);
             }).catch(function (error) {
                 _this3.queryError(error);
@@ -100062,6 +100205,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this4 = this;
 
             this.beforeQuery(sql);
+            this.beforeRequest();
             var data = {
                 sql: this.sql
             };
@@ -100069,6 +100213,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/delete', data).then(function (response) {
+                _this4.afterRequest();
                 _this4.querySuccess(response);
             }).catch(function (error) {
                 _this4.queryError(error);
@@ -100080,9 +100225,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this5 = this;
 
             this.beforeQuery(sql);
+            this.beforeRequest();
             return axios.post(this.server + '/execute', {
                 sql: this.sql
             }).then(function (response) {
+                _this5.afterRequest();
                 _this5.querySuccess(response);
             }).catch(function (error) {
                 _this5.queryError(error);
@@ -100121,7 +100268,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 _this7.schema = _.clone(_this7.result);
-                _this7.result = null;
+                _this7.getForeignKeys(table);
+            });
+        },
+        getForeignKeys: function getForeignKeys(table) {
+            var _this8 = this;
+
+            var sql = "SELECT \
+                tc.constraint_name, kcu.column_name, \
+                    ccu.table_name AS foreign_table_name, \
+                    ccu.column_name AS foreign_column_name \
+                FROM \
+                information_schema.table_constraints AS tc \
+                JOIN information_schema.key_column_usage AS kcu \
+                ON tc.constraint_name = kcu.constraint_name \
+                JOIN information_schema.constraint_column_usage AS ccu \
+                ON ccu.constraint_name = tc.constraint_name \
+                WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'";
+            this.customQuery = false;
+            return this.selectQuery(sql).then(function () {
+                _this8.tableForeignKeys = _.clone(_this8.result);
+                _this8.result = null;
             });
         },
         getColumn: function getColumn(column) {
@@ -100136,12 +100303,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             return info;
         },
-        beforeQuery: function beforeQuery(sql) {
+        getColumnForeignKey: function getColumnForeignKey(column) {
+            var foreign_key = false;
+            if (this.tableForeignKeys) {
+                var length = this.tableForeignKeys.length;
+                for (var i = 0; i < length; i++) {
+                    if (this.tableForeignKeys[i].column_name === column) {
+                        foreign_key = {
+                            name: this.tableForeignKeys[i].constraint_name,
+                            table: this.tableForeignKeys[i].foreign_table_name,
+                            column: this.tableForeignKeys[i].foreign_column_name
+                        };
+                    }
+                }
+            }
+            return foreign_key;
+        },
+        beforeRequest: function beforeRequest() {
             this.processing = true;
+            if (this.customQuery) {
+                this.requestTime.query = 0;
+                this.requestTimeStart.query = new Date().getTime();
+            } else {
+                this.requestTime.content = 0;
+                this.requestTimeStart.content = new Date().getTime();
+            }
+        },
+        afterRequest: function afterRequest() {
+            if (this.customQuery) {
+                this.requestTime.query = new Date().getTime() - this.requestTimeStart.query;
+            } else {
+                this.requestTime.content = new Date().getTime() - this.requestTimeStart.content;
+            }
+            this.processing = false;
+        },
+        beforeQuery: function beforeQuery(sql) {
             this.sql = sql;
         },
         afterQuery: function afterQuery() {
-            this.processing = false;
             if (this.customQuery) {
                 this.history.push(this.sql);
             }
@@ -100260,22 +100459,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 };
                 query.verb = tokens.shift().toUpperCase();
                 tokenLength = tokens.length;
-                //                    switch(query.verb) {
-                //                        case 'SELECT': {
                 for (var i = 0; i < tokenLength; i++) {
                     token = tokens[i];
-
-                    // SELECT * FROM table WHERE id=2 AND id<>1 ORDER BY id LIMIT 1
-
-
-                    // DELETE FROM films WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo');
-
                     if (query.verb == 'UPDATE') {
                         flags.table = true;
                         lastFlag = 'table';
                         skip = true;
                     }
-
                     switch (token.toUpperCase()) {
                         case 'INTO':
                         case 'FROM':
@@ -100336,23 +100526,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                 break;
                             }
                     }
-
                     if (skip) {
                         skip = false;
                         continue;
                     }
-
-                    // INSERT INTO films
-                    //                                    VALUES ('UA502', 'Bananas', 105, DEFAULT, 'Comedy', '82 minutes');
-
-
-                    // INSERT INTO films (code, title, did, date_prod, kind)
-                    //                                    VALUES ('T_601', 'Yojimbo', 106, DEFAULT, 'Drama');
-
-
-                    // UPDATE weather SET (temp_lo, temp_hi, prcp) = (temp_lo+1, temp_lo+15, DEFAULT)
-                    //                                    WHERE city = 'San Francisco' AND date = '2003-07-03';
-
                     switch (lastFlag) {
                         case null:
                             {
@@ -100409,9 +100586,177 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
             return query;
+        },
+        requestTimeStr: function requestTimeStr(tab) {
+            var time = "";
+            if (this.requestTime[tab]) {
+                if (this.requestTime[tab] > 999) {
+                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab], 'seconds').format("ss") + " s";
+                } else {
+                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab]) + " ms";
+                }
+            }
+            return time;
         }
     }
 });
+
+/***/ }),
+/* 266 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(267)
+/* template */
+var __vue_template__ = __webpack_require__(268)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/IndicesTable.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] IndicesTable.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-abbfc098", Component.options)
+  } else {
+    hotAPI.reload("data-v-abbfc098", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 267 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['table', 'tableForeignKeys', 'processing']
+});
+
+/***/ }),
+/* 268 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("br"),
+      _vm._v(" "),
+      _vm.table && _vm.tableForeignKeys
+        ? _c(
+            "el-table",
+            {
+              staticStyle: { width: "100%" },
+              attrs: { data: _vm.tableForeignKeys, border: "" }
+            },
+            _vm._l(_vm.tableForeignKeys[0], function(value, name) {
+              return _c("el-table-column", {
+                key: name,
+                attrs: { prop: name, label: _vm.$parent.titleCase(name) }
+              })
+            })
+          )
+        : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-abbfc098", module.exports)
+  }
+}
+
+/***/ }),
+/* 269 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(270);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(64)("7379e3e2", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 270 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(42)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.table th {\n    white-space:nowrap;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);
