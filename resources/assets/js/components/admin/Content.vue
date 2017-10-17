@@ -7,14 +7,8 @@
                     <div class="input-group-addon">
                         <span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
                     </div>
-
                 </div>
-
-
-
                 <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
-
-                <!-- -->
                 <select
                         id="database-switcher"
                         class="form-control input-sm"
@@ -24,12 +18,11 @@
                 >
                     <option
                             v-for="item in databases"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            :key="item"
+                            :label="item"
+                            :value="item"
                     />
                 </select>
-                <!-- -->
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">
@@ -169,19 +162,19 @@
 
 <script>
     export default {
-        props: [  'selectedDatabase', 'loadedTables' ],
+        props: [  'databases', 'selectedDatabase', 'loadedTables' ],
         data() {
             return {
                 database: this.selectedDatabase,
-                databases: [
-                    {
-                        label: 'stars10',
-                        value: 'stars10'
-                    }, {
-                        label: 'team20',
-                        value: 'team20'
-                    }
-                ],
+//                databases: [
+//                    {
+//                        label: 'stars10',
+//                        value: 'stars10'
+//                    }, {
+//                        label: 'team20',
+//                        value: 'team20'
+//                    }
+//                ],
                 table: null,
                 tables: this.loadedTables,
                 editingRow: null,

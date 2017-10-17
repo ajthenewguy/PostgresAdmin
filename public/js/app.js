@@ -42912,26 +42912,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['selectedDatabase', 'loadedTables'],
+    props: ['databases', 'selectedDatabase', 'loadedTables'],
     data: function data() {
         return {
             database: this.selectedDatabase,
-            databases: [{
-                label: 'stars10',
-                value: 'stars10'
-            }, {
-                label: 'team20',
-                value: 'team20'
-            }],
+            //                databases: [
+            //                    {
+            //                        label: 'stars10',
+            //                        value: 'stars10'
+            //                    }, {
+            //                        label: 'team20',
+            //                        value: 'team20'
+            //                    }
+            //                ],
             table: null,
             tables: this.loadedTables,
             editingRow: null,
@@ -43216,9 +43211,9 @@ var render = function() {
             },
             _vm._l(_vm.databases, function(item) {
               return _c("option", {
-                key: item.value,
-                attrs: { label: item.label },
-                domProps: { value: item.value }
+                key: item,
+                attrs: { label: item },
+                domProps: { value: item }
               })
             })
           )

@@ -12,6 +12,7 @@ class FrontController extends Controller
     public function index(Request $request)
     {
         $data = [
+            'databases' => collect(array_keys(Config::get('database.connections'))),
             'selectedDatabase' => $this->getSelectedDatabase($request)
         ];
 
@@ -38,7 +39,7 @@ class FrontController extends Controller
             $database = $this->getSelectedDatabase($request);
         }
 
-        if (in_array($database, [ 'stars10', 'team20' ])) {
+        if (in_array($database, array_keys(Config::get('database.connections')))) {
             $request->session()->put('selectedDatabase', $database);
             Config::set('database.default', $database);
             DB::reconnect($database);

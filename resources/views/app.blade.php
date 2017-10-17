@@ -4,7 +4,7 @@
     @guest
         <primary-content></primary-content>
     @else
-        <admin-content selected-database="{{ $selectedDatabase }}" :loaded-tables="{{ (isset($tables) ? $tables : '') }}"></admin-content>
+        <admin-content :databases="{{ (isset($databases) ? $databases : '') }}" selected-database="{{ $selectedDatabase }}" :loaded-tables="{{ (isset($tables) ? $tables : '') }}"></admin-content>
     @endguest
 @endsection
 
