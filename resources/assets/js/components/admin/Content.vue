@@ -166,15 +166,6 @@
         data() {
             return {
                 database: this.selectedDatabase,
-//                databases: [
-//                    {
-//                        label: 'stars10',
-//                        value: 'stars10'
-//                    }, {
-//                        label: 'team20',
-//                        value: 'team20'
-//                    }
-//                ],
                 table: null,
                 tables: this.loadedTables,
                 editingRow: null,
@@ -340,7 +331,7 @@
                 this.tablePrimaryKeyFormat = ''
                 this.tableForeignKeys = null
                 this.order = null
-                this.filer = null
+                this.filter = null
                 this.records = []
             },
             titleCase(string) {

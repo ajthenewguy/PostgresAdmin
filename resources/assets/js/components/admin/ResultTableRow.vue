@@ -7,6 +7,7 @@
                         v-model="data[name]"
                         :placeholder="getFieldDefault(name)"
                         :type="getTypeAttr(name)"
+                        @keyup.enter.native="saveRow"
                 />
             </span>
             <span v-else>

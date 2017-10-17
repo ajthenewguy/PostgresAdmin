@@ -42918,15 +42918,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             database: this.selectedDatabase,
-            //                databases: [
-            //                    {
-            //                        label: 'stars10',
-            //                        value: 'stars10'
-            //                    }, {
-            //                        label: 'team20',
-            //                        value: 'team20'
-            //                    }
-            //                ],
             table: null,
             tables: this.loadedTables,
             editingRow: null,
@@ -43105,7 +43096,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.tablePrimaryKeyFormat = '';
             this.tableForeignKeys = null;
             this.order = null;
-            this.filer = null;
+            this.filter = null;
             this.records = [];
         },
         titleCase: function titleCase(string) {
@@ -99423,6 +99414,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow', 'customQuery'],
@@ -99597,91 +99589,99 @@ var render = function() {
                       : _vm._e()
                 ]),
                 _vm._v(" "),
-                !_vm.processing
-                  ? _c(
-                      "tbody",
-                      [
-                        _vm.table && _vm.insertingRow
-                          ? _c("insert-table-row", {
-                              attrs: {
-                                tab: _vm.tab,
-                                table: _vm.table,
-                                schema: _vm.schema,
-                                "table-primary-key": _vm.tablePrimaryKey,
-                                processing: _vm.processing,
-                                "inserting-row": _vm.insertingRow
-                              },
-                              on: {
-                                cancelInsertingRow: function($event) {
-                                  _vm.$emit("insertingRow", false)
-                                },
-                                insertRow: _vm.insertRow
-                              }
-                            })
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm._l(_vm.records, function(row) {
-                          return _vm.records
-                            ? _c("result-table-row", {
-                                key: row[_vm.tablePrimaryKey],
+                _c("transition", { attrs: { name: "fade" } }, [
+                  !_vm.processing
+                    ? _c(
+                        "tbody",
+                        [
+                          _vm.table && _vm.insertingRow
+                            ? _c("insert-table-row", {
                                 attrs: {
                                   tab: _vm.tab,
                                   table: _vm.table,
                                   schema: _vm.schema,
                                   "table-primary-key": _vm.tablePrimaryKey,
-                                  row: row,
                                   processing: _vm.processing,
-                                  "editing-row": _vm.editingRow
+                                  "inserting-row": _vm.insertingRow
                                 },
                                 on: {
-                                  editingRow: function($event) {
-                                    _vm.$emit(
-                                      "editingRow",
-                                      row[_vm.tablePrimaryKey]
-                                    )
+                                  cancelInsertingRow: function($event) {
+                                    _vm.$emit("insertingRow", false)
                                   },
-                                  cancelEditingRow: function($event) {
-                                    _vm.$emit("editingRow", null)
-                                  },
-                                  updateRow: _vm.updateRow,
-                                  deleteRow: function($event) {
-                                    _vm.$emit(
-                                      "deleteRow",
-                                      row[_vm.tablePrimaryKey]
-                                    )
-                                  }
+                                  insertRow: _vm.insertRow
                                 }
                               })
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm._l(_vm.records, function(row) {
+                            return _vm.records
+                              ? _c("result-table-row", {
+                                  key: row[_vm.tablePrimaryKey],
+                                  attrs: {
+                                    tab: _vm.tab,
+                                    table: _vm.table,
+                                    schema: _vm.schema,
+                                    "table-primary-key": _vm.tablePrimaryKey,
+                                    row: row,
+                                    processing: _vm.processing,
+                                    "editing-row": _vm.editingRow
+                                  },
+                                  on: {
+                                    editingRow: function($event) {
+                                      _vm.$emit(
+                                        "editingRow",
+                                        row[_vm.tablePrimaryKey]
+                                      )
+                                    },
+                                    cancelEditingRow: function($event) {
+                                      _vm.$emit("editingRow", null)
+                                    },
+                                    updateRow: _vm.updateRow,
+                                    deleteRow: function($event) {
+                                      _vm.$emit(
+                                        "deleteRow",
+                                        row[_vm.tablePrimaryKey]
+                                      )
+                                    }
+                                  }
+                                })
+                              : _vm._e()
+                          }),
+                          _vm._v(" "),
+                          !_vm.processing
+                            ? _c("tr", [
+                                (_vm.tab === "query" ||
+                                  _vm.tab === "content") &&
+                                (!_vm.records || _vm.records.length < 1)
+                                  ? _c(
+                                      "td",
+                                      { attrs: { colspan: _vm.colspan } },
+                                      [
+                                        _c("div", { staticClass: "empty" }, [
+                                          _c("span", [
+                                            _vm._v("No records found")
+                                          ])
+                                        ])
+                                      ]
+                                    )
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                (_vm.tab === "structure" ||
+                                  _vm.tab === "content") &&
+                                !_vm.table
+                                  ? _c("td", {
+                                      attrs: { colspan: _vm.colspan }
+                                    })
+                                  : _vm._e()
+                              ])
                             : _vm._e()
-                        }),
-                        _vm._v(" "),
-                        !_vm.processing
-                          ? _c("tr", [
-                              (_vm.tab === "query" || _vm.tab === "content") &&
-                              (!_vm.records || _vm.records.length < 1)
-                                ? _c(
-                                    "td",
-                                    { attrs: { colspan: _vm.colspan } },
-                                    [
-                                      _c("div", { staticClass: "empty" }, [
-                                        _c("span", [_vm._v("No records found")])
-                                      ])
-                                    ]
-                                  )
-                                : _vm._e(),
-                              _vm._v(" "),
-                              (_vm.tab === "structure" ||
-                                _vm.tab === "content") &&
-                              !_vm.table
-                                ? _c("td", { attrs: { colspan: _vm.colspan } })
-                                : _vm._e()
-                            ])
-                          : _vm._e()
-                      ],
-                      2
-                    )
-                  : _vm._e()
-              ]
+                        ],
+                        2
+                      )
+                    : _vm._e()
+                ])
+              ],
+              1
             )
           : _c("div", { staticClass: "empty" }, [
               _c("span", [_vm._v("No table selected")])
@@ -99910,6 +99910,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -100044,6 +100045,17 @@ var render = function() {
                     attrs: {
                       placeholder: _vm.getFieldDefault(name),
                       type: _vm.getTypeAttr(name)
+                    },
+                    nativeOn: {
+                      keyup: function($event) {
+                        if (
+                          !("button" in $event) &&
+                          _vm._k($event.keyCode, "enter", 13)
+                        ) {
+                          return null
+                        }
+                        _vm.saveRow($event)
+                      }
                     },
                     model: {
                       value: _vm.data[name],
@@ -101005,7 +101017,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table td input {\n  border: 0;\n  height: 20px;\n  padding: 3px;\n}\n", ""]);
+exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table td input {\n  border: 0;\n  height: 20px;\n  padding: 3px;\n}\n.fade-enter-active, .fade-leave-active {\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n", ""]);
 
 // exports
 

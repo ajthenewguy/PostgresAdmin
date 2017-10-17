@@ -23,51 +23,52 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody v-if="!processing"> <!--v-if="records && records.length > 0"-->
-                    <insert-table-row
-                            v-if="table && insertingRow"
-                            :tab="tab"
-                            :table="table"
-                            :schema="schema"
-                            :table-primary-key="tablePrimaryKey"
-                            :processing="processing"
-                            :inserting-row="insertingRow"
-                            @cancelInsertingRow="$emit('insertingRow', false)"
-                            @insertRow="insertRow"
-                    />
-                    <result-table-row
-                            v-if="records"
-                            v-for="row in records"
-                            :key="row[tablePrimaryKey]"
-                            :tab="tab"
-                            :table="table"
-                            :schema="schema"
-                            :table-primary-key="tablePrimaryKey"
-                            :row="row"
-                            :processing="processing"
-                            :editing-row="editingRow"
-                            @editingRow="$emit('editingRow', row[tablePrimaryKey])"
-                            @cancelEditingRow="$emit('editingRow', null)"
-                            @updateRow="updateRow"
-                            @deleteRow="$emit('deleteRow', row[tablePrimaryKey])"
-                    />
-                    <tr v-if="!processing">
-                        <td
-                                v-if="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
-                                :colspan="colspan"
-                        >
-                            <div class="empty">
-                                <span>No records found</span>
-                            </div>
-                        </td>
-                        <td
-                                v-if="(tab === 'structure' || tab === 'content') && ! table"
-                                :colspan="colspan"
-                        >
-                        </td>
-
-                    </tr>
-                </tbody>
+                <transition name="fade">
+                    <tbody v-if="!processing">
+                        <insert-table-row
+                                v-if="table && insertingRow"
+                                :tab="tab"
+                                :table="table"
+                                :schema="schema"
+                                :table-primary-key="tablePrimaryKey"
+                                :processing="processing"
+                                :inserting-row="insertingRow"
+                                @cancelInsertingRow="$emit('insertingRow', false)"
+                                @insertRow="insertRow"
+                        />
+                        <result-table-row
+                                v-if="records"
+                                v-for="row in records"
+                                :key="row[tablePrimaryKey]"
+                                :tab="tab"
+                                :table="table"
+                                :schema="schema"
+                                :table-primary-key="tablePrimaryKey"
+                                :row="row"
+                                :processing="processing"
+                                :editing-row="editingRow"
+                                @editingRow="$emit('editingRow', row[tablePrimaryKey])"
+                                @cancelEditingRow="$emit('editingRow', null)"
+                                @updateRow="updateRow"
+                                @deleteRow="$emit('deleteRow', row[tablePrimaryKey])"
+                        />
+                        <tr v-if="!processing">
+                            <td
+                                    v-if="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
+                                    :colspan="colspan"
+                            >
+                                <div class="empty">
+                                    <span>No records found</span>
+                                </div>
+                            </td>
+                            <td
+                                    v-if="(tab === 'structure' || tab === 'content') && ! table"
+                                    :colspan="colspan"
+                            >
+                            </td>
+                        </tr>
+                    </tbody>
+                </transition>
             </table>
             <div v-else class="empty">
                 <span>No table selected</span>
@@ -155,5 +156,12 @@
         border: 0;
         height: 20px;
         padding: 3px;
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0
     }
 </style>
