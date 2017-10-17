@@ -8350,6 +8350,10 @@ button.close {
   }
 }
 
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .container {
   margin-top: 150px;
 }

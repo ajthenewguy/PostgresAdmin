@@ -92,7 +92,14 @@
             makeSelect(table, where, conjunction, order) {
                 let sql = 'SELECT * FROM ' + table
                 if (where) {
-                    sql += ' ' + this.makeBindingsWhere(where, conjunction)
+                    if (where.constructor === Array) {
+                        sql += ' ' + this.makeBindingsWhere(where, conjunction)
+                    } else {
+                        if (! where.toUpperCase().includes('WHERE')) {
+                            sql += ' WHERE '
+                        }
+                        sql += ' ' + where + ' '
+                    }
                 }
                 if (! order) {
                     order = this.tablePrimaryKey
@@ -284,7 +291,11 @@
             },
             getSchema(table) {
                 let sql = "SELECT " +
-                    "column_name, data_type AS type, character_maximum_length AS length, column_default AS default_value, is_nullable AS nullable, is_updatable AS mutable " +
+                    "column_name, data_type AS type, " +
+                    "character_maximum_length AS length, " +
+                    "column_default AS default_value, " +
+                    "is_nullable AS nullable, " +
+                    "is_updatable AS mutable " +
                     "FROM information_schema.columns WHERE " +
                     "table_name = '" + table + "'"
                 this.customQuery = false

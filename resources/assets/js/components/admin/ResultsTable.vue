@@ -1,7 +1,7 @@
 <template>
     <div class="results table-responsive">
         <transition name="fade">
-            <table class="table table-hover table-striped table-condensed">
+            <table v-if="(tab === 'query' || tab === 'content' && table)" class="table table-hover table-striped table-condensed">
                 <thead>
                 <tr v-if="tab === 'query'">
                     <th v-for="(value, name) in records[0]">
@@ -9,18 +9,34 @@
                         {{ name }}
                     </th>
                 </tr>
-                <tr v-else>
+                <tr v-else-if="table">
                     <th v-for="(value, name) in schema">
                         <span v-html="keyIcon(value['column_name'])"></span>
                         <a href="#" @click.prevent="$emit('sortColumn', value['column_name'])">{{ value['column_name'] }}<span v-html="sortIcon(value['column_name'])" style="margin-left:5px"></span></a>
                         <br>
                         <small>{{ getDataTypeDisplay(value['type']) }}</small>
                     </th>
-                    <th></th>
+                    <th>
+                        <button @click="$emit('insertingRow', true)" type="button" class="btn btn-default btn-xs" aria-label="Insert Row">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </button>
+                    </th>
                 </tr>
                 </thead>
-                <tbody v-if="records && records.length > 0">
+                <tbody v-if="!processing"> <!--v-if="records && records.length > 0"-->
+                    <insert-table-row
+                            v-if="table && insertingRow"
+                            :tab="tab"
+                            :table="table"
+                            :schema="schema"
+                            :table-primary-key="tablePrimaryKey"
+                            :processing="processing"
+                            :inserting-row="insertingRow"
+                            @cancelInsertingRow="$emit('insertingRow', false)"
+                            @insertRow="insertRow"
+                    />
                     <result-table-row
+                            v-if="records"
                             v-for="row in records"
                             :key="row[tablePrimaryKey]"
                             :tab="tab"
@@ -32,21 +48,30 @@
                             :editing-row="editingRow"
                             @editingRow="$emit('editingRow', row[tablePrimaryKey])"
                             @cancelEditingRow="$emit('editingRow', null)"
-                            @updateRow="saveRow"
+                            @updateRow="updateRow"
                             @deleteRow="$emit('deleteRow', row[tablePrimaryKey])"
                     />
-                </tbody>
-                <tbody v-else>
-                    <tr v-if="!processing && ((records && records.length > 0) || table || customQuery)">
-                        <td :colspan="schema ? (Object.keys(schema).length + (tab === 'query' ? 1 : 0)) : 2">
+                    <tr v-if="!processing">
+                        <td
+                                v-if="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
+                                :colspan="colspan"
+                        >
                             <div class="empty">
-                                <span v-if="(table || tab === 'query')">No records found</span>
-                                <span v-else>No table selected</span>
+                                <span>No records found</span>
                             </div>
                         </td>
+                        <td
+                                v-if="(tab === 'structure' || tab === 'content') && ! table"
+                                :colspan="colspan"
+                        >
+                        </td>
+
                     </tr>
                 </tbody>
             </table>
+            <div v-else class="empty">
+                <span>No table selected</span>
+            </div>
         </transition>
     </div>
 </template>
@@ -61,11 +86,19 @@
             'records',
             'tablePrimaryKey',
             'processing',
+            'insertingRow',
             'editingRow',
             'customQuery'
         ],
         components: {
+            'insert-table-row': require('./InsertTableRow'),
             'result-table-row': require('./ResultTableRow')
+        },
+        computed: {
+            // a computed getter
+            colspan: function () {
+                return this.schema ? (Object.keys(this.schema).length + (this.tab === 'content' ? 1 : 0)) : 2
+            }
         },
         methods: {
             getColumn(column) {
@@ -84,8 +117,10 @@
                 }
                 return output
             },
-            saveRow(data) {
-                console.log('2.', data)
+            insertRow(data) {
+                this.$emit('insertRow', data)
+            },
+            updateRow(data) {
                 this.$emit('updateRow', data)
             },
             keyIcon(column) {
@@ -111,8 +146,14 @@
     }
 </script>
 
-<style>
-    .table th {
-        white-space:nowrap;
+<style lang="scss">
+    .table th,
+    .table .rowButtons {
+        white-space: nowrap;
+    }
+    .results .table td input {
+        border: 0;
+        height: 20px;
+        padding: 3px;
     }
 </style>

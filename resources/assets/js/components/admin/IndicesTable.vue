@@ -2,7 +2,7 @@
     <div>
         <br>
         <el-table
-                v-if="table && tableForeignKeys"
+                v-if="table && tableForeignKeys && tableForeignKeys[0]"
                 :data="tableForeignKeys"
                 border
                 style="width: 100%">

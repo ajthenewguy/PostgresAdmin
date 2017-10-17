@@ -1,15 +1,10 @@
 <template>
-    <div>
-        <br>
+    <div id="query-wrapper">
         <textarea v-model="query" class="form-control" rows="2" id="query_input">{{ sql }}</textarea>
-
-
         <div class="btn-group">
             <button @click="run" type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Run Query
             </button>
-
-
             <button v-if="history.length > 1" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 History <span class="caret"></span>
             </button>
@@ -73,8 +68,12 @@
     }
 </script>
 <style>
+    #query-wrapper {
+        margin-bottom: 10px;
+    }
     #query_input {
-        width: 100%;
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        margin-top: 10px;
+        width: 100%;
     }
 </style>

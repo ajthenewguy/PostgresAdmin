@@ -112,7 +112,7 @@ class QueryController extends Controller
             $deleted = DB::delete($sql);
         }
 
-        return response()->json($result);
+        return response()->json($deleted);
     }
 
     /**

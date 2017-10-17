@@ -14,77 +14,24 @@
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">
                     <li :class="{ active: tab === 'query' }">
-                        <a href="#query" @click="changeTab('query')" data-toggle="pill">Query</a>
+                        <a href="#query" @click="changeTab('query')" data-toggle="pill">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Query
+                        </a>
                     </li>
                     <li :class="{ active: tab === 'structure' }">
-                        <a href="#structure" @click="changeTab('structure')" data-toggle="pill">Structure</a>
+                        <a href="#structure" @click="changeTab('structure')" data-toggle="pill">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Structure
+                        </a>
                     </li>
                     <li :class="{ active: tab === 'content' }">
-                        <a href="#content" @click="changeTab('content')" data-toggle="pill">Content</a>
+                        <a href="#content" @click="changeTab('content')" data-toggle="pill">
+                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Content
+                        </a>
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane" :class="{ active: tab === 'structure' }" id="structure">
-                        <div v-if="table && schema">
-                            <structure-table
-                                    :table="table"
-                                    :schema="schema"
-                                    :processing="processing"
-                            />
-                            <indices-table
-                                    :table="table"
-                                    :table-foreign-keys="tableForeignKeys"
-                                    :processing="processing"
-                            />
-                        </div>
 
-                        <div v-else>
-                            <div v-if="!processing" class="empty">
-                                No table selected
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane" :class="{ active: tab === 'content' }" id="content">
-                        <results-table
-                                :tab="tab"
-                                :table="table"
-                                :order="order"
-                                :schema="schema"
-                                :table-primary-key="tablePrimaryKey"
-                                :records="records"
-                                :processing="processing"
-                                :editing-row="editingRow"
-                                :custom-query="customQuery"
-                                @sortColumn="sortColumn"
-                                @editingRow="setEditingRow"
-                                @updateRow="updateRow"
-                                @deleteRow="deleteRow"
-                        />
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <span v-if="processing">
-                                    <span class="glyphicon glyphicon-refresh spinning"></span>
-                                </span>
-                                <span v-else>
-                                    <a @click.prevent="refresh" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
-                                </span>
-                                <span v-if="requestTime[tab]" class="request-time">
-                                    {{ requestTimeStr(tab) }}
-                                </span>
-                            </div>
-                            <div class="col-sm-10 text-right">
-                                <el-pagination
-                                        v-if="records && records.length"
-                                        layout="total, prev, pager, next"
-                                        :currentPage="pagination.current_page"
-                                        :total="pagination.total"
-                                        :pageCount="pagination.last_page"
-                                        :pageSize="pagination.per_page"
-                                        @current-change="getRecords"
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <!-- QUERY TAB -->
                     <div class="tab-pane" :class="{ active: tab === 'query' }" id="query">
                         <query
                                 v-if="!processing || customQuery"
@@ -110,7 +57,7 @@
                         />
                         <div class="row">
                             <div class="col-sm-2">
-                                <span v-if="requestTime[tab]">
+                                <span v-if="requestTime[tab] && (records || customRecords)">
                                     {{ requestTimeStr(tab) }}
                                 </span>
                                 <span v-if="processing">
@@ -122,6 +69,78 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- STRUCTURE TAB -->
+                    <div class="tab-pane" :class="{ active: tab === 'structure' }" id="structure">
+                        <div v-if="table && schema">
+                            <structure-table
+                                    :table="table"
+                                    :schema="schema"
+                                    :processing="processing"
+                            />
+                            <indices-table
+                                    :table="table"
+                                    :table-foreign-keys="tableForeignKeys"
+                                    :processing="processing"
+                            />
+                        </div>
+                        <div v-else>
+                            <div v-if="!processing" class="empty">
+                                No table selected
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTENT TAB -->
+                    <div class="tab-pane" :class="{ active: tab === 'content' }" id="content">
+                        <content-filter
+                                v-if="(records && records.length > 0) || where"
+                                @filterWhere="filterWhere"
+                        />
+                        <results-table
+                                :tab="tab"
+                                :table="table"
+                                :order="order"
+                                :schema="schema"
+                                :table-primary-key="tablePrimaryKey"
+                                :records="records"
+                                :processing="processing"
+                                :inserting-row="insertingRow"
+                                :editing-row="editingRow"
+                                :custom-query="customQuery"
+                                @sortColumn="sortColumn"
+                                @insertingRow="setInsertingRow"
+                                @editingRow="setEditingRow"
+                                @insertRow="insertRow"
+                                @updateRow="updateRow"
+                                @deleteRow="deleteRow"
+                        />
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <span v-if="processing">
+                                    <span class="glyphicon glyphicon-refresh spinning"></span>
+                                </span>
+                                <span v-else-if="table">
+                                    <a @click.prevent="refresh" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
+                                </span>
+                                <span v-if="requestTime[tab]" class="request-time">
+                                    {{ requestTimeStr(tab) }}
+                                </span>
+                            </div>
+                            <div class="col-sm-10 text-right">
+                                <el-pagination
+                                        v-if="records && records.length"
+                                        layout="total, prev, pager, next"
+                                        :currentPage="pagination.current_page"
+                                        :total="pagination.total"
+                                        :pageCount="pagination.last_page"
+                                        :pageSize="pagination.per_page"
+                                        @current-change="getRecords"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -133,15 +152,16 @@
         props: [ 'tables' ],
         data() {
             return {
-                primaryPanelTitle: '',
                 table: null,
                 editingRow: null,
                 filter: null,
+                insertingRow: false,
                 records: [],
                 recordsCustom: [],
                 tab: 'query',
                 tableQuery: '',
                 order: null,
+                where: null,
                 pagination: {
                     current_page: 1,
                     first_page_url: '',
@@ -160,6 +180,7 @@
         mixins: [ require( '../../mixins/PostgresMixin.vue') ],
         components: {
             'list': require('./TableList'),
+            'content-filter': require('./Filter'),
             'query': require('./Query'),
             'results-table': require('./ResultsTable'),
             'structure-table': require('./StructureTable'),
@@ -177,6 +198,7 @@
             openTable(table) {
                 this.clearTable()
                 this.customQuery = false
+                this.setInsertingRow(false)
                 this.setEditingRow(null)
                 this.table = table
                 if (this.tab === "query") {
@@ -191,6 +213,8 @@
             },
             changeTab(tab) {
                 this.tab = tab
+                this.setInsertingRow(false)
+                this.setEditingRow(null)
                 if (tab === "content" && (this.table && this.recordCount() < 1 && !this.processing)) {
                     this.getRecords()
                 }
@@ -210,12 +234,15 @@
             refresh() {
                 this.getRecords()
             },
+            filterWhere(where) {
+                this.where = where
+                this.getRecords()
+            },
             getRecords(page) {
-                let sql = this.makeSelect(this.table, null, null, this.order)
+                let sql = this.makeSelect(this.table, this.where, null, this.order)
                 if (typeof page === "undefined") {
                     page = this.currentPage()
                 }
-                this.primaryPanelTitle = 'Records in table "' + this.table + '"'
                 return this.selectQuery(sql, page).then(response => {
                     if (this.tab === 'content') {
                         this.records = this.result
@@ -224,14 +251,24 @@
                     }
                 })
             },
+            setInsertingRow(inserting) {
+                this.editingRow = false
+                this.insertingRow = !! inserting
+            },
             setEditingRow(row) {
                 this.editingRow = row
+            },
+            insertRow(data) {
+                return this.insertQuery(this.makeInsert(this.table, data), data).then(() => {
+                    this.setInsertingRow(false)
+                    this.getRecords()
+                })
             },
             updateRow(payload) {
                 let where = {}
                 where[this.tablePrimaryKey] = payload.primaryKey
                 return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
-                    this.editingRow = null
+                    this.setEditingRow(null)
                     this.getRecords()
                 })
             },
@@ -239,7 +276,11 @@
                 if (confirm('Delete this row?')) {
                     let where = {}
                     where[this.tablePrimaryKey] = primaryKey
-                    this.deleteQuery(this.makeDelete(this.table, where)).then(() => {
+
+                    // eslint-disable-next-line
+                    console.log(this.table, where)
+
+                    this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
                         this.getRecords(this.currentPage()).then(() => {
                             this.editingRow = null
                             this.processing = false
@@ -250,7 +291,6 @@
             beforeCustomQuery(sql) {
                 if (sql) {
                     this.customQuery = true
-                    this.primaryPanelTitle = sql
                 } else {
                     this.recordsCustom = []
                 }

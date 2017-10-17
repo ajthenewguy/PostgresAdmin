@@ -42880,20 +42880,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables'],
     data: function data() {
         return {
-            primaryPanelTitle: '',
             table: null,
             editingRow: null,
             filter: null,
+            insertingRow: false,
             records: [],
             recordsCustom: [],
             tab: 'query',
             tableQuery: '',
             order: null,
+            where: null,
             pagination: {
                 current_page: 1,
                 first_page_url: '',
@@ -42913,6 +42933,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mixins: [__webpack_require__(264)],
     components: {
         'list': __webpack_require__(56),
+        'content-filter': __webpack_require__(275),
         'query': __webpack_require__(59),
         'results-table': __webpack_require__(255),
         'structure-table': __webpack_require__(258),
@@ -42932,6 +42953,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.clearTable();
             this.customQuery = false;
+            this.setInsertingRow(false);
             this.setEditingRow(null);
             this.table = table;
             if (this.tab === "query") {
@@ -42946,6 +42968,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         changeTab: function changeTab(tab) {
             this.tab = tab;
+            this.setInsertingRow(false);
+            this.setEditingRow(null);
             if (tab === "content" && this.table && this.recordCount() < 1 && !this.processing) {
                 this.getRecords();
             }
@@ -42965,14 +42989,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         refresh: function refresh() {
             this.getRecords();
         },
+        filterWhere: function filterWhere(where) {
+            this.where = where;
+            this.getRecords();
+        },
         getRecords: function getRecords(page) {
             var _this2 = this;
 
-            var sql = this.makeSelect(this.table, null, null, this.order);
+            var sql = this.makeSelect(this.table, this.where, null, this.order);
             if (typeof page === "undefined") {
                 page = this.currentPage();
             }
-            this.primaryPanelTitle = 'Records in table "' + this.table + '"';
             return this.selectQuery(sql, page).then(function (response) {
                 if (_this2.tab === 'content') {
                     _this2.records = _this2.result;
@@ -42981,29 +43008,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
+        setInsertingRow: function setInsertingRow(inserting) {
+            this.editingRow = false;
+            this.insertingRow = !!inserting;
+        },
         setEditingRow: function setEditingRow(row) {
             this.editingRow = row;
         },
-        updateRow: function updateRow(payload) {
+        insertRow: function insertRow(data) {
             var _this3 = this;
+
+            return this.insertQuery(this.makeInsert(this.table, data), data).then(function () {
+                _this3.setInsertingRow(false);
+                _this3.getRecords();
+            });
+        },
+        updateRow: function updateRow(payload) {
+            var _this4 = this;
 
             var where = {};
             where[this.tablePrimaryKey] = payload.primaryKey;
             return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(function () {
-                _this3.editingRow = null;
-                _this3.getRecords();
+                _this4.setEditingRow(null);
+                _this4.getRecords();
             });
         },
         deleteRow: function deleteRow(primaryKey) {
-            var _this4 = this;
+            var _this5 = this;
 
             if (confirm('Delete this row?')) {
                 var where = {};
                 where[this.tablePrimaryKey] = primaryKey;
-                this.deleteQuery(this.makeDelete(this.table, where)).then(function () {
-                    _this4.getRecords(_this4.currentPage()).then(function () {
-                        _this4.editingRow = null;
-                        _this4.processing = false;
+
+                // eslint-disable-next-line
+                console.log(this.table, where);
+
+                this.deleteQuery(this.makeDelete(this.table, where), where).then(function () {
+                    _this5.getRecords(_this5.currentPage()).then(function () {
+                        _this5.editingRow = null;
+                        _this5.processing = false;
                     });
                 });
             }
@@ -43011,7 +43054,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         beforeCustomQuery: function beforeCustomQuery(sql) {
             if (sql) {
                 this.customQuery = true;
-                this.primaryPanelTitle = sql;
             } else {
                 this.recordsCustom = [];
             }
@@ -43125,7 +43167,13 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Query")]
+                  [
+                    _c("span", {
+                      staticClass: "glyphicon glyphicon-search",
+                      attrs: { "aria-hidden": "true" }
+                    }),
+                    _vm._v(" Query\n                    ")
+                  ]
                 )
               ]),
               _vm._v(" "),
@@ -43140,7 +43188,13 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Structure")]
+                  [
+                    _c("span", {
+                      staticClass: "glyphicon glyphicon-info-sign",
+                      attrs: { "aria-hidden": "true" }
+                    }),
+                    _vm._v(" Structure\n                    ")
+                  ]
                 )
               ]),
               _vm._v(" "),
@@ -43155,13 +43209,85 @@ var render = function() {
                       }
                     }
                   },
-                  [_vm._v("Content")]
+                  [
+                    _c("span", {
+                      staticClass: "glyphicon glyphicon-th-list",
+                      attrs: { "aria-hidden": "true" }
+                    }),
+                    _vm._v(" Content\n                    ")
+                  ]
                 )
               ])
             ]
           ),
           _vm._v(" "),
           _c("div", { staticClass: "tab-content" }, [
+            _c(
+              "div",
+              {
+                staticClass: "tab-pane",
+                class: { active: _vm.tab === "query" },
+                attrs: { id: "query" }
+              },
+              [
+                !_vm.processing || _vm.customQuery
+                  ? _c("query", {
+                      attrs: { sql: _vm.customQuery, history: _vm.history },
+                      on: {
+                        beforeQuery: _vm.beforeQuery,
+                        customQuery: _vm.beforeCustomQuery,
+                        success: _vm.querySuccess,
+                        afterQuery: _vm.afterCustomQuery,
+                        error: _vm.queryError
+                      }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("results-table", {
+                  attrs: {
+                    tab: _vm.tab,
+                    table: _vm.table,
+                    "table-primary-key": false,
+                    records: _vm.recordsCustom,
+                    processing: _vm.processing,
+                    "editing-row": false,
+                    "custom-query": _vm.customQuery
+                  },
+                  on: {
+                    editingRow: _vm.setEditingRow,
+                    updateRow: _vm.updateRow,
+                    deleteRow: _vm.deleteRow
+                  }
+                }),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col-sm-2" }, [
+                    _vm.requestTime[_vm.tab] &&
+                    (_vm.records || _vm.customRecords)
+                      ? _c("span", [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
+                              "\n                            "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.processing
+                      ? _c("span", [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-refresh spinning"
+                          })
+                        ])
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-10 text-right" })
+                ])
+              ],
+              1
+            ),
+            _vm._v(" "),
             _c(
               "div",
               {
@@ -43212,6 +43338,12 @@ var render = function() {
                 attrs: { id: "content" }
               },
               [
+                (_vm.records && _vm.records.length > 0) || _vm.where
+                  ? _c("content-filter", {
+                      on: { filterWhere: _vm.filterWhere }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
                 _c("results-table", {
                   attrs: {
                     tab: _vm.tab,
@@ -43221,12 +43353,15 @@ var render = function() {
                     "table-primary-key": _vm.tablePrimaryKey,
                     records: _vm.records,
                     processing: _vm.processing,
+                    "inserting-row": _vm.insertingRow,
                     "editing-row": _vm.editingRow,
                     "custom-query": _vm.customQuery
                   },
                   on: {
                     sortColumn: _vm.sortColumn,
+                    insertingRow: _vm.setInsertingRow,
                     editingRow: _vm.setEditingRow,
+                    insertRow: _vm.insertRow,
                     updateRow: _vm.updateRow,
                     deleteRow: _vm.deleteRow
                   }
@@ -43240,25 +43375,27 @@ var render = function() {
                             staticClass: "glyphicon glyphicon-refresh spinning"
                           })
                         ])
-                      : _c("span", [
-                          _c(
-                            "a",
-                            {
-                              attrs: { href: "#" },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  _vm.refresh($event)
+                      : _vm.table
+                        ? _c("span", [
+                            _c(
+                              "a",
+                              {
+                                attrs: { href: "#" },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    _vm.refresh($event)
+                                  }
                                 }
-                              }
-                            },
-                            [
-                              _c("span", {
-                                staticClass: "glyphicon glyphicon-refresh"
-                              })
-                            ]
-                          )
-                        ]),
+                              },
+                              [
+                                _c("span", {
+                                  staticClass: "glyphicon glyphicon-refresh"
+                                })
+                              ]
+                            )
+                          ])
+                        : _vm._e(),
                     _vm._v(" "),
                     _vm.requestTime[_vm.tab]
                       ? _c("span", { staticClass: "request-time" }, [
@@ -43293,71 +43430,6 @@ var render = function() {
                 ])
               ],
               1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "tab-pane",
-                class: { active: _vm.tab === "query" },
-                attrs: { id: "query" }
-              },
-              [
-                !_vm.processing || _vm.customQuery
-                  ? _c("query", {
-                      attrs: { sql: _vm.customQuery, history: _vm.history },
-                      on: {
-                        beforeQuery: _vm.beforeQuery,
-                        customQuery: _vm.beforeCustomQuery,
-                        success: _vm.querySuccess,
-                        afterQuery: _vm.afterCustomQuery,
-                        error: _vm.queryError
-                      }
-                    })
-                  : _vm._e(),
-                _vm._v(" "),
-                _c("results-table", {
-                  attrs: {
-                    tab: _vm.tab,
-                    table: _vm.table,
-                    "table-primary-key": false,
-                    records: _vm.recordsCustom,
-                    processing: _vm.processing,
-                    "editing-row": false,
-                    "custom-query": _vm.customQuery
-                  },
-                  on: {
-                    editingRow: _vm.setEditingRow,
-                    updateRow: _vm.updateRow,
-                    deleteRow: _vm.deleteRow
-                  }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-sm-2" }, [
-                    _vm.requestTime[_vm.tab]
-                      ? _c("span", [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
-                              "\n                            "
-                          )
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.processing
-                      ? _c("span", [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-refresh spinning"
-                          })
-                        ])
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-10 text-right" })
-                ])
-              ],
-              1
             )
           ])
         ]
@@ -43380,13 +43452,17 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(273)
+}
 var normalizeComponent = __webpack_require__(37)
 /* script */
 var __vue_script__ = __webpack_require__(57)
 /* template */
 var __vue_template__ = __webpack_require__(58)
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -43511,7 +43587,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("\n            " + _vm._s(value) + "\n        ")]
+            [_c("span", { attrs: { title: value } }, [_vm._v(_vm._s(value))])]
           )
         })
       )
@@ -43601,11 +43677,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['sql', 'history'],
@@ -43670,9 +43741,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("br"),
-    _vm._v(" "),
+  return _c("div", { attrs: { id: "query-wrapper" } }, [
     _c(
       "textarea",
       {
@@ -43806,7 +43875,7 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n#query_input {\n    width: 100%;\n    font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n}\n", ""]);
+exports.push([module.i, "\n#query-wrapper {\n    margin-bottom: 10px;\n}\n#query_input {\n    font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n    margin-top: 10px;\n    width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -99139,7 +99208,7 @@ exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  transitio
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(269)
+  __webpack_require__(271)
 }
 var normalizeComponent = __webpack_require__(37)
 /* script */
@@ -99241,11 +99310,43 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'editingRow', 'customQuery'],
+    props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow', 'customQuery'],
     components: {
+        'insert-table-row': __webpack_require__(282),
         'result-table-row': __webpack_require__(261)
+    },
+    computed: {
+        // a computed getter
+        colspan: function colspan() {
+            return this.schema ? Object.keys(this.schema).length + (this.tab === 'content' ? 1 : 0) : 2;
+        }
     },
     methods: {
         getColumn: function getColumn(column) {
@@ -99264,8 +99365,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             return output;
         },
-        saveRow: function saveRow(data) {
-            console.log('2.', data);
+        insertRow: function insertRow(data) {
+            this.$emit('insertRow', data);
+        },
+        updateRow: function updateRow(data) {
             this.$emit('updateRow', data);
         },
         keyIcon: function keyIcon(column) {
@@ -99303,136 +99406,198 @@ var render = function() {
     { staticClass: "results table-responsive" },
     [
       _c("transition", { attrs: { name: "fade" } }, [
-        _c(
-          "table",
-          { staticClass: "table table-hover table-striped table-condensed" },
-          [
-            _c("thead", [
-              _vm.tab === "query"
-                ? _c(
-                    "tr",
-                    _vm._l(_vm.records[0], function(value, name) {
-                      return _c("th", [
-                        _vm._v(
-                          "\n                    " +
-                            _vm._s(name) +
-                            "\n                "
-                        )
-                      ])
-                    })
-                  )
-                : _c(
-                    "tr",
-                    [
-                      _vm._l(_vm.schema, function(value, name) {
-                        return _c("th", [
-                          _c("span", {
-                            domProps: {
-                              innerHTML: _vm._s(
-                                _vm.keyIcon(value["column_name"])
-                              )
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "a",
-                            {
-                              attrs: { href: "#" },
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  _vm.$emit("sortColumn", value["column_name"])
-                                }
-                              }
-                            },
-                            [
-                              _vm._v(_vm._s(value["column_name"])),
-                              _c("span", {
-                                staticStyle: { "margin-left": "5px" },
-                                domProps: {
-                                  innerHTML: _vm._s(
-                                    _vm.sortIcon(value["column_name"])
-                                  )
-                                }
-                              })
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c("br"),
-                          _vm._v(" "),
-                          _c("small", [
+        _vm.tab === "query" || (_vm.tab === "content" && _vm.table)
+          ? _c(
+              "table",
+              {
+                staticClass: "table table-hover table-striped table-condensed"
+              },
+              [
+                _c("thead", [
+                  _vm.tab === "query"
+                    ? _c(
+                        "tr",
+                        _vm._l(_vm.records[0], function(value, name) {
+                          return _c("th", [
                             _vm._v(
-                              _vm._s(_vm.getDataTypeDisplay(value["type"]))
+                              "\n                    " +
+                                _vm._s(name) +
+                                "\n                "
                             )
                           ])
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c("th")
-                    ],
-                    2
-                  )
-            ]),
-            _vm._v(" "),
-            _vm.records && _vm.records.length > 0
-              ? _c(
-                  "tbody",
-                  _vm._l(_vm.records, function(row) {
-                    return _c("result-table-row", {
-                      key: row[_vm.tablePrimaryKey],
-                      attrs: {
-                        tab: _vm.tab,
-                        table: _vm.table,
-                        schema: _vm.schema,
-                        "table-primary-key": _vm.tablePrimaryKey,
-                        row: row,
-                        processing: _vm.processing,
-                        "editing-row": _vm.editingRow
-                      },
-                      on: {
-                        editingRow: function($event) {
-                          _vm.$emit("editingRow", row[_vm.tablePrimaryKey])
-                        },
-                        cancelEditingRow: function($event) {
-                          _vm.$emit("editingRow", null)
-                        },
-                        updateRow: _vm.saveRow,
-                        deleteRow: function($event) {
-                          _vm.$emit("deleteRow", row[_vm.tablePrimaryKey])
-                        }
-                      }
-                    })
-                  })
-                )
-              : _c("tbody", [
-                  !_vm.processing &&
-                  ((_vm.records && _vm.records.length > 0) ||
-                    _vm.table ||
-                    _vm.customQuery)
-                    ? _c("tr", [
-                        _c(
-                          "td",
-                          {
-                            attrs: {
-                              colspan: _vm.schema
-                                ? Object.keys(_vm.schema).length +
-                                  (_vm.tab === "query" ? 1 : 0)
-                                : 2
-                            }
-                          },
+                        })
+                      )
+                    : _vm.table
+                      ? _c(
+                          "tr",
                           [
-                            _c("div", { staticClass: "empty" }, [
-                              _vm.table || _vm.tab === "query"
-                                ? _c("span", [_vm._v("No records found")])
-                                : _c("span", [_vm._v("No table selected")])
+                            _vm._l(_vm.schema, function(value, name) {
+                              return _c("th", [
+                                _c("span", {
+                                  domProps: {
+                                    innerHTML: _vm._s(
+                                      _vm.keyIcon(value["column_name"])
+                                    )
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c(
+                                  "a",
+                                  {
+                                    attrs: { href: "#" },
+                                    on: {
+                                      click: function($event) {
+                                        $event.preventDefault()
+                                        _vm.$emit(
+                                          "sortColumn",
+                                          value["column_name"]
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(_vm._s(value["column_name"])),
+                                    _c("span", {
+                                      staticStyle: { "margin-left": "5px" },
+                                      domProps: {
+                                        innerHTML: _vm._s(
+                                          _vm.sortIcon(value["column_name"])
+                                        )
+                                      }
+                                    })
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("br"),
+                                _vm._v(" "),
+                                _c("small", [
+                                  _vm._v(
+                                    _vm._s(
+                                      _vm.getDataTypeDisplay(value["type"])
+                                    )
+                                  )
+                                ])
+                              ])
+                            }),
+                            _vm._v(" "),
+                            _c("th", [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-default btn-xs",
+                                  attrs: {
+                                    type: "button",
+                                    "aria-label": "Insert Row"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.$emit("insertingRow", true)
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("span", {
+                                    staticClass: "glyphicon glyphicon-plus",
+                                    attrs: { "aria-hidden": "true" }
+                                  })
+                                ]
+                              )
                             ])
-                          ]
+                          ],
+                          2
                         )
-                      ])
-                    : _vm._e()
-                ])
-          ]
-        )
+                      : _vm._e()
+                ]),
+                _vm._v(" "),
+                !_vm.processing
+                  ? _c(
+                      "tbody",
+                      [
+                        _vm.table && _vm.insertingRow
+                          ? _c("insert-table-row", {
+                              attrs: {
+                                tab: _vm.tab,
+                                table: _vm.table,
+                                schema: _vm.schema,
+                                "table-primary-key": _vm.tablePrimaryKey,
+                                processing: _vm.processing,
+                                "inserting-row": _vm.insertingRow
+                              },
+                              on: {
+                                cancelInsertingRow: function($event) {
+                                  _vm.$emit("insertingRow", false)
+                                },
+                                insertRow: _vm.insertRow
+                              }
+                            })
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm._l(_vm.records, function(row) {
+                          return _vm.records
+                            ? _c("result-table-row", {
+                                key: row[_vm.tablePrimaryKey],
+                                attrs: {
+                                  tab: _vm.tab,
+                                  table: _vm.table,
+                                  schema: _vm.schema,
+                                  "table-primary-key": _vm.tablePrimaryKey,
+                                  row: row,
+                                  processing: _vm.processing,
+                                  "editing-row": _vm.editingRow
+                                },
+                                on: {
+                                  editingRow: function($event) {
+                                    _vm.$emit(
+                                      "editingRow",
+                                      row[_vm.tablePrimaryKey]
+                                    )
+                                  },
+                                  cancelEditingRow: function($event) {
+                                    _vm.$emit("editingRow", null)
+                                  },
+                                  updateRow: _vm.updateRow,
+                                  deleteRow: function($event) {
+                                    _vm.$emit(
+                                      "deleteRow",
+                                      row[_vm.tablePrimaryKey]
+                                    )
+                                  }
+                                }
+                              })
+                            : _vm._e()
+                        }),
+                        _vm._v(" "),
+                        !_vm.processing
+                          ? _c("tr", [
+                              (_vm.tab === "query" || _vm.tab === "content") &&
+                              (!_vm.records || _vm.records.length < 1)
+                                ? _c(
+                                    "td",
+                                    { attrs: { colspan: _vm.colspan } },
+                                    [
+                                      _c("div", { staticClass: "empty" }, [
+                                        _c("span", [_vm._v("No records found")])
+                                      ])
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              (_vm.tab === "structure" ||
+                                _vm.tab === "content") &&
+                              !_vm.table
+                                ? _c("td", { attrs: { colspan: _vm.colspan } })
+                                : _vm._e()
+                            ])
+                          : _vm._e()
+                      ],
+                      2
+                    )
+                  : _vm._e()
+              ]
+            )
+          : _c("div", { staticClass: "empty" }, [
+              _c("span", [_vm._v("No table selected")])
+            ])
       ])
     ],
     1
@@ -99660,10 +99825,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['tab', 'table', 'schema', 'row', 'tablePrimaryKey', 'processing', 'editingRow'],
+    props: ['tab', 'table', 'schema', 'row', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow'],
     data: function data() {
         return {
-            newValues: {}
+            data: {}
         };
     },
     mounted: function mounted() {
@@ -99672,7 +99837,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     watch: {
         row: function row(newData) {
-            this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(newData);
+            this.data = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(newData);
         }
     },
     methods: {
@@ -99681,14 +99846,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('editingRow', this.row[this.tablePrimaryKey]);
         },
         saveRow: function saveRow() {
-            var data = this.updatedValues();
             this.$emit('updateRow', {
                 primaryKey: this.row[this.tablePrimaryKey],
-                data: data
+                data: this.updatedValues()
             });
         },
         refreshRow: function refreshRow() {
-            this.newValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
+            this.data = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
         },
         getFieldDefault: function getFieldDefault(column) {
             var config = this.getColumn(column);
@@ -99707,6 +99871,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         break;
                     }
                 case "int":
+                case "json":
                 case "text":
                 case "uuid":
                 case "integer":
@@ -99749,7 +99914,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var original = this.row;
             var changed = {};
             var $this = this;
-            __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.newValues, function (val, attr) {
+            __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(this.data, function (val, attr) {
                 if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEqual(original[attr], val)) {
                     if (typeof val !== "undefined") {
                         if (val === "") {
@@ -99778,9 +99943,9 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "tr",
-    { class: { info: _vm.editingRow === _vm.row[_vm.tablePrimaryKey] } },
+    { class: { warning: _vm.editingRow === _vm.row[_vm.tablePrimaryKey] } },
     [
-      _vm._l(_vm.row, function(value, name) {
+      _vm._l(_vm.data, function(value, name) {
         return _c("td", [
           _vm.editingRow === _vm.row[_vm.tablePrimaryKey]
             ? _c(
@@ -99793,11 +99958,11 @@ var render = function() {
                       type: _vm.getTypeAttr(name)
                     },
                     model: {
-                      value: _vm.newValues[name],
+                      value: _vm.data[name],
                       callback: function($$v) {
-                        _vm.$set(_vm.newValues, name, $$v)
+                        _vm.$set(_vm.data, name, $$v)
                       },
-                      expression: "newValues[name]"
+                      expression: "data[name]"
                     }
                   })
                 ],
@@ -99810,93 +99975,83 @@ var render = function() {
       }),
       _vm._v(" "),
       _vm.tab !== "query"
-        ? _c(
-            "td",
-            { staticClass: "rowButtons" },
-            [
-              _c("transition", [
-                _vm.editingRow === _vm.row[_vm.tablePrimaryKey]
-                  ? _c("span", [
-                      _c(
-                        "button",
-                        {
-                          key: "cancel",
-                          staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              _vm.$emit("cancelEditingRow", null)
-                            }
-                          }
-                        },
-                        [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-remove",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          key: "save",
-                          staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
-                          on: { click: _vm.saveRow }
-                        },
-                        [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-ok",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          key: "delete",
-                          staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              _vm.$emit(
-                                "deleteRow",
-                                _vm.row[_vm.tablePrimaryKey]
-                              )
-                            }
-                          }
-                        },
-                        [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-trash",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      )
-                    ])
-                  : _c("span", [
-                      _c(
-                        "button",
-                        {
-                          key: "edit",
-                          staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
-                          on: { click: _vm.editRow }
-                        },
-                        [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-pencil",
-                            attrs: { "aria-hidden": "true" }
-                          })
-                        ]
-                      )
-                    ])
-              ])
-            ],
-            1
-          )
+        ? _c("td", { staticClass: "rowButtons" }, [
+            _vm.editingRow === _vm.row[_vm.tablePrimaryKey]
+              ? _c("span", [
+                  _c(
+                    "button",
+                    {
+                      key: "cancel",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.$emit("cancelEditingRow", null)
+                        }
+                      }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-remove",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      key: "save",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: { click: _vm.saveRow }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-ok",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      key: "delete",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.$emit("deleteRow", _vm.row[_vm.tablePrimaryKey])
+                        }
+                      }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-trash",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ])
+              : _c("span", [
+                  _c(
+                    "button",
+                    {
+                      key: "edit",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: { click: _vm.editRow }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-pencil",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ])
+          ])
         : _vm._e()
     ],
     2
@@ -100060,7 +100215,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         makeSelect: function makeSelect(table, where, conjunction, order) {
             var sql = 'SELECT * FROM ' + table;
             if (where) {
-                sql += ' ' + this.makeBindingsWhere(where, conjunction);
+                if (where.constructor === Array) {
+                    sql += ' ' + this.makeBindingsWhere(where, conjunction);
+                } else {
+                    if (!where.toUpperCase().includes('WHERE')) {
+                        sql += ' WHERE ';
+                    }
+                    sql += ' ' + where + ' ';
+                }
             }
             if (!order) {
                 order = this.tablePrimaryKey;
@@ -100264,7 +100426,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getSchema: function getSchema(table) {
             var _this7 = this;
 
-            var sql = "SELECT " + "column_name, data_type AS type, character_maximum_length AS length, column_default AS default_value, is_nullable AS nullable, is_updatable AS mutable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
+            var sql = "SELECT " + "column_name, data_type AS type, " + "character_maximum_length AS length, " + "column_default AS default_value, " + "is_nullable AS nullable, " + "is_updatable AS mutable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
             this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 _this7.schema = _.clone(_this7.result);
@@ -100689,7 +100851,7 @@ var render = function() {
     [
       _c("br"),
       _vm._v(" "),
-      _vm.table && _vm.tableForeignKeys
+      _vm.table && _vm.tableForeignKeys && _vm.tableForeignKeys[0]
         ? _c(
             "el-table",
             {
@@ -100719,23 +100881,25 @@ if (false) {
 }
 
 /***/ }),
-/* 269 */
+/* 269 */,
+/* 270 */,
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(270);
+var content = __webpack_require__(272);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(64)("7379e3e2", content, false);
+var update = __webpack_require__(64)("494b1aa9", content, false);
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue");
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-4f5acf76\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./ResultsTable.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -100745,7 +100909,7 @@ if(false) {
 }
 
 /***/ }),
-/* 270 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(42)(undefined);
@@ -100753,10 +100917,477 @@ exports = module.exports = __webpack_require__(42)(undefined);
 
 
 // module
-exports.push([module.i, "\n.table th {\n    white-space:nowrap;\n}\n", ""]);
+exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table td input {\n  border: 0;\n  height: 20px;\n  padding: 3px;\n}\n", ""]);
 
 // exports
 
+
+/***/ }),
+/* 273 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(274);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(64)("5ae0024d", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-637d820f\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TableList.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-637d820f\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./TableList.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 274 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(42)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n.list-group a {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 275 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(280)
+}
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(276)
+/* template */
+var __vue_template__ = __webpack_require__(277)
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/Filter.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] Filter.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c46253f6", Component.options)
+  } else {
+    hotAPI.reload("data-v-c46253f6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 276 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            where: null
+        };
+    }
+});
+
+/***/ }),
+/* 277 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      { staticClass: "col-sm-12" },
+      [
+        _c(
+          "el-input",
+          {
+            attrs: { id: "content-filter", placeholder: "WHERE clause" },
+            nativeOn: {
+              keyup: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13)
+                ) {
+                  return null
+                }
+                _vm.$emit("filterWhere", _vm.where)
+              }
+            },
+            model: {
+              value: _vm.where,
+              callback: function($$v) {
+                _vm.where = $$v
+              },
+              expression: "where"
+            }
+          },
+          [
+            _c("el-button", {
+              attrs: { slot: "append", icon: "cstm-filter" },
+              on: {
+                click: function($event) {
+                  _vm.$emit("filterWhere", _vm.where)
+                }
+              },
+              slot: "append"
+            })
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-c46253f6", module.exports)
+  }
+}
+
+/***/ }),
+/* 278 */,
+/* 279 */,
+/* 280 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(281);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(64)("25f412c4", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c46253f6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-c46253f6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 281 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(42)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "\n#content-filter {\n  margin-top: 5px;\n}\n#content-filter input {\n    height: 30px;\n}\n.el-icon-cstm-filter {\n  font-family: 'Glyphicons Halflings' !important;\n  font-size: inherit;\n  font-style: normal;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n.el-icon-cstm-filter:before {\n  content: \"\\E138\";\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 282 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(37)
+/* script */
+var __vue_script__ = __webpack_require__(283)
+/* template */
+var __vue_template__ = __webpack_require__(284)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/InsertTableRow.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] InsertTableRow.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-99e83fdc", Component.options)
+  } else {
+    hotAPI.reload("data-v-99e83fdc", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 283 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['tab', 'table', 'schema', 'tablePrimaryKey', 'processing', 'insertingRow'],
+    data: function data() {
+        return {
+            insertRow: {}
+        };
+    },
+
+    methods: {
+        saveRow: function saveRow() {
+            this.$emit('insertRow', this.insertRow);
+        },
+        getFieldDefault: function getFieldDefault(column) {
+            var config = this.getColumn(column);
+            return config.default_value ? config.default_value : "";
+        },
+        getColumn: function getColumn(column) {
+            return this.$parent.getColumn(column);
+        },
+        getFormComponent: function getFormComponent(column) {
+            var config = this.$parent.getColumn(column);
+            var data_type = this.$parent.getDataTypeDisplay(config.type);
+            switch (data_type) {
+                case "boolean":
+                    {
+                        return 'el-checkbox';
+                        break;
+                    }
+                case "int":
+                case "json":
+                case "text":
+                case "uuid":
+                case "integer":
+                case "varchar":
+                case "character varying":
+                    {
+                        return 'el-input';
+                        break;
+                    }
+                case "date":
+                case "timestamp":
+                    {
+                        return 'el-date-picker';
+                        break;
+                    }
+            }
+        },
+        getTypeAttr: function getTypeAttr(column) {
+            var config = this.$parent.getColumn(column);
+            var data_type = this.$parent.getDataTypeDisplay(config.type);
+            switch (data_type) {
+                case "date":
+                    {
+                        return 'date';
+                        break;
+                    }
+                case "text":
+                    {
+                        return 'text';
+                        break;
+                    }
+                case "timestamp":
+                    {
+                        return 'datetime';
+                        break;
+                    }
+            }
+        }
+    }
+});
+
+/***/ }),
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "tr",
+    { staticClass: "success" },
+    [
+      _vm._l(_vm.schema, function(column) {
+        return _c(
+          "td",
+          [
+            _c(_vm.getFormComponent(column.column_name), {
+              tag: "component",
+              attrs: {
+                placeholder: _vm.getFieldDefault(column.column_name),
+                type: _vm.getTypeAttr(column.column_name)
+              },
+              model: {
+                value: _vm.insertRow[column.column_name],
+                callback: function($$v) {
+                  _vm.$set(_vm.insertRow, column.column_name, $$v)
+                },
+                expression: "insertRow[column.column_name]"
+              }
+            })
+          ],
+          1
+        )
+      }),
+      _vm._v(" "),
+      _vm.tab !== "query"
+        ? _c("td", { staticClass: "rowButtons" }, [
+            _c(
+              "button",
+              {
+                key: "cancel",
+                staticClass: "btn btn-default btn-xs",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    _vm.$emit("cancelInsertingRow")
+                  }
+                }
+              },
+              [
+                _c("span", {
+                  staticClass: "glyphicon glyphicon-remove",
+                  attrs: { "aria-hidden": "true" }
+                })
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                key: "save",
+                staticClass: "btn btn-default btn-xs",
+                attrs: { type: "button" },
+                on: { click: _vm.saveRow }
+              },
+              [
+                _c("span", {
+                  staticClass: "glyphicon glyphicon-ok",
+                  attrs: { "aria-hidden": "true" }
+                })
+              ]
+            )
+          ])
+        : _vm._e()
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-99e83fdc", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

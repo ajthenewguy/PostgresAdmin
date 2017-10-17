@@ -1,10 +1,10 @@
 <template>
-    <tr :class="{ info: editingRow === row[tablePrimaryKey] }">
-        <td v-for="(value, name) in row">
+    <tr :class="{ warning: editingRow === row[tablePrimaryKey] }">
+        <td v-for="(value, name) in data">
             <span v-if="editingRow === row[tablePrimaryKey]">
                 <component
                         :is="getFormComponent(name)"
-                        v-model="newValues[name]"
+                        v-model="data[name]"
                         :placeholder="getFieldDefault(name)"
                         :type="getTypeAttr(name)"
                 />
@@ -14,7 +14,7 @@
             </span>
         </td>
         <td v-if="tab !== 'query'" class="rowButtons">
-            <transition>
+            <!--<transition>-->
                 <span v-if="editingRow === row[tablePrimaryKey]">
                     <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -31,7 +31,7 @@
                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                     </button>
                 </span>
-            </transition>
+            <!--</transition>-->
         </td>
     </tr>
 </template>
@@ -46,11 +46,12 @@
             'row',
             'tablePrimaryKey',
             'processing',
+            'insertingRow',
             'editingRow'
         ],
         data() {
             return {
-                newValues: {}
+                data: {}
             }
         },
         mounted() {
@@ -58,7 +59,7 @@
         },
         watch: {
             row: function (newData) {
-                this.newValues = _.clone(newData)
+                this.data = _.clone(newData)
             }
         },
         methods: {
@@ -67,14 +68,13 @@
                 this.$emit('editingRow', this.row[this.tablePrimaryKey])
             },
             saveRow() {
-                let data = this.updatedValues()
                 this.$emit('updateRow', {
                     primaryKey: this.row[this.tablePrimaryKey],
-                    data: data
+                    data: this.updatedValues()
                 })
             },
             refreshRow() {
-                this.newValues = _.clone(this.row)
+                this.data = _.clone(this.row)
             },
             getFieldDefault(column) {
                 let config = this.getColumn(column)
@@ -92,6 +92,7 @@
                         break
                     }
                     case "int":
+                    case "json":
                     case "text":
                     case "uuid":
                     case "integer":
@@ -129,7 +130,7 @@
                 var original = this.row
                 var changed = {}
                 var $this = this
-                _.each(this.newValues, function(val, attr) {
+                _.each(this.data, function(val, attr) {
                     if (!_.isEqual(original[attr], val)) {
                         if (typeof val !== "undefined") {
                             if (val === "") {

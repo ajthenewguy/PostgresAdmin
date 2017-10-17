@@ -2,7 +2,7 @@
     <div v-if="tables" class="list-group">
 
             <a v-for="(value, key) in computedList" @click.prevent="openTable(value)" :key="value" :class="{ active: table === value }" class="list-group-item" href="#">
-                {{ value }}
+                <span :title="value">{{ value }}</span>
             </a>
     </div>
 </template>
@@ -62,3 +62,12 @@
     }
 </script>
 
+
+
+<style lang="scss">
+    .list-group a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
