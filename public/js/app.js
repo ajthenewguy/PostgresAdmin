@@ -42899,12 +42899,41 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['tables'],
+    props: ['selectedDatabase', 'loadedTables'],
     data: function data() {
         return {
+            database: this.selectedDatabase,
+            databases: [{
+                label: 'stars10',
+                value: 'stars10'
+            }, {
+                label: 'team20',
+                value: 'team20'
+            }],
             table: null,
+            tables: this.loadedTables,
             editingRow: null,
             filter: null,
             insertingRow: false,
@@ -42948,8 +42977,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         recordCount: function recordCount() {
             return this.records ? this.records.length : 0;
         },
-        openTable: function openTable(table) {
+        openDatabase: function openDatabase() {
             var _this = this;
+
+            this.tableQuery = '';
+            return axios.post(this.server + '/switch-database', { database: this.database }).then(function (response) {
+                _this.tables = response.data.tables;
+            }).catch(function (error) {
+                _this.result = null;
+                _this.queryError(error);
+            });
+        },
+        openTable: function openTable(table) {
+            var _this2 = this;
 
             this.clearTable();
             this.customQuery = false;
@@ -42960,9 +43000,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.tab = 'content';
             }
             this.getPrimaryKey(this.table).then(function () {
-                _this.order = _this.primaryKey;
-                _this.getSchema(_this.table).then(function () {
-                    _this.getRecords();
+                _this2.order = _this2.primaryKey;
+                _this2.getSchema(_this2.table).then(function () {
+                    _this2.getRecords();
                 });
             });
         },
@@ -42994,17 +43034,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.getRecords();
         },
         getRecords: function getRecords(page) {
-            var _this2 = this;
+            var _this3 = this;
 
             var sql = this.makeSelect(this.table, this.where, null, this.order);
             if (typeof page === "undefined") {
                 page = this.currentPage();
             }
             return this.selectQuery(sql, page).then(function (response) {
-                if (_this2.tab === 'content') {
-                    _this2.records = _this2.result;
+                if (_this3.tab === 'content') {
+                    _this3.records = _this3.result;
                 } else {
-                    _this2.recordsCustom = _this2.result;
+                    _this3.recordsCustom = _this3.result;
                 }
             });
         },
@@ -43016,25 +43056,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.editingRow = row;
         },
         insertRow: function insertRow(data) {
-            var _this3 = this;
+            var _this4 = this;
 
             return this.insertQuery(this.makeInsert(this.table, data), data).then(function () {
-                _this3.setInsertingRow(false);
-                _this3.getRecords();
+                _this4.setInsertingRow(false);
+                _this4.getRecords();
             });
         },
         updateRow: function updateRow(payload) {
-            var _this4 = this;
+            var _this5 = this;
 
             var where = {};
             where[this.tablePrimaryKey] = payload.primaryKey;
             return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(function () {
-                _this4.setEditingRow(null);
-                _this4.getRecords();
+                _this5.setEditingRow(null);
+                _this5.getRecords();
             });
         },
         deleteRow: function deleteRow(primaryKey) {
-            var _this5 = this;
+            var _this6 = this;
 
             if (confirm('Delete this row?')) {
                 var where = {};
@@ -43044,9 +43084,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 console.log(this.table, where);
 
                 this.deleteQuery(this.makeDelete(this.table, where), where).then(function () {
-                    _this5.getRecords(_this5.currentPage()).then(function () {
-                        _this5.editingRow = null;
-                        _this5.processing = false;
+                    _this6.getRecords(_this6.currentPage()).then(function () {
+                        _this6.editingRow = null;
+                        _this6.processing = false;
                     });
                 });
             }
@@ -43138,7 +43178,50 @@ var render = function() {
               query: _vm.tableQuery
             },
             on: { openTable: _vm.openTable }
-          })
+          }),
+          _vm._v(" "),
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.database,
+                  expression: "database"
+                }
+              ],
+              staticClass: "form-control input-sm",
+              attrs: { id: "database-switcher", placeholder: "Database" },
+              on: {
+                change: [
+                  function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.database = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  },
+                  function($event) {
+                    _vm.openDatabase()
+                  }
+                ]
+              }
+            },
+            _vm._l(_vm.databases, function(item) {
+              return _c("option", {
+                key: item.value,
+                attrs: { label: item.label },
+                domProps: { value: item.value }
+              })
+            })
+          )
         ],
         1
       ),
@@ -43511,7 +43594,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables', 'table', 'query'],
@@ -43526,15 +43608,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: {
         computedList: function computedList() {
-            var vm = this;
-            if (vm.query) {
-                return this.list.filter(function (item) {
-                    return item.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1;
-                });
-            } else {
-                return this.list;
-            }
+            return this.computeList();
         }
+    },
+    watch: {
+        tables: function tables(newTables) {
+            this.list = newTables;
+            return this.computeList();
+        },
+        deep: true
     },
     methods: {
         openTable: function openTable(table) {
@@ -43551,6 +43633,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 Velocity(el, { opacity: 1, height: '1.6em' }, { complete: done });
             }, delay);
         },
+        computeList: function computeList() {
+            var vm = this;
+            if (vm.query) {
+                return this.list.filter(function (item) {
+                    return item.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1;
+                });
+            } else {
+                return this.list;
+            }
+        },
+
         leave: function leave(el, done) {
             var delay = el.dataset.index * 150;
             setTimeout(function () {

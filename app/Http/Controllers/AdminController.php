@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class AdminController extends FrontController
 {
     /**
      * Create a new controller instance.
@@ -21,8 +22,15 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         return view('home');
+    }
+
+    public function switchDatabase(Request $request)
+    {
+        $result['tables'] = $this->selectDatabase($request, $request->database);
+
+        return response()->json($result);
     }
 }

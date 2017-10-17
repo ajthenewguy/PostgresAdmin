@@ -9,7 +9,27 @@
                     </div>
 
                 </div>
+
+
+
                 <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
+
+                <!-- -->
+                <select
+                        id="database-switcher"
+                        class="form-control input-sm"
+                        v-model="database"
+                        placeholder="Database"
+                        @change="openDatabase()"
+                >
+                    <option
+                            v-for="item in databases"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                    />
+                </select>
+                <!-- -->
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">
@@ -149,10 +169,21 @@
 
 <script>
     export default {
-        props: [ 'tables' ],
+        props: [  'selectedDatabase', 'loadedTables' ],
         data() {
             return {
+                database: this.selectedDatabase,
+                databases: [
+                    {
+                        label: 'stars10',
+                        value: 'stars10'
+                    }, {
+                        label: 'team20',
+                        value: 'team20'
+                    }
+                ],
                 table: null,
+                tables: this.loadedTables,
                 editingRow: null,
                 filter: null,
                 insertingRow: false,
@@ -194,6 +225,15 @@
         methods: {
             recordCount() {
                 return this.records ? this.records.length : 0
+            },
+            openDatabase() {
+                this.tableQuery = ''
+                return axios.post(this.server + '/switch-database', { database: this.database }).then(response => {
+                    this.tables = response.data.tables
+                }).catch(error => {
+                    this.result = null
+                    this.queryError(error)
+                })
             },
             openTable(table) {
                 this.clearTable()

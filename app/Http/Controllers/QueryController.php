@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \Illuminate\Pagination\Paginator;
 
-class QueryController extends Controller
+class QueryController extends AdminController
 {
 
     private $collection;
@@ -22,13 +22,10 @@ class QueryController extends Controller
         $this->middleware('auth');
     }
 
-    /*
-    Route::post('/select', 'QueryController@select');
-    Route::post('/insert', 'QueryController@insert');
-    Route::post('/update', 'QueryController@update');
-    Route::post('/delete', 'QueryController@delete');
-    Route::post('/execute', 'QueryController@execute');
-     */
+    protected function beforeQuery(Request $request)
+    {
+        return $this->selectDatabase($request);
+    }
 
     /**
      * Run a select statement
@@ -39,6 +36,8 @@ class QueryController extends Controller
     {
         $perPage = $request->perPage ?: 30;
         $sql = $request->sql;
+
+        $this->beforeQuery($request);
 
         if ($bindings = $request->bindings) {
             $this->collection = collect(DB::select($sql), $bindings);
@@ -67,6 +66,8 @@ class QueryController extends Controller
     {
         $sql = $request->sql;
 
+        $this->beforeQuery($request);
+
         if ($bindings = $request->bindings) {
             $result = DB::insert($sql, $bindings);
         } else {
@@ -84,6 +85,8 @@ class QueryController extends Controller
     public function update(Request $request)
     {
         $sql = $request->sql;
+
+        $this->beforeQuery($request);
 
         if ($bindings = $request->bindings) {
 //            if (false !== strpos($sql, '?')) {
@@ -106,6 +109,8 @@ class QueryController extends Controller
     {
         $sql = $request->sql;
 
+        $this->beforeQuery($request);
+
         if ($bindings = $request->bindings) {
             $deleted = DB::delete($sql, $bindings);
         } else {
@@ -122,6 +127,7 @@ class QueryController extends Controller
      */
     public function execute(Request $request)
     {
+        $this->beforeQuery($request);
         $result = DB::statement($request->sql);
         return response()->json($result);
     }
