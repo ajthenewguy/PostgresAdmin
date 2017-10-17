@@ -42912,6 +42912,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['databases', 'selectedDatabase', 'loadedTables'],
@@ -43166,48 +43170,52 @@ var render = function() {
             on: { openTable: _vm.openTable }
           }),
           _vm._v(" "),
-          _c(
-            "select",
-            {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.database,
-                  expression: "database"
-                }
-              ],
-              staticClass: "form-control input-sm",
-              attrs: { id: "database-switcher", placeholder: "Database" },
-              on: {
-                change: [
-                  function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.database = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
-                  },
-                  function($event) {
-                    _vm.openDatabase()
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { staticClass: "control-label" }, [_vm._v("Database")]),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.database,
+                    expression: "database"
                   }
-                ]
-              }
-            },
-            _vm._l(_vm.databases, function(item) {
-              return _c("option", {
-                key: item,
-                attrs: { label: item },
-                domProps: { value: item }
+                ],
+                staticClass: "form-control input-sm",
+                attrs: { id: "database-switcher", placeholder: "Database" },
+                on: {
+                  change: [
+                    function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.database = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    },
+                    function($event) {
+                      _vm.openDatabase()
+                    }
+                  ]
+                }
+              },
+              _vm._l(_vm.databases, function(item) {
+                return _c("option", {
+                  key: item,
+                  attrs: { label: item },
+                  domProps: { value: item }
+                })
               })
-            })
-          )
+            )
+          ])
         ],
         1
       ),
@@ -99872,8 +99880,6 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-//
-//
 //
 //
 //

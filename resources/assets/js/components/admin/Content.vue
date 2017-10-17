@@ -9,20 +9,24 @@
                     </div>
                 </div>
                 <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
-                <select
-                        id="database-switcher"
-                        class="form-control input-sm"
-                        v-model="database"
-                        placeholder="Database"
-                        @change="openDatabase()"
-                >
-                    <option
-                            v-for="item in databases"
-                            :key="item"
-                            :label="item"
-                            :value="item"
-                    />
-                </select>
+
+                <div class="form-group">
+                    <label class="control-label">Database</label>
+                    <select
+                            id="database-switcher"
+                            class="form-control input-sm"
+                            v-model="database"
+                            placeholder="Database"
+                            @change="openDatabase()"
+                    >
+                        <option
+                                v-for="item in databases"
+                                :key="item"
+                                :label="item"
+                                :value="item"
+                        />
+                    </select>
+                </div>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">

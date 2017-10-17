@@ -15,24 +15,22 @@
             </span>
         </td>
         <td v-if="tab !== 'query'" class="rowButtons">
-            <!--<transition>-->
-                <span v-if="editingRow === row[tablePrimaryKey]">
-                    <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </button>
-                    <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </button>
-                    <button key="delete" @click="$emit('deleteRow', row[tablePrimaryKey])" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
-                </span>
-                <span v-else>
-                    <button key="edit" @click="editRow" type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                    </button>
-                </span>
-            <!--</transition>-->
+            <span v-if="editingRow === row[tablePrimaryKey]">
+                <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+                <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                </button>
+                <button key="delete" @click="$emit('deleteRow', row[tablePrimaryKey])" type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+            </span>
+            <span v-else>
+                <button key="edit" @click="editRow" type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                </button>
+            </span>
         </td>
     </tr>
 </template>
