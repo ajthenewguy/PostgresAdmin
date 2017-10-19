@@ -10,6 +10,8 @@
                 </div>
                 <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
 
+
+
                 <div class="form-group">
                     <label class="control-label">Database</label>
                     <select
@@ -27,6 +29,10 @@
                         />
                     </select>
                 </div>
+
+
+
+
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">
@@ -147,12 +153,14 @@
                             <div class="col-sm-10 text-right">
                                 <el-pagination
                                         v-if="records && records.length"
-                                        layout="total, prev, pager, next"
-                                        :currentPage="pagination.current_page"
+                                        layout="sizes, total, prev, pager, next"
+                                        :current-page.sync="pagination.current_page"
                                         :total="pagination.total"
-                                        :pageCount="pagination.last_page"
-                                        :pageSize="pagination.per_page"
+                                        :page-count="pagination.last_page"
+                                        :page-size="pagination.per_page"
+                                        :page-sizes="[25, 50, 100, 250, 500]"
                                         @current-change="getRecords"
+                                        @size-change="handleSizeChange"
                                 />
                             </div>
                         </div>
@@ -180,20 +188,7 @@
                 tab: 'query',
                 tableQuery: '',
                 order: null,
-                where: null,
-                pagination: {
-                    current_page: 1,
-                    first_page_url: '',
-                    from: null,
-                    last_page: null,
-                    last_page_url: '',
-                    next_page_url: '',
-                    path: '',
-                    per_page: null,
-                    prev_page_url: '',
-                    to: null,
-                    total: 0
-                }
+                where: null
             }
         },
         mixins: [ require( '../../mixins/PostgresMixin.vue') ],
@@ -205,36 +200,15 @@
             'structure-table': require('./StructureTable'),
             'indices-table': require('./IndicesTable')
         },
-//        watch: {
-//            order: function(column) {
-//                this.getRecords()
-//            }
-//        },
         methods: {
             recordCount() {
                 return this.records ? this.records.length : 0
             },
-//            getTable(table) {
-//                return this.loadTable(table).then(() => {
-//                    return this.tables[table]
-//                })
-//            },
-            openDatabase() {
-                this.tableQuery = ''
-                return axios.post(this.server + '/switch-database', { database: this.database }).then(response => {
-                    this.tables = response.data.tables
-                }).catch(error => {
-                    this.result = null
-                    this.queryError(error)
-                })
-            },
             openTable(table) {
                 this.clearTable()
                 this.table = table
-//                this.customQuery = false
                 this.setInsertingRow(false)
                 this.setEditingRow(null)
-                let config = null
                 this.loadTable(table).then(config => {
                     this.order = config.primaryKey
                     this.schema = config.schema
@@ -248,6 +222,10 @@
                         this.getRecords()
                     }
                 })
+            },
+            handleSizeChange(size) {
+                this.pagination.per_page = size
+                this.refresh()
             },
             changeTab(tab) {
                 this.tab = tab

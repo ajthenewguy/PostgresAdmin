@@ -34,7 +34,7 @@ class QueryController extends AdminController
      */
     public function select(Request $request)
     {
-        $perPage = $request->perPage ?: 30;
+        $perPage = $request->per_page ?: 30;
         $sql = $request->sql;
 
         $this->beforeQuery($request);

@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'FrontController@index');
+//Route::get('/', 'FrontController@index');
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
@@ -24,3 +24,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/execute', 'QueryController@execute');
     Route::post('/schema', 'QueryController@schema');
 });
+
+
+//Route::get('/', function () {
+//    return redirect('/'.($request->session()->get('selectedDatabase') ?: env('DB_CONNECTION')));
+//});
+Route::get('/{database?}', 'FrontController@index');

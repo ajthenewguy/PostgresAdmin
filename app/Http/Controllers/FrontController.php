@@ -9,12 +9,17 @@ use Illuminate\Support\Facades\Config;
 
 class FrontController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $database = null)
     {
+        if (is_null($database)) {
+            return redirect('/'.$this->getSelectedDatabase($request));
+        }
+
         $data = [
             'databases' => collect(array_keys(Config::get('database.connections'))),
-            'selectedDatabase' => $this->getSelectedDatabase($request)
+            'selectedDatabase' => $this->getSelectedDatabase($request, $database)
         ];
+
 
         if (Auth::check()) {
             $data['tables'] = $this->selectDatabase($request, $data['selectedDatabase']);
@@ -25,10 +30,15 @@ class FrontController extends Controller
         return view('app', $data);
     }
 
-    protected function getSelectedDatabase(Request $request)
+    protected function getSelectedDatabase(Request $request, $database = null)
     {
+        if (is_null($database)) {
+            $database = env('DB_CONNECTION');
+        } else {
+            $request->session()->put('selectedDatabase', $database);
+        }
         if (! $request->session()->get('selectedDatabase')) {
-            $request->session()->put('selectedDatabase', env('DB_CONNECTION'));
+            $request->session()->put('selectedDatabase', $database);
         }
         return $request->session()->get('selectedDatabase');
     }

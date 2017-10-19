@@ -8,6 +8,17 @@
     @endguest
 @endsection
 
+@section('nav-right')
+    @guest
+    @else
+        <form class="navbar-form navbar-right">
+            <div class="form-group">
+                <database-switcher :databases="{{ (isset($databases) ? $databases : '') }}" selected-database="{{ $selectedDatabase }}"></database-switcher>
+            </div>
+        </form>
+    @endguest
+@endsection
+
 @section('js')
     <script>
         window.Laravel = {!! json_encode([

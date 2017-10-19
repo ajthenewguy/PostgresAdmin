@@ -1,5 +1,13 @@
 <template>
     <tr class="success">
+        <td v-if="tab !== 'query'" class="rowButtons">
+            <button key="cancel" @click="$emit('cancelInsertingRow')" type="button" class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+            <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            </button>
+        </td>
         <td v-for="column in schema">
             <component
                     :is="getFormComponent(column.column_name)"
@@ -7,16 +15,6 @@
                     :placeholder="getFieldDefault(column.column_name)"
                     :type="getTypeAttr(column.column_name)"
             />
-        </td>
-        <td v-if="tab !== 'query'" class="rowButtons">
-            <!--<transition>-->
-                <button key="cancel" @click="$emit('cancelInsertingRow')" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-                <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-            <!--</transition>-->
         </td>
     </tr>
 </template>

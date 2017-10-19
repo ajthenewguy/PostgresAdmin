@@ -204,7 +204,9 @@
                     data.bindings = bindings
                 }
                 if (perPage) {
-                    data.perPage = perPage
+                    data.per_page = perPage
+                } else if (this.pagination.per_page) {
+                    data.per_page = this.pagination.per_page
                 }
                 if (pluck) {
                     data.pluck = pluck

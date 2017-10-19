@@ -71,6 +71,11 @@
                             </li>
                         @endguest
                     </ul>
+
+                    @guest
+                    @else
+                        @yield('nav-right')
+                    @endguest
                 </div>
             </div>
         </nav>

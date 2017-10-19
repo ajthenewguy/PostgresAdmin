@@ -22,7 +22,7 @@ class AdminController extends FrontController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $database = null)
     {
         return view('home');
     }

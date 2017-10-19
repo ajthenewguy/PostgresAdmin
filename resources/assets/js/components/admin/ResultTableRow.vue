@@ -1,19 +1,5 @@
 <template>
     <tr :class="{ warning: editingRow === row[tablePrimaryKey] }">
-        <td v-for="(value, name) in data">
-            <span v-if="editingRow === row[tablePrimaryKey]">
-                <component
-                        :is="getFormComponent(name)"
-                        v-model="data[name]"
-                        :placeholder="getFieldDefault(name)"
-                        :type="getTypeAttr(name)"
-                        @keyup.enter.native="saveRow"
-                />
-            </span>
-            <span v-else>
-                {{ value }}
-            </span>
-        </td>
         <td v-if="tab !== 'query'" class="rowButtons">
             <span v-if="editingRow === row[tablePrimaryKey]">
                 <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
@@ -30,6 +16,20 @@
                 <button key="edit" @click="editRow" type="button" class="btn btn-default btn-xs">
                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                 </button>
+            </span>
+        </td>
+        <td v-for="(value, name) in data">
+            <span v-if="editingRow === row[tablePrimaryKey]">
+                <component
+                        :is="getFormComponent(name)"
+                        v-model="data[name]"
+                        :placeholder="getFieldDefault(name)"
+                        :type="getTypeAttr(name)"
+                        @keyup.enter.native="saveRow"
+                />
+            </span>
+            <span v-else>
+                {{ value }}
             </span>
         </td>
     </tr>

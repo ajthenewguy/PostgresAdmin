@@ -8358,3 +8358,9 @@ body {
   margin-top: 150px;
 }
 
+#database-switcher input {
+  background-color: #222;
+  color: #f5f5f5;
+  border-color: #666;
+}
+
