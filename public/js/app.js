@@ -100031,6 +100031,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow', 'customQuery'],
@@ -100693,215 +100695,217 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "results table-responsive" },
-    [
-      _c("transition", { attrs: { name: "fade" } }, [
-        _vm.tab === "query" || (_vm.tab === "content" && _vm.table)
-          ? _c(
-              "table",
-              {
-                staticClass: "table table-hover table-striped table-condensed"
-              },
-              [
-                _c("thead", [
-                  _vm.tab === "query"
-                    ? _c(
-                        "tr",
-                        _vm._l(_vm.records[0], function(value, name) {
-                          return _c("th", [
-                            _vm._v(
-                              "\n                    " +
-                                _vm._s(name) +
-                                "\n                "
-                            )
-                          ])
-                        })
-                      )
-                    : _vm.table
+  return _c("div", [
+    _vm.tab === "query" || (_vm.tab === "content" && _vm.table)
+      ? _c(
+          "div",
+          { staticClass: "results table-responsive" },
+          [
+            _c("transition", { attrs: { name: "fade" } }, [
+              _c(
+                "table",
+                {
+                  staticClass: "table table-hover table-striped table-condensed"
+                },
+                [
+                  _c("thead", [
+                    _vm.tab === "query"
                       ? _c(
                           "tr",
-                          [
-                            _vm._l(_vm.schema, function(value, name) {
-                              return _c("th", [
-                                _c("span", {
-                                  domProps: {
-                                    innerHTML: _vm._s(
-                                      _vm.keyIcon(value["column_name"])
+                          _vm._l(_vm.records[0], function(value, name) {
+                            return _c("th", [
+                              _vm._v(
+                                "\n                        " +
+                                  _vm._s(name) +
+                                  "\n                    "
+                              )
+                            ])
+                          })
+                        )
+                      : _vm.table
+                        ? _c(
+                            "tr",
+                            [
+                              _vm._l(_vm.schema, function(value, name) {
+                                return _c("th", [
+                                  _c("span", {
+                                    domProps: {
+                                      innerHTML: _vm._s(
+                                        _vm.keyIcon(value["column_name"])
+                                      )
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: { href: "#" },
+                                      on: {
+                                        click: function($event) {
+                                          $event.preventDefault()
+                                          _vm.$emit(
+                                            "sortColumn",
+                                            value["column_name"]
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(_vm._s(value["column_name"])),
+                                      _c("span", {
+                                        staticStyle: { "margin-left": "5px" },
+                                        domProps: {
+                                          innerHTML: _vm._s(
+                                            _vm.sortIcon(value["column_name"])
+                                          )
+                                        }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("br"),
+                                  _vm._v(" "),
+                                  _c("small", [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.getDataTypeDisplay(value["type"])
+                                      )
                                     )
-                                  }
-                                }),
-                                _vm._v(" "),
+                                  ])
+                                ])
+                              }),
+                              _vm._v(" "),
+                              _c("th", [
                                 _c(
-                                  "a",
+                                  "button",
                                   {
-                                    attrs: { href: "#" },
+                                    staticClass: "btn btn-default btn-xs",
+                                    attrs: {
+                                      type: "button",
+                                      "aria-label": "Insert Row"
+                                    },
                                     on: {
                                       click: function($event) {
-                                        $event.preventDefault()
-                                        _vm.$emit(
-                                          "sortColumn",
-                                          value["column_name"]
-                                        )
+                                        _vm.$emit("insertingRow", true)
                                       }
                                     }
                                   },
                                   [
-                                    _vm._v(_vm._s(value["column_name"])),
                                     _c("span", {
-                                      staticStyle: { "margin-left": "5px" },
-                                      domProps: {
-                                        innerHTML: _vm._s(
-                                          _vm.sortIcon(value["column_name"])
-                                        )
-                                      }
+                                      staticClass: "glyphicon glyphicon-plus",
+                                      attrs: { "aria-hidden": "true" }
                                     })
                                   ]
-                                ),
-                                _vm._v(" "),
-                                _c("br"),
-                                _vm._v(" "),
-                                _c("small", [
-                                  _vm._v(
-                                    _vm._s(
-                                      _vm.getDataTypeDisplay(value["type"])
-                                    )
-                                  )
-                                ])
+                                )
                               ])
-                            }),
-                            _vm._v(" "),
-                            _c("th", [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-default btn-xs",
-                                  attrs: {
-                                    type: "button",
-                                    "aria-label": "Insert Row"
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.$emit("insertingRow", true)
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("span", {
-                                    staticClass: "glyphicon glyphicon-plus",
-                                    attrs: { "aria-hidden": "true" }
-                                  })
-                                ]
-                              )
-                            ])
-                          ],
-                          2
-                        )
-                      : _vm._e()
-                ]),
-                _vm._v(" "),
-                _c("transition", { attrs: { name: "fade" } }, [
-                  !_vm.processing
-                    ? _c(
-                        "tbody",
-                        [
-                          _vm.table && _vm.insertingRow
-                            ? _c("insert-table-row", {
-                                attrs: {
-                                  tab: _vm.tab,
-                                  table: _vm.table,
-                                  schema: _vm.schema,
-                                  "table-primary-key": _vm.tablePrimaryKey,
-                                  processing: _vm.processing,
-                                  "inserting-row": _vm.insertingRow
-                                },
-                                on: {
-                                  cancelInsertingRow: function($event) {
-                                    _vm.$emit("insertingRow", false)
-                                  },
-                                  insertRow: _vm.insertRow
-                                }
-                              })
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _vm._l(_vm.records, function(row) {
-                            return _vm.records
-                              ? _c("result-table-row", {
-                                  key: row[_vm.tablePrimaryKey],
+                            ],
+                            2
+                          )
+                        : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c("transition", { attrs: { name: "fade" } }, [
+                    !_vm.processing
+                      ? _c(
+                          "tbody",
+                          [
+                            _vm.table && _vm.insertingRow
+                              ? _c("insert-table-row", {
                                   attrs: {
                                     tab: _vm.tab,
                                     table: _vm.table,
                                     schema: _vm.schema,
                                     "table-primary-key": _vm.tablePrimaryKey,
-                                    row: row,
                                     processing: _vm.processing,
-                                    "editing-row": _vm.editingRow
+                                    "inserting-row": _vm.insertingRow
                                   },
                                   on: {
-                                    editingRow: function($event) {
-                                      _vm.$emit(
-                                        "editingRow",
-                                        row[_vm.tablePrimaryKey]
-                                      )
+                                    cancelInsertingRow: function($event) {
+                                      _vm.$emit("insertingRow", false)
                                     },
-                                    cancelEditingRow: function($event) {
-                                      _vm.$emit("editingRow", null)
-                                    },
-                                    updateRow: _vm.updateRow,
-                                    deleteRow: function($event) {
-                                      _vm.$emit(
-                                        "deleteRow",
-                                        row[_vm.tablePrimaryKey]
-                                      )
-                                    }
+                                    insertRow: _vm.insertRow
                                   }
                                 })
-                              : _vm._e()
-                          }),
-                          _vm._v(" "),
-                          !_vm.processing
-                            ? _c("tr", [
-                                (_vm.tab === "query" ||
-                                  _vm.tab === "content") &&
-                                (!_vm.records || _vm.records.length < 1)
-                                  ? _c(
-                                      "td",
-                                      { attrs: { colspan: _vm.colspan } },
-                                      [
-                                        _c("div", { staticClass: "empty" }, [
-                                          _c("span", [
-                                            _vm._v("No records found")
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm._l(_vm.records, function(row) {
+                              return _vm.records
+                                ? _c("result-table-row", {
+                                    key: row[_vm.tablePrimaryKey],
+                                    attrs: {
+                                      tab: _vm.tab,
+                                      table: _vm.table,
+                                      schema: _vm.schema,
+                                      "table-primary-key": _vm.tablePrimaryKey,
+                                      row: row,
+                                      processing: _vm.processing,
+                                      "editing-row": _vm.editingRow
+                                    },
+                                    on: {
+                                      editingRow: function($event) {
+                                        _vm.$emit(
+                                          "editingRow",
+                                          row[_vm.tablePrimaryKey]
+                                        )
+                                      },
+                                      cancelEditingRow: function($event) {
+                                        _vm.$emit("editingRow", null)
+                                      },
+                                      updateRow: _vm.updateRow,
+                                      deleteRow: function($event) {
+                                        _vm.$emit(
+                                          "deleteRow",
+                                          row[_vm.tablePrimaryKey]
+                                        )
+                                      }
+                                    }
+                                  })
+                                : _vm._e()
+                            }),
+                            _vm._v(" "),
+                            !_vm.processing
+                              ? _c("tr", [
+                                  (_vm.tab === "query" ||
+                                    _vm.tab === "content") &&
+                                  (!_vm.records || _vm.records.length < 1)
+                                    ? _c(
+                                        "td",
+                                        { attrs: { colspan: _vm.colspan } },
+                                        [
+                                          _c("div", { staticClass: "empty" }, [
+                                            _c("span", [
+                                              _vm._v("No records found")
+                                            ])
                                           ])
-                                        ])
-                                      ]
-                                    )
-                                  : _vm._e(),
-                                _vm._v(" "),
-                                (_vm.tab === "structure" ||
-                                  _vm.tab === "content") &&
-                                !_vm.table
-                                  ? _c("td", {
-                                      attrs: { colspan: _vm.colspan }
-                                    })
-                                  : _vm._e()
-                              ])
-                            : _vm._e()
-                        ],
-                        2
-                      )
-                    : _vm._e()
-                ])
-              ],
-              1
-            )
-          : _c("div", { staticClass: "empty" }, [
-              _c("span", [_vm._v("No table selected")])
+                                        ]
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  (_vm.tab === "structure" ||
+                                    _vm.tab === "content") &&
+                                  !_vm.table
+                                    ? _c("td", {
+                                        attrs: { colspan: _vm.colspan }
+                                      })
+                                    : _vm._e()
+                                ])
+                              : _vm._e()
+                          ],
+                          2
+                        )
+                      : _vm._e()
+                  ])
+                ],
+                1
+              )
             ])
-      ])
-    ],
-    1
-  )
+          ],
+          1
+        )
+      : _c("div", { staticClass: "empty" }, [
+          _c("span", [_vm._v("No table selected")])
+        ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
