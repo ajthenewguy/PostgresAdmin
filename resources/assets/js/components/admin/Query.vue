@@ -1,6 +1,6 @@
 <template>
     <div id="query-wrapper">
-        <textarea v-model="query" class="form-control" rows="2" id="query_input">{{ sql }}</textarea>
+        <textarea v-model="query" class="form-control" rows="2" id="query_input"></textarea>
         <div class="btn-group">
             <button @click="run" type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Run Query
@@ -25,6 +25,9 @@
             }
         },
         mounted() {
+            if (this.sql) {
+                this.query = this.sql
+            }
         },
         methods: {
             run() {

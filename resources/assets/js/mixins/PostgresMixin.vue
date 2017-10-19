@@ -3,9 +3,11 @@
     export default {
         data() {
             return {
+                cacheData: {},
                 customQuery: false,
                 errors: [],
                 history: [],
+                order: null,
                 pagination: {
                     current_page: 1,
                     first_page_url: '',
@@ -27,12 +29,31 @@
                 schema: null,
                 server: 'http://postgres:5433',
                 sql: '',
+                tables: [],
                 tablePrimaryKey: '',
                 tablePrimaryKeyFormat: '',
-                tableForeignKeys: null
+                tableForeignKeys: null,
+                where: null
             }
         },
         methods: {
+            cache(key, value) {
+                let argCount = arguments.length
+                let returnVal = null
+                if (argCount === 1) {
+                    if (this.cache.hasOwnProperty(key)) {
+                        returnVal = this.cacheData[key]
+                    }
+                } else if (argCount === 2) {
+                    if (value === null) {
+                        if (this.cacheData.hasOwnProperty(key)) {
+                            delete this.cacheData[key]
+                        }
+                    } else {
+                        returnVal = this.cacheData[key]
+                    }
+                }
+            },
             getKeysValues(data) {
                 let keys = []
                 let values = []
@@ -266,30 +287,57 @@
                     this.afterQuery()
                 })
             },
-            getPrimaryKey(table) {
+            loadTable(table) {
+                this.customQuery = false
+                if (! this.tables.hasOwnProperty(table)) {
+                    this.tables[table] = {
+                        name: table,
+                        schema: null,
+                        primaryKey: null,
+                        primaryKeyFormat: null,
+                        foreignKeys: null
+                    }
+                    return this.getTableSchema(table).then(() => {
+                        if (this.result[0].length) {
+                            this.tables[table].schema = _.clone(this.result[0])
+                        }
+                        if (this.result[1].length && Object.keys(this.result[1][0]).length) {
+                            this.tables[table].primaryKey = this.result[1][0].attname || 'id'
+                            this.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
+                        }
+                        if (this.result[2].length) {
+                            this.tables[table].foreignKeys = _.clone(this.result[2])
+                        }
+                        return this.tables[table]
+                    })
+                } else {
+                    return Promise.resolve(this.tables[table])
+                }
+            },
+            loadPrimaryKey(table) {
                 let sql = "SELECT \
-                    pg_attribute.attname, \
-                    pg_attribute.attlen, \
-                    format_type(pg_attribute.atttypid, pg_attribute.atttypmod) \
-                FROM pg_index, pg_class, pg_attribute, pg_namespace \
-                WHERE \
-                pg_class.oid = '" + table + "'::regclass AND \
-                indrelid = pg_class.oid AND \
-                nspname = 'public' AND \
-                pg_class.relnamespace = pg_namespace.oid AND \
-                pg_attribute.attrelid = pg_class.oid AND \
-                pg_attribute.attnum = any(pg_index.indkey) \
+                        pg_attribute.attname, \
+                        pg_attribute.attlen, \
+                        format_type(pg_attribute.atttypid, pg_attribute.atttypmod) \
+                    FROM pg_index, pg_class, pg_attribute, pg_namespace \
+                    WHERE \
+                    pg_class.oid = '" + table + "'::regclass AND \
+                    indrelid = pg_class.oid AND \
+                    nspname = 'public' AND \
+                    pg_class.relnamespace = pg_namespace.oid AND \
+                    pg_attribute.attrelid = pg_class.oid AND \
+                    pg_attribute.attnum = any(pg_index.indkey) \
                 AND indisprimary"
                 this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
                         if (this.result.length) {
-                            this.tablePrimaryKey = this.result[0].attname || 'id'
-                            this.tablePrimaryKeyFormat = this.result[0].format_type || ''
+                            this.tables[table].primaryKey = this.result[0].attname || 'id'
+                            this.tables[table].primaryKeyFormat = this.result[0].format_type || ''
                         }
                     })
             },
-            getSchema(table) {
+            loadSchema(table) {
                 let sql = "SELECT " +
                     "column_name, data_type AS type, " +
                     "character_maximum_length AS length, " +
@@ -301,28 +349,39 @@
                 this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
-                        this.schema = _.clone(this.result)
-                        this.getForeignKeys(table)
+                        this.tables[table].schema = _.clone(this.result)
+                        this.loadForeignKeys(table)
                     })
             },
-            getForeignKeys(table) {
+            loadForeignKeys(table) {
                 let sql = "SELECT \
-                tc.constraint_name, kcu.column_name, \
-                    ccu.table_name AS foreign_table_name, \
-                    ccu.column_name AS foreign_column_name \
-                FROM \
-                information_schema.table_constraints AS tc \
-                JOIN information_schema.key_column_usage AS kcu \
-                ON tc.constraint_name = kcu.constraint_name \
-                JOIN information_schema.constraint_column_usage AS ccu \
-                ON ccu.constraint_name = tc.constraint_name \
-                WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'"
+                    tc.constraint_name, kcu.column_name, \
+                        ccu.table_name AS foreign_table_name, \
+                        ccu.column_name AS foreign_column_name \
+                    FROM \
+                    information_schema.table_constraints AS tc \
+                    JOIN information_schema.key_column_usage AS kcu \
+                    ON tc.constraint_name = kcu.constraint_name \
+                    JOIN information_schema.constraint_column_usage AS ccu \
+                    ON ccu.constraint_name = tc.constraint_name \
+                    WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'"
                 this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
-                        this.tableForeignKeys = _.clone(this.result)
+                        this.tables[table].foreignKeys = _.clone(this.result)
                         this.result = null
                     })
+            },
+            getTableSchema(table) {
+                this.beforeRequest()
+                return axios.post(this.server + '/schema', {
+                    table: table
+                }).then(response => {
+                    this.afterRequest()
+                    this.querySuccess(response)
+                }).catch(error => {
+                    this.queryError(error)
+                })
             },
             getColumn(column) {
                 let info = {}

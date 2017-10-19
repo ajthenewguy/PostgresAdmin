@@ -22,4 +22,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/update', 'QueryController@update');
     Route::post('/delete', 'QueryController@delete');
     Route::post('/execute', 'QueryController@execute');
+    Route::post('/schema', 'QueryController@schema');
 });

@@ -205,15 +205,20 @@
             'structure-table': require('./StructureTable'),
             'indices-table': require('./IndicesTable')
         },
-        watch: {
-            order: function(column) {
-                this.getRecords()
-            }
-        },
+//        watch: {
+//            order: function(column) {
+//                this.getRecords()
+//            }
+//        },
         methods: {
             recordCount() {
                 return this.records ? this.records.length : 0
             },
+//            getTable(table) {
+//                return this.loadTable(table).then(() => {
+//                    return this.tables[table]
+//                })
+//            },
             openDatabase() {
                 this.tableQuery = ''
                 return axios.post(this.server + '/switch-database', { database: this.database }).then(response => {
@@ -225,25 +230,30 @@
             },
             openTable(table) {
                 this.clearTable()
-                this.customQuery = false
+                this.table = table
+//                this.customQuery = false
                 this.setInsertingRow(false)
                 this.setEditingRow(null)
-                this.table = table
-                if (this.tab === "query") {
-                    this.tab = 'content'
-                }
-                this.getPrimaryKey(this.table).then(() => {
-                    this.order = this.primaryKey
-                    this.getSchema(this.table).then(() => {
+                let config = null
+                this.loadTable(table).then(config => {
+                    this.order = config.primaryKey
+                    this.schema = config.schema
+                    this.tablePrimaryKey = config.primaryKey
+                    this.tablePrimaryKeyFormat = config.primaryKeyFormat
+                    this.tableForeignKeys = config.foreignKeys
+                    if (this.tab === "query") {
+                        this.tab = "content"
+                    }
+                    if (this.tab === "content") {
                         this.getRecords()
-                    })
+                    }
                 })
             },
             changeTab(tab) {
                 this.tab = tab
                 this.setInsertingRow(false)
                 this.setEditingRow(null)
-                if (tab === "content" && (this.table && this.recordCount() < 1 && !this.processing)) {
+                if (tab === "content" && this.table && this.recordCount() < 1 && !this.processing) {
                     this.getRecords()
                 }
             },
@@ -258,6 +268,7 @@
                 } else {
                     this.order = column
                 }
+                this.getRecords()
             },
             refresh() {
                 this.getRecords()
@@ -294,24 +305,24 @@
             },
             updateRow(payload) {
                 let where = {}
-                where[this.tablePrimaryKey] = payload.primaryKey
-                return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
-                    this.setEditingRow(null)
-                    this.getRecords()
+                this.loadTable(this.table).then(config => {
+                    where[config.primaryKey] = payload.primaryKey
+                    return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
+                        this.setEditingRow(null)
+                        this.getRecords()
+                    })
                 })
             },
             deleteRow(primaryKey) {
                 if (confirm('Delete this row?')) {
                     let where = {}
-                    where[this.tablePrimaryKey] = primaryKey
-
-                    // eslint-disable-next-line
-                    console.log(this.table, where)
-
-                    this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
-                        this.getRecords(this.currentPage()).then(() => {
-                            this.editingRow = null
-                            this.processing = false
+                    this.loadTable(this.table).then(config => {
+                        where[config.primaryKey] = primaryKey
+                        this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
+                            this.getRecords(this.currentPage()).then(() => {
+                                this.editingRow = null
+                                this.processing = false
+                            })
                         })
                     })
                 }

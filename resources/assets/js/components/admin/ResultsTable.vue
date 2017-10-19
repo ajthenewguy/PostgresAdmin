@@ -118,6 +118,9 @@
                 }
                 return output
             },
+            getTable(table) {
+                return this.$parent.loadTable(table)
+            },
             insertRow(data) {
                 this.$emit('insertRow', data)
             },

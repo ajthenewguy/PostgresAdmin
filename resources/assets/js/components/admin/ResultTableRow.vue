@@ -63,13 +63,17 @@
         },
         methods: {
             editRow() {
-                this.refreshRow()
-                this.$emit('editingRow', this.row[this.tablePrimaryKey])
+                this.$parent.getTable(this.table).then(config => {
+                    this.refreshRow()
+                    this.$emit('editingRow', this.row[config.primaryKey])
+                })
             },
             saveRow() {
-                this.$emit('updateRow', {
-                    primaryKey: this.row[this.tablePrimaryKey],
-                    data: this.updatedValues()
+                this.$parent.getTable(this.table).then(config => {
+                    this.$emit('updateRow', {
+                        primaryKey: this.row[config.primaryKey],
+                        data: this.updatedValues()
+                    })
                 })
             },
             refreshRow() {
