@@ -435,11 +435,12 @@
                 this.sql = sql
             },
             afterQuery() {
-                if (this.customQuery) {
+                let top = this.history[this.history.length-1]
+                if (this.customQuery && top !== this.sql) {
                     this.history.push(this.sql)
-                }
-                if (this.history.length > 15) {
-                    this.history = this.history.slice(0, 16)
+                    if (this.history.length > 15) {
+                        this.history = this.history.slice(0, 16)
+                    }
                 }
             },
             querySuccess(response) {
@@ -670,6 +671,7 @@
                 return query
             },
             requestTimeStr(tab) {
+                console.log('deprecated')
                 let time = ""
                 if (this.requestTime[tab]) {
                     if (this.requestTime[tab] > 999) {

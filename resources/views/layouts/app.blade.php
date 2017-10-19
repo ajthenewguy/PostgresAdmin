@@ -76,6 +76,7 @@
                     @else
                         @yield('nav-right')
                     @endguest
+
                 </div>
             </div>
         </nav>

@@ -9,30 +9,6 @@
                     </div>
                 </div>
                 <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
-
-
-
-                <div class="form-group">
-                    <label class="control-label">Database</label>
-                    <select
-                            id="database-switcher"
-                            class="form-control input-sm"
-                            v-model="database"
-                            placeholder="Database"
-                            @change="openDatabase()"
-                    >
-                        <option
-                                v-for="item in databases"
-                                :key="item"
-                                :label="item"
-                                :value="item"
-                        />
-                    </select>
-                </div>
-
-
-
-
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs" id="primaryTabContainer">
@@ -78,19 +54,17 @@
                                 @updateRow="updateRow"
                                 @deleteRow="deleteRow"
                         />
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <span v-if="requestTime[tab] && (records || customRecords)">
-                                    {{ requestTimeStr(tab) }}
-                                </span>
-                                <span v-if="processing">
-                                    <span class="glyphicon glyphicon-refresh spinning"></span>
-                                </span>
-                            </div>
-                            <div class="col-sm-10 text-right">
-                                <!-- no pagination -->
-                            </div>
-                        </div>
+                        <results-footer
+                                :pagination="false"
+                                :processing="processing"
+                                :records="recordsCustom"
+                                :request-time="requestTime"
+                                :tab="tab"
+                                :table="false"
+                                @refresh="refresh"
+                                @changePage="false"
+                                @changePerPage="false"
+                        />
                     </div>
 
                     <!-- STRUCTURE TAB -->
@@ -138,32 +112,17 @@
                                 @updateRow="updateRow"
                                 @deleteRow="deleteRow"
                         />
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <span v-if="processing">
-                                    <span class="glyphicon glyphicon-refresh spinning"></span>
-                                </span>
-                                <span v-else-if="table">
-                                    <a @click.prevent="refresh" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
-                                </span>
-                                <span v-if="requestTime[tab]" class="request-time">
-                                    {{ requestTimeStr(tab) }}
-                                </span>
-                            </div>
-                            <div class="col-sm-10 text-right">
-                                <el-pagination
-                                        v-if="records && records.length"
-                                        layout="sizes, total, prev, pager, next"
-                                        :current-page.sync="pagination.current_page"
-                                        :total="pagination.total"
-                                        :page-count="pagination.last_page"
-                                        :page-size="pagination.per_page"
-                                        :page-sizes="[25, 50, 100, 250, 500]"
-                                        @current-change="getRecords"
-                                        @size-change="handleSizeChange"
-                                />
-                            </div>
-                        </div>
+                        <results-footer
+                                :pagination="pagination"
+                                :processing="processing"
+                                :records="records"
+                                :request-time="requestTime"
+                                :tab="tab"
+                                :table="table"
+                                @refresh="refresh"
+                                @changePage="getRecords"
+                                @changePerPage="handleSizeChange"
+                        />
                     </div>
 
                 </div>
@@ -174,7 +133,7 @@
 
 <script>
     export default {
-        props: [  'databases', 'selectedDatabase', 'loadedTables' ],
+        props: [ 'selectedDatabase', 'loadedTables' ],
         data() {
             return {
                 database: this.selectedDatabase,

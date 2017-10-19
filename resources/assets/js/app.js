@@ -23,6 +23,7 @@ import _ from 'lodash'
 Vue.component('primary-content', require('./components/Content.vue'));
 Vue.component('admin-content', require('./components/admin/Content.vue'));
 Vue.component('database-switcher', require('./components/admin/DatabaseSwitcher.vue'));
+Vue.component('results-footer', require('./components/admin/ResultsFooter.vue'));
 
 Vue.prototype._ = _
 Vue.prototype.$http = axios

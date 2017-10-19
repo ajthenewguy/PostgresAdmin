@@ -47013,6 +47013,7 @@ window.Vue = __webpack_require__(4);
 Vue.component('primary-content', __webpack_require__(226));
 Vue.component('admin-content', __webpack_require__(229));
 Vue.component('database-switcher', __webpack_require__(279));
+Vue.component('results-footer', __webpack_require__(282));
 
 Vue.prototype._ = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a;
 Vue.prototype.$http = axios;
@@ -98188,50 +98189,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['databases', 'selectedDatabase', 'loadedTables'],
+    props: ['selectedDatabase', 'loadedTables'],
     data: function data() {
         return {
             database: this.selectedDatabase,
@@ -98904,11 +98864,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.sql = sql;
         },
         afterQuery: function afterQuery() {
-            if (this.customQuery) {
+            var top = this.history[this.history.length - 1];
+            if (this.customQuery && top !== this.sql) {
                 this.history.push(this.sql);
-            }
-            if (this.history.length > 15) {
-                this.history = this.history.slice(0, 16);
+                if (this.history.length > 15) {
+                    this.history = this.history.slice(0, 16);
+                }
             }
         },
         querySuccess: function querySuccess(response) {
@@ -99151,6 +99112,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return query;
         },
         requestTimeStr: function requestTimeStr(tab) {
+            console.log('deprecated');
             var time = "";
             if (this.requestTime[tab]) {
                 if (this.requestTime[tab] > 999) {
@@ -99685,6 +99647,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
 
+    computed: {
+        reversedHistory: function reversedHistory() {
+            return this.history.slice().reverse();
+        }
+    },
     methods: {
         run: function run() {
             this.$emit('customQuery', this.query);
@@ -99802,7 +99769,7 @@ var render = function() {
         ? _c(
             "ul",
             { staticClass: "dropdown-menu" },
-            _vm._l(_vm.history.reverse(), function(priorQuery) {
+            _vm._l(_vm.reversedHistory, function(priorQuery) {
               return _c("li", [
                 _c(
                   "a",
@@ -101166,54 +101133,7 @@ var render = function() {
               query: _vm.tableQuery
             },
             on: { openTable: _vm.openTable }
-          }),
-          _vm._v(" "),
-          _c("div", { staticClass: "form-group" }, [
-            _c("label", { staticClass: "control-label" }, [_vm._v("Database")]),
-            _vm._v(" "),
-            _c(
-              "select",
-              {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.database,
-                    expression: "database"
-                  }
-                ],
-                staticClass: "form-control input-sm",
-                attrs: { id: "database-switcher", placeholder: "Database" },
-                on: {
-                  change: [
-                    function($event) {
-                      var $$selectedVal = Array.prototype.filter
-                        .call($event.target.options, function(o) {
-                          return o.selected
-                        })
-                        .map(function(o) {
-                          var val = "_value" in o ? o._value : o.value
-                          return val
-                        })
-                      _vm.database = $event.target.multiple
-                        ? $$selectedVal
-                        : $$selectedVal[0]
-                    },
-                    function($event) {
-                      _vm.openDatabase()
-                    }
-                  ]
-                }
-              },
-              _vm._l(_vm.databases, function(item) {
-                return _c("option", {
-                  key: item,
-                  attrs: { label: item },
-                  domProps: { value: item }
-                })
-              })
-            )
-          ])
+          })
         ],
         1
       ),
@@ -101335,30 +101255,21 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-sm-2" }, [
-                    _vm.requestTime[_vm.tab] &&
-                    (_vm.records || _vm.customRecords)
-                      ? _c("span", [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
-                              "\n                            "
-                          )
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.processing
-                      ? _c("span", [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-refresh spinning"
-                          })
-                        ])
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-10 text-right" })
-                ])
+                _c("results-footer", {
+                  attrs: {
+                    pagination: false,
+                    processing: _vm.processing,
+                    records: _vm.recordsCustom,
+                    "request-time": _vm.requestTime,
+                    tab: _vm.tab,
+                    table: false
+                  },
+                  on: {
+                    refresh: _vm.refresh,
+                    changePage: false,
+                    changePerPage: false
+                  }
+                })
               ],
               1
             ),
@@ -101442,74 +101353,21 @@ var render = function() {
                   }
                 }),
                 _vm._v(" "),
-                _c("div", { staticClass: "row" }, [
-                  _c("div", { staticClass: "col-sm-2" }, [
-                    _vm.processing
-                      ? _c("span", [
-                          _c("span", {
-                            staticClass: "glyphicon glyphicon-refresh spinning"
-                          })
-                        ])
-                      : _vm.table
-                        ? _c("span", [
-                            _c(
-                              "a",
-                              {
-                                attrs: { href: "#" },
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    _vm.refresh($event)
-                                  }
-                                }
-                              },
-                              [
-                                _c("span", {
-                                  staticClass: "glyphicon glyphicon-refresh"
-                                })
-                              ]
-                            )
-                          ])
-                        : _vm._e(),
-                    _vm._v(" "),
-                    _vm.requestTime[_vm.tab]
-                      ? _c("span", { staticClass: "request-time" }, [
-                          _vm._v(
-                            "\n                                " +
-                              _vm._s(_vm.requestTimeStr(_vm.tab)) +
-                              "\n                            "
-                          )
-                        ])
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "col-sm-10 text-right" },
-                    [
-                      _vm.records && _vm.records.length
-                        ? _c("el-pagination", {
-                            attrs: {
-                              layout: "sizes, total, prev, pager, next",
-                              "current-page": _vm.pagination.current_page,
-                              total: _vm.pagination.total,
-                              "page-count": _vm.pagination.last_page,
-                              "page-size": _vm.pagination.per_page,
-                              "page-sizes": [25, 50, 100, 250, 500]
-                            },
-                            on: {
-                              "update:currentPage": function($event) {
-                                _vm.pagination.current_page = $event
-                              },
-                              "current-change": _vm.getRecords,
-                              "size-change": _vm.handleSizeChange
-                            }
-                          })
-                        : _vm._e()
-                    ],
-                    1
-                  )
-                ])
+                _c("results-footer", {
+                  attrs: {
+                    pagination: _vm.pagination,
+                    processing: _vm.processing,
+                    records: _vm.records,
+                    "request-time": _vm.requestTime,
+                    tab: _vm.tab,
+                    table: _vm.table
+                  },
+                  on: {
+                    refresh: _vm.refresh,
+                    changePage: _vm.getRecords,
+                    changePerPage: _vm.handleSizeChange
+                  }
+                })
               ],
               1
             )
@@ -101688,6 +101546,194 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-hot-reload-api").rerender("data-v-5965686e", module.exports)
+  }
+}
+
+/***/ }),
+/* 282 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(5)
+/* script */
+var __vue_script__ = __webpack_require__(283)
+/* template */
+var __vue_template__ = __webpack_require__(284)
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/ResultsFooter.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] ResultsFooter.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3a0e0498", Component.options)
+  } else {
+    hotAPI.reload("data-v-3a0e0498", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 283 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['pagination', 'processing', 'records', 'requestTime', 'tab', 'table'],
+    methods: {
+        handleSizeChange: function handleSizeChange(val) {
+            this.$emit('changePerPage', val);
+        },
+        handleCurrentChange: function handleCurrentChange(val) {
+            this.$emit('changePage', val);
+        },
+        requestTimeStr: function requestTimeStr(tab) {
+            var time = "";
+            if (this.requestTime[tab]) {
+                if (this.requestTime[tab] > 999) {
+                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab], 'seconds').format("ss") + " s";
+                } else {
+                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab]) + " ms";
+                }
+            }
+            return time;
+        }
+    }
+});
+
+/***/ }),
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-sm-2" }, [
+      _vm.processing
+        ? _c("span", [
+            _c("span", { staticClass: "glyphicon glyphicon-refresh spinning" })
+          ])
+        : _vm.table
+          ? _c("span", [
+              _c(
+                "a",
+                {
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      _vm.$emit("refresh")
+                    }
+                  }
+                },
+                [_c("span", { staticClass: "glyphicon glyphicon-refresh" })]
+              )
+            ])
+          : _vm._e(),
+      _vm._v(" "),
+      _vm.requestTime[_vm.tab]
+        ? _c("span", { staticClass: "request-time" }, [
+            _vm._v(
+              "\n            " +
+                _vm._s(_vm.requestTimeStr(_vm.tab)) +
+                "\n        "
+            )
+          ])
+        : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "col-sm-10 text-right" },
+      [
+        _vm.pagination && _vm.records && _vm.records.length
+          ? _c("el-pagination", {
+              attrs: {
+                layout: "sizes, total, prev, pager, next",
+                "current-page": _vm.pagination.current_page,
+                total: _vm.pagination.total,
+                "page-count": _vm.pagination.last_page,
+                "page-size": _vm.pagination.per_page,
+                "page-sizes": [25, 50, 100, 250, 500]
+              },
+              on: {
+                "update:currentPage": function($event) {
+                  _vm.pagination.current_page = $event
+                },
+                "size-change": _vm.handleSizeChange,
+                "current-change": _vm.handleCurrentChange
+              }
+            })
+          : _vm._e()
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-3a0e0498", module.exports)
   }
 }
 

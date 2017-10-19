@@ -9,7 +9,7 @@
                 History <span class="caret"></span>
             </button>
             <ul v-if="history.length > 1" class="dropdown-menu">
-                <li v-for="priorQuery in history.reverse()">
+                <li v-for="priorQuery in reversedHistory">
                     <a href="#" @click.prevent="query = priorQuery">{{ priorQuery }}</a>
                 </li>
             </ul>
@@ -27,6 +27,11 @@
         mounted() {
             if (this.sql) {
                 this.query = this.sql
+            }
+        },
+        computed: {
+            reversedHistory: function () {
+                return this.history.slice().reverse()
             }
         },
         methods: {
