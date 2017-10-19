@@ -188,6 +188,7 @@ class QueryController extends AdminController
                 AND tc.table_name=\''.$request->table.'\''
         ];
 
+        $this->beforeQuery($request);
         foreach ($queries as $sql) {
             $results[] = collect(DB::select($sql));
         }
