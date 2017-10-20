@@ -33,7 +33,6 @@
                     <!-- QUERY TAB -->
                     <div class="tab-pane" :class="{ active: tab === 'query' }" id="query">
                         <query
-                                v-if="!processing || customQuery"
                                 :sql="customQuery"
                                 :history="history"
                                 @beforeQuery="beforeQuery"
@@ -49,7 +48,6 @@
                                 :records="recordsCustom"
                                 :processing="processing"
                                 :editing-row="false"
-                                :custom-query="customQuery"
                                 @editingRow="setEditingRow"
                                 @updateRow="updateRow"
                                 @deleteRow="deleteRow"
@@ -58,7 +56,7 @@
                                 :pagination="false"
                                 :processing="processing"
                                 :records="recordsCustom"
-                                :request-time="requestTime"
+                                :request-time="requestTimes"
                                 :tab="tab"
                                 :table="false"
                                 @refresh="refresh"
@@ -104,7 +102,6 @@
                                 :processing="processing"
                                 :inserting-row="insertingRow"
                                 :editing-row="editingRow"
-                                :custom-query="customQuery"
                                 @sortColumn="sortColumn"
                                 @insertingRow="setInsertingRow"
                                 @editingRow="setEditingRow"
@@ -116,7 +113,7 @@
                                 :pagination="pagination"
                                 :processing="processing"
                                 :records="records"
-                                :request-time="requestTime"
+                                :request-time="requestTimes"
                                 :tab="tab"
                                 :table="table"
                                 @refresh="refresh"
@@ -144,6 +141,7 @@
                 insertingRow: false,
                 records: [],
                 recordsCustom: [],
+                requestTimes: {},
                 tab: 'query',
                 tableQuery: '',
                 order: null,
@@ -264,9 +262,18 @@
                     })
                 }
             },
+            beforeRequest() {
+                ///
+            },
+            afterRequest() {
+                this.requestTimes[this.tab] = this.requestTime
+                if (this.tab === 'query') {
+                    this.pushHistory(this.customQuery)
+                }
+            },
             beforeCustomQuery(sql) {
                 if (sql) {
-                    this.customQuery = true
+                    this.customQuery = sql
                 } else {
                     this.recordsCustom = []
                 }

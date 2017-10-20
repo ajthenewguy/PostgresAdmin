@@ -88,8 +88,7 @@
             'tablePrimaryKey',
             'processing',
             'insertingRow',
-            'editingRow',
-            'customQuery'
+            'editingRow'
         ],
         components: {
             'insert-table-row': require('./InsertTableRow'),

@@ -22,8 +22,8 @@
                     total: 0
                 },
                 processing: false,
-                requestTime: {},
-                requestTimeStart: {},
+                requestTime: null,
+                requestTimeStart: null,
                 response: null,
                 result: null,
                 schema: null,
@@ -193,7 +193,7 @@
             },
             selectQuery(sql, page, bindings, perPage, pluck) {
                 this.beforeQuery(sql)
-                this.beforeRequest()
+                this.beforeRequestInternal()
                 let data = {
                     sql: this.sql
                 }
@@ -212,7 +212,7 @@
                     data.pluck = pluck
                 }
                 return axios.post(this.server + '/select', data).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.result = null
@@ -223,7 +223,7 @@
             },
             insertQuery(sql, bindings) {
                 this.beforeQuery(sql)
-                this.beforeRequest()
+                this.beforeRequestInternal()
                 let data = {
                     sql: this.sql
                 }
@@ -231,7 +231,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/insert', data).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -241,7 +241,7 @@
             },
             updateQuery(sql, bindings) {
                 this.beforeQuery(sql)
-                this.beforeRequest()
+                this.beforeRequestInternal()
                 let data = {
                     sql: this.sql
                 }
@@ -249,7 +249,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/update', data).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -259,7 +259,7 @@
             },
             deleteQuery(sql, bindings) {
                 this.beforeQuery(sql)
-                this.beforeRequest()
+                this.beforeRequestInternal()
                 let data = {
                     sql: this.sql
                 }
@@ -267,7 +267,7 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/delete', data).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -277,11 +277,11 @@
             },
             executeQuery(sql) {
                 this.beforeQuery(sql)
-                this.beforeRequest()
+                this.beforeRequestInternal()
                 return axios.post(this.server + '/execute', {
                     sql: this.sql
                 }).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -290,7 +290,7 @@
                 })
             },
             loadTable(table) {
-                this.customQuery = false
+//                this.customQuery = false
                 if (! this.tables.hasOwnProperty(table)) {
                     this.tables[table] = {
                         name: table,
@@ -330,7 +330,6 @@
                     pg_attribute.attrelid = pg_class.oid AND \
                     pg_attribute.attnum = any(pg_index.indkey) \
                 AND indisprimary"
-                this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
                         if (this.result.length) {
@@ -348,7 +347,6 @@
                     "is_updatable AS mutable " +
                     "FROM information_schema.columns WHERE " +
                     "table_name = '" + table + "'"
-                this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
                         this.tables[table].schema = _.clone(this.result)
@@ -367,7 +365,6 @@
                     JOIN information_schema.constraint_column_usage AS ccu \
                     ON ccu.constraint_name = tc.constraint_name \
                     WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'"
-                this.customQuery = false
                 return this.selectQuery(sql)
                     .then(() => {
                         this.tables[table].foreignKeys = _.clone(this.result)
@@ -375,11 +372,11 @@
                     })
             },
             getTableSchema(table) {
-                this.beforeRequest()
+                this.beforeRequestInternal(false)
                 return axios.post(this.server + '/schema', {
                     table: table
                 }).then(response => {
-                    this.afterRequest()
+                    this.afterRequestInternal(false)
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -414,30 +411,35 @@
                 return foreign_key
             },
             beforeRequest() {
-                this.processing = true
-                if (this.customQuery) {
-                    this.requestTime.query = 0
-                    this.requestTimeStart.query = new Date().getTime()
-                } else {
-                    this.requestTime.content = 0
-                    this.requestTimeStart.content = new Date().getTime()
-                }
+                ///
             },
             afterRequest() {
-                if (this.customQuery) {
-                    this.requestTime.query = (new Date().getTime() - this.requestTimeStart.query)
-                } else {
-                    this.requestTime.content = (new Date().getTime() - this.requestTimeStart.content)
+                ///
+            },
+            beforeRequestInternal(track_request_time = true) {
+                this.processing = true
+                if (track_request_time) {
+                    this.requestTime = 0
+                    this.requestTimeStart = new Date().getTime()
+                }
+                this.beforeRequest()
+            },
+            afterRequestInternal(track_request_time = true) {
+                if (track_request_time) {
+                    this.requestTime = (new Date().getTime() - this.requestTimeStart)
                 }
                 this.processing = false
+                this.afterRequest()
             },
             beforeQuery(sql) {
                 this.sql = sql
             },
             afterQuery() {
-                let top = this.history[this.history.length-1]
-                if (this.customQuery && top !== this.sql) {
-                    this.history.push(this.sql)
+                //
+            },
+            pushHistory(query) {
+                if (query !== this.history[this.history.length-1]) {
+                    this.history.push(query)
                     if (this.history.length > 15) {
                         this.history = this.history.slice(0, 16)
                     }

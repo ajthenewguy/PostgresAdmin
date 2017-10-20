@@ -98186,9 +98186,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['selectedDatabase', 'loadedTables'],
@@ -98202,6 +98199,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             insertingRow: false,
             records: [],
             recordsCustom: [],
+            requestTimes: {},
             tab: 'query',
             tableQuery: '',
             order: null,
@@ -98333,9 +98331,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             }
         },
+        beforeRequest: function beforeRequest() {
+            ///
+        },
+        afterRequest: function afterRequest() {
+            this.requestTimes[this.tab] = this.requestTime;
+            if (this.tab === 'query') {
+                this.pushHistory(this.customQuery);
+            }
+        },
         beforeCustomQuery: function beforeCustomQuery(sql) {
             if (sql) {
-                this.customQuery = true;
+                this.customQuery = sql;
             } else {
                 this.recordsCustom = [];
             }
@@ -98440,8 +98447,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 total: 0
             },
             processing: false,
-            requestTime: {},
-            requestTimeStart: {},
+            requestTime: null,
+            requestTimeStart: null,
             response: null,
             result: null,
             schema: null,
@@ -98614,7 +98621,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.beforeQuery(sql);
-            this.beforeRequest();
+            this.beforeRequestInternal();
             var data = {
                 sql: this.sql
             };
@@ -98633,7 +98640,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.pluck = pluck;
             }
             return axios.post(this.server + '/select', data).then(function (response) {
-                _this.afterRequest();
+                _this.afterRequestInternal();
                 _this.querySuccess(response);
             }).catch(function (error) {
                 _this.result = null;
@@ -98646,7 +98653,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.beforeQuery(sql);
-            this.beforeRequest();
+            this.beforeRequestInternal();
             var data = {
                 sql: this.sql
             };
@@ -98654,7 +98661,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/insert', data).then(function (response) {
-                _this2.afterRequest();
+                _this2.afterRequestInternal();
                 _this2.querySuccess(response);
             }).catch(function (error) {
                 _this2.queryError(error);
@@ -98666,7 +98673,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             this.beforeQuery(sql);
-            this.beforeRequest();
+            this.beforeRequestInternal();
             var data = {
                 sql: this.sql
             };
@@ -98674,7 +98681,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/update', data).then(function (response) {
-                _this3.afterRequest();
+                _this3.afterRequestInternal();
                 _this3.querySuccess(response);
             }).catch(function (error) {
                 _this3.queryError(error);
@@ -98686,7 +98693,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this4 = this;
 
             this.beforeQuery(sql);
-            this.beforeRequest();
+            this.beforeRequestInternal();
             var data = {
                 sql: this.sql
             };
@@ -98694,7 +98701,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/delete', data).then(function (response) {
-                _this4.afterRequest();
+                _this4.afterRequestInternal();
                 _this4.querySuccess(response);
             }).catch(function (error) {
                 _this4.queryError(error);
@@ -98706,11 +98713,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this5 = this;
 
             this.beforeQuery(sql);
-            this.beforeRequest();
+            this.beforeRequestInternal();
             return axios.post(this.server + '/execute', {
                 sql: this.sql
             }).then(function (response) {
-                _this5.afterRequest();
+                _this5.afterRequestInternal();
                 _this5.querySuccess(response);
             }).catch(function (error) {
                 _this5.queryError(error);
@@ -98721,7 +98728,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         loadTable: function loadTable(table) {
             var _this6 = this;
 
-            this.customQuery = false;
+            //                this.customQuery = false
             if (!this.tables.hasOwnProperty(table)) {
                 this.tables[table] = {
                     name: table,
@@ -98763,7 +98770,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     pg_attribute.attrelid = pg_class.oid AND \
                     pg_attribute.attnum = any(pg_index.indkey) \
                 AND indisprimary";
-            this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 if (_this7.result.length) {
                     _this7.tables[table].primaryKey = _this7.result[0].attname || 'id';
@@ -98775,7 +98781,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this8 = this;
 
             var sql = "SELECT " + "column_name, data_type AS type, " + "character_maximum_length AS length, " + "column_default AS default_value, " + "is_nullable AS nullable, " + "is_updatable AS mutable " + "FROM information_schema.columns WHERE " + "table_name = '" + table + "'";
-            this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 _this8.tables[table].schema = _.clone(_this8.result);
                 _this8.loadForeignKeys(table);
@@ -98795,7 +98800,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     JOIN information_schema.constraint_column_usage AS ccu \
                     ON ccu.constraint_name = tc.constraint_name \
                     WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'";
-            this.customQuery = false;
             return this.selectQuery(sql).then(function () {
                 _this9.tables[table].foreignKeys = _.clone(_this9.result);
                 _this9.result = null;
@@ -98804,11 +98808,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getTableSchema: function getTableSchema(table) {
             var _this10 = this;
 
-            this.beforeRequest();
+            this.beforeRequestInternal(false);
             return axios.post(this.server + '/schema', {
                 table: table
             }).then(function (response) {
-                _this10.afterRequest();
+                _this10.afterRequestInternal(false);
                 _this10.querySuccess(response);
             }).catch(function (error) {
                 _this10.queryError(error);
@@ -98843,30 +98847,39 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return foreign_key;
         },
         beforeRequest: function beforeRequest() {
-            this.processing = true;
-            if (this.customQuery) {
-                this.requestTime.query = 0;
-                this.requestTimeStart.query = new Date().getTime();
-            } else {
-                this.requestTime.content = 0;
-                this.requestTimeStart.content = new Date().getTime();
-            }
+            ///
         },
         afterRequest: function afterRequest() {
-            if (this.customQuery) {
-                this.requestTime.query = new Date().getTime() - this.requestTimeStart.query;
-            } else {
-                this.requestTime.content = new Date().getTime() - this.requestTimeStart.content;
+            ///
+        },
+        beforeRequestInternal: function beforeRequestInternal() {
+            var track_request_time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            this.processing = true;
+            if (track_request_time) {
+                this.requestTime = 0;
+                this.requestTimeStart = new Date().getTime();
+            }
+            this.beforeRequest();
+        },
+        afterRequestInternal: function afterRequestInternal() {
+            var track_request_time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            if (track_request_time) {
+                this.requestTime = new Date().getTime() - this.requestTimeStart;
             }
             this.processing = false;
+            this.afterRequest();
         },
         beforeQuery: function beforeQuery(sql) {
             this.sql = sql;
         },
         afterQuery: function afterQuery() {
-            var top = this.history[this.history.length - 1];
-            if (this.customQuery && top !== this.sql) {
-                this.history.push(this.sql);
+            //
+        },
+        pushHistory: function pushHistory(query) {
+            if (query !== this.history[this.history.length - 1]) {
+                this.history.push(query);
                 if (this.history.length > 15) {
                     this.history = this.history.slice(0, 16);
                 }
@@ -99660,7 +99673,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 var parsedQuery = this.$parent.parseSql(this.query);
                 // eslint-disable-next-line
-                console.log(parsedQuery);
+                console.log('@todo: use 3rd party lib', parsedQuery);
 
                 switch (parsedQuery.verb) {
                     case 'SELECT':
@@ -99978,7 +99991,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow', 'customQuery'],
+    props: ['tab', 'table', 'order', 'schema', 'records', 'tablePrimaryKey', 'processing', 'insertingRow', 'editingRow'],
     components: {
         'insert-table-row': __webpack_require__(255),
         'result-table-row': __webpack_require__(258)
@@ -101225,18 +101238,16 @@ var render = function() {
                 attrs: { id: "query" }
               },
               [
-                !_vm.processing || _vm.customQuery
-                  ? _c("query", {
-                      attrs: { sql: _vm.customQuery, history: _vm.history },
-                      on: {
-                        beforeQuery: _vm.beforeQuery,
-                        customQuery: _vm.beforeCustomQuery,
-                        success: _vm.querySuccess,
-                        afterQuery: _vm.afterCustomQuery,
-                        error: _vm.queryError
-                      }
-                    })
-                  : _vm._e(),
+                _c("query", {
+                  attrs: { sql: _vm.customQuery, history: _vm.history },
+                  on: {
+                    beforeQuery: _vm.beforeQuery,
+                    customQuery: _vm.beforeCustomQuery,
+                    success: _vm.querySuccess,
+                    afterQuery: _vm.afterCustomQuery,
+                    error: _vm.queryError
+                  }
+                }),
                 _vm._v(" "),
                 _c("results-table", {
                   attrs: {
@@ -101245,8 +101256,7 @@ var render = function() {
                     "table-primary-key": false,
                     records: _vm.recordsCustom,
                     processing: _vm.processing,
-                    "editing-row": false,
-                    "custom-query": _vm.customQuery
+                    "editing-row": false
                   },
                   on: {
                     editingRow: _vm.setEditingRow,
@@ -101260,7 +101270,7 @@ var render = function() {
                     pagination: false,
                     processing: _vm.processing,
                     records: _vm.recordsCustom,
-                    "request-time": _vm.requestTime,
+                    "request-time": _vm.requestTimes,
                     tab: _vm.tab,
                     table: false
                   },
@@ -101340,8 +101350,7 @@ var render = function() {
                     records: _vm.records,
                     processing: _vm.processing,
                     "inserting-row": _vm.insertingRow,
-                    "editing-row": _vm.editingRow,
-                    "custom-query": _vm.customQuery
+                    "editing-row": _vm.editingRow
                   },
                   on: {
                     sortColumn: _vm.sortColumn,
@@ -101358,7 +101367,7 @@ var render = function() {
                     pagination: _vm.pagination,
                     processing: _vm.processing,
                     records: _vm.records,
-                    "request-time": _vm.requestTime,
+                    "request-time": _vm.requestTimes,
                     tab: _vm.tab,
                     table: _vm.table
                   },

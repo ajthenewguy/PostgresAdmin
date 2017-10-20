@@ -42,7 +42,7 @@
 
                     let parsedQuery = this.$parent.parseSql(this.query)
                     // eslint-disable-next-line
-                    console.log(parsedQuery)
+                    console.log('@todo: use 3rd party lib', parsedQuery)
 
                     switch(parsedQuery.verb) {
                         case 'SELECT': {
