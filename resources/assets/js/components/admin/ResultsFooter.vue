@@ -1,14 +1,14 @@
 <template>
     <div class="row">
         <div class="col-sm-2">
-            <span v-if="processing">
+            <span v-if="state.processing">
                 <span class="glyphicon glyphicon-refresh spinning"></span>
             </span>
             <span v-else-if="table">
                 <a @click.prevent="$emit('refresh')" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
             </span>
-            <span v-if="requestTime[tab]" class="request-time">
-                {{ requestTimeStr(tab) }}
+            <span v-if="requestTime" class="request-time">
+                {{ requestTimeStr }}
             </span>
         </div>
         <div class="col-sm-10 text-right">
@@ -29,24 +29,32 @@
 <script>
     import moment from 'moment'
     export default {
-        props: [ 'pagination', 'processing', 'records', 'requestTime', 'tab', 'table'  ],
+        props: [ 'pagination', 'records', 'requestTime', 'tab', 'table'  ],
+        data() {
+            return {
+                store: window.store,
+                state: window.store.state
+            }
+        },
+        computed: {
+            requestTimeStr: function () {
+                let time = ""
+                if (this.requestTime) {
+                    if (this.requestTime > 999) {
+                        time = moment.duration(this.requestTime, 'seconds').format("ss") + " s"
+                    } else {
+                        time = moment.duration(this.requestTime) + " ms"
+                    }
+                }
+                return time
+            }
+        },
         methods: {
             handleSizeChange(val) {
                 this.$emit('changePerPage', val)
             },
             handleCurrentChange(val) {
                 this.$emit('changePage', val)
-            },
-            requestTimeStr(tab) {
-                let time = ""
-                if (this.requestTime[tab]) {
-                    if (this.requestTime[tab] > 999) {
-                        time = moment.duration(this.requestTime[tab], 'seconds').format("ss") + " s"
-                    } else {
-                        time = moment.duration(this.requestTime[tab]) + " ms"
-                    }
-                }
-                return time
             }
         }
     }

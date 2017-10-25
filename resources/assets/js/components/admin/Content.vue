@@ -8,121 +8,16 @@
                         <span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
                     </div>
                 </div>
-                <list :tables="tables" :table="table" :query="tableQuery" @openTable="openTable" />
+                <list
+                        :tables="tables"
+                        :table="table"
+                        :query="tableQuery"
+                        @openTable="openTable"
+                        @addStructureTab="addStructureTab"
+                />
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <ul class="nav nav-tabs" id="primaryTabContainer">
-                    <li :class="{ active: tab === 'query' }">
-                        <a href="#query" @click="changeTab('query')" data-toggle="pill">
-                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Query
-                        </a>
-                    </li>
-                    <li :class="{ active: tab === 'structure' }">
-                        <a href="#structure" @click="changeTab('structure')" data-toggle="pill">
-                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Structure
-                        </a>
-                    </li>
-                    <li :class="{ active: tab === 'content' }">
-                        <a href="#content" @click="changeTab('content')" data-toggle="pill">
-                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Content
-                        </a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-
-                    <!-- QUERY TAB -->
-                    <div class="tab-pane" :class="{ active: tab === 'query' }" id="query">
-                        <query
-                                :sql="customQuery"
-                                :history="history"
-                                @beforeQuery="beforeQuery"
-                                @customQuery="beforeCustomQuery"
-                                @success="querySuccess"
-                                @afterQuery="afterCustomQuery"
-                                @error="queryError"
-                        />
-                        <results-table
-                                :tab="tab"
-                                :table="table"
-                                :table-primary-key="false"
-                                :records="recordsCustom"
-                                :processing="processing"
-                                :editing-row="false"
-                                @editingRow="setEditingRow"
-                                @updateRow="updateRow"
-                                @deleteRow="deleteRow"
-                        />
-                        <results-footer
-                                :pagination="false"
-                                :processing="processing"
-                                :records="recordsCustom"
-                                :request-time="requestTimes"
-                                :tab="tab"
-                                :table="false"
-                                @refresh="refresh"
-                                @changePage="false"
-                                @changePerPage="false"
-                        />
-                    </div>
-
-                    <!-- STRUCTURE TAB -->
-                    <div class="tab-pane" :class="{ active: tab === 'structure' }" id="structure">
-                        <div v-if="table && schema">
-                            <structure-table
-                                    :table="table"
-                                    :schema="schema"
-                                    :processing="processing"
-                            />
-                            <indices-table
-                                    :table="table"
-                                    :table-foreign-keys="tableForeignKeys"
-                                    :processing="processing"
-                            />
-                        </div>
-                        <div v-else>
-                            <div v-if="!processing" class="empty">
-                                No table selected
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CONTENT TAB -->
-                    <div class="tab-pane" :class="{ active: tab === 'content' }" id="content">
-                        <content-filter
-                                v-if="(records && records.length > 0) || where"
-                                @filterWhere="filterWhere"
-                        />
-                        <results-table
-                                :tab="tab"
-                                :table="table"
-                                :order="order"
-                                :schema="schema"
-                                :table-primary-key="tablePrimaryKey"
-                                :records="records"
-                                :processing="processing"
-                                :inserting-row="insertingRow"
-                                :editing-row="editingRow"
-                                @sortColumn="sortColumn"
-                                @insertingRow="setInsertingRow"
-                                @editingRow="setEditingRow"
-                                @insertRow="insertRow"
-                                @updateRow="updateRow"
-                                @deleteRow="deleteRow"
-                        />
-                        <results-footer
-                                :pagination="pagination"
-                                :processing="processing"
-                                :records="records"
-                                :request-time="requestTimes"
-                                :tab="tab"
-                                :table="table"
-                                @refresh="refresh"
-                                @changePage="getRecords"
-                                @changePerPage="handleSizeChange"
-                        />
-                    </div>
-
-                </div>
+                <tabs ref="tabs"></tabs>
             </div>
         </div>
     </div>
@@ -133,6 +28,8 @@
         props: [ 'selectedDatabase', 'loadedTables' ],
         data() {
             return {
+                store: window.store,
+                state: window.store.state,
                 database: this.selectedDatabase,
                 table: null,
                 tables: this.loadedTables,
@@ -142,10 +39,10 @@
                 records: [],
                 recordsCustom: [],
                 requestTimes: {},
-                tab: 'query',
                 tableQuery: '',
                 order: null,
-                where: null
+                where: null,
+                tabs: []
             }
         },
         mixins: [ require( '../../mixins/PostgresMixin.vue') ],
@@ -157,144 +54,63 @@
             'structure-table': require('./StructureTable'),
             'indices-table': require('./IndicesTable')
         },
+        mounted() {
+            this.newTab("query")
+        },
+        watch: {
+            state: {
+                handler() {
+                    this.tabs = this.state.tabs
+                },
+                deep: true
+            }
+        },
         methods: {
-            recordCount() {
-                return this.records ? this.records.length : 0
-            },
-            openTable(table) {
+            addTableTab(table, type) {
                 this.clearTable()
                 this.table = table
-                this.setInsertingRow(false)
-                this.setEditingRow(null)
                 this.loadTable(table).then(config => {
-                    this.order = config.primaryKey
-                    this.schema = config.schema
-                    this.tablePrimaryKey = config.primaryKey
-                    this.tablePrimaryKeyFormat = config.primaryKeyFormat
-                    this.tableForeignKeys = config.foreignKeys
-                    if (this.tab === "query") {
-                        this.tab = "content"
+                    this.newTab(type, table, config)
+                })
+            },
+            openTable(table) {
+                this.addTableTab(table, "content")
+            },
+            addStructureTab(table) {
+                this.addTableTab(table, "structure")
+            },
+            activeTab() {
+                return this.$refs.tabs.activeTab()
+            },
+            newTab(type, title, table) {
+                let tabId = this.$refs.tabs.newTab(...arguments)
+                this.changeTab(tabId)
+            },
+            changeTab(id) {
+                this.$refs.tabs.changeTab(id)
+            },
+            closeTab(id) {
+                return this.$refs.tabs.closeTab(id)
+            },
+            tabIcon(type) {
+                switch (type) {
+                    case "query": {
+                        return "glyphicon glyphicon-search"
                     }
-                    if (this.tab === "content") {
-                        this.getRecords()
+                    case "content": {
+                        return "glyphicon glyphicon-th-list"
                     }
-                })
-            },
-            handleSizeChange(size) {
-                this.pagination.per_page = size
-                this.refresh()
-            },
-            changeTab(tab) {
-                this.tab = tab
-                this.setInsertingRow(false)
-                this.setEditingRow(null)
-                if (tab === "content" && this.table && this.recordCount() < 1 && !this.processing) {
-                    this.getRecords()
-                }
-            },
-            currentPage() {
-                return this.pagination.current_page
-            },
-            sortColumn(column) {
-                if (typeof this.order === "string" && this.order === column) {
-                    this.order = [column, 'DESC']
-                } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
-                    this.order = this.primaryKey
-                } else {
-                    this.order = column
-                }
-                this.getRecords()
-            },
-            refresh() {
-                this.getRecords()
-            },
-            filterWhere(where) {
-                this.where = where
-                this.getRecords()
-            },
-            getRecords(page) {
-                let sql = this.makeSelect(this.table, this.where, null, this.order)
-                if (typeof page === "undefined") {
-                    page = this.currentPage()
-                }
-                return this.selectQuery(sql, page).then(response => {
-                    if (this.tab === 'content') {
-                        this.records = this.result
-                    } else {
-                        this.recordsCustom = this.result
+                    case "structure": {
+                        return "glyphicon glyphicon-info-sign"
                     }
-                })
-            },
-            setInsertingRow(inserting) {
-                this.editingRow = false
-                this.insertingRow = !! inserting
-            },
-            setEditingRow(row) {
-                this.editingRow = row
-            },
-            insertRow(data) {
-                return this.insertQuery(this.makeInsert(this.table, data), data).then(() => {
-                    this.setInsertingRow(false)
-                    this.getRecords()
-                })
-            },
-            updateRow(payload) {
-                let where = {}
-                this.loadTable(this.table).then(config => {
-                    where[config.primaryKey] = payload.primaryKey
-                    return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
-                        this.setEditingRow(null)
-                        this.getRecords()
-                    })
-                })
-            },
-            deleteRow(primaryKey) {
-                if (confirm('Delete this row?')) {
-                    let where = {}
-                    this.loadTable(this.table).then(config => {
-                        where[config.primaryKey] = primaryKey
-                        this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
-                            this.getRecords(this.currentPage()).then(() => {
-                                this.editingRow = null
-                                this.processing = false
-                            })
-                        })
-                    })
-                }
-            },
-            beforeRequest() {
-                ///
-            },
-            afterRequest() {
-                this.requestTimes[this.tab] = this.requestTime
-                if (this.tab === 'query') {
-                    this.pushHistory(this.customQuery)
-                }
-            },
-            beforeCustomQuery(sql) {
-                if (sql) {
-                    this.customQuery = sql
-                } else {
-                    this.recordsCustom = []
-                }
-            },
-            afterCustomQuery() {
-                if (this.result) {
-                    this.recordsCustom = this.result
                 }
             },
             clearTable() {
                 this.table = null
                 this.schema = null
-                this.tablePrimaryKey = ''
-                this.tablePrimaryKeyFormat = ''
-                this.tableForeignKeys = null
                 this.order = null
                 this.filter = null
                 this.records = []
-            },
-            titleCase(string) {
-                return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
             }
         }
     }
@@ -330,6 +146,9 @@
     }
     .list-group-item {
         padding: 3px 10px
+    }
+    .closeTab {
+        margin-left: 5px;
     }
     .empty {
         color: #bcbcbc;
@@ -371,9 +190,8 @@
     /* Move down content because we have a fixed navbar that is 50px tall */
     body {
         margin-bottom: 32px;
-        padding-top: 50px;
+        padding-top: 30px;
     }
-
 
     /*
      * Global add-ons
@@ -403,7 +221,7 @@
     @media (min-width: 768px) {
         .sidebar {
             position: fixed;
-            top: 51px;
+            top: 42px;
             bottom: 0;
             left: 0;
             z-index: 1000;

@@ -25,13 +25,13 @@
         props: [
             'tab',
             'table',
-            'schema',
-            'tablePrimaryKey',
-            'processing',
-            'insertingRow'
+            'schema'
         ],
+        mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
+                store: window.store,
+                state: window.store.state,
                 insertRow: {}
             }
         },
@@ -40,15 +40,16 @@
                 this.$emit('insertRow', this.insertRow)
             },
             getFieldDefault(column) {
-                let config = this.getColumn(column)
-                return config.default_value ? config.default_value : ""
-            },
-            getColumn(column) {
-                return this.$parent.getColumn(column)
+                let config = this.getColumn(this.table, column)
+                return config.default_value ? config.default_value : (config.nullable === "YES" ? "<null>" : "")
             },
             getFormComponent(column) {
-                let config = this.$parent.getColumn(column)
+                let config = this.getColumn(this.table, column)
                 let data_type = this.$parent.getDataTypeDisplay(config.type)
+
+                // eslint-disable-next-line
+                console.log(config)
+
                 switch(data_type) {
                     case "boolean": {
                         return 'el-checkbox'
@@ -72,7 +73,7 @@
                 }
             },
             getTypeAttr(column) {
-                let config = this.$parent.getColumn(column)
+                let config = this.getColumn(column)
                 let data_type = this.$parent.getDataTypeDisplay(config.type)
                 switch(data_type) {
                     case "date": {

@@ -3,11 +3,10 @@
     export default {
         data() {
             return {
+                store: window.store,
+                state: window.store.state,
                 cacheData: {},
                 customQuery: false,
-                errors: [],
-                history: [],
-                order: null,
                 pagination: {
                     current_page: 1,
                     first_page_url: '',
@@ -21,19 +20,12 @@
                     to: null,
                     total: 0
                 },
-                processing: false,
                 requestTime: null,
                 requestTimeStart: null,
                 response: null,
                 result: null,
-                schema: null,
                 server: 'http://postgres:5433',
-                sql: '',
-                tables: [],
-                tablePrimaryKey: '',
-                tablePrimaryKeyFormat: '',
-                tableForeignKeys: null,
-                where: null
+                sql: ''
             }
         },
         methods: {
@@ -123,7 +115,7 @@
                     }
                 }
                 if (! order) {
-                    order = this.tablePrimaryKey
+                    order = this.getTablePrimaryKey(table)
                 }
                 if (order) {
                     sql += ' ORDER BY ' + this.makeOrderBy(order)
@@ -290,30 +282,34 @@
                 })
             },
             loadTable(table) {
-//                this.customQuery = false
-                if (! this.tables.hasOwnProperty(table)) {
-                    this.tables[table] = {
+                if (! this.state.tables.hasOwnProperty(table)) {
+                    // eslint-disable-next-line
+                    console.log('loadTable FRESH:', table)
+                    this.state.tables[table] = {
                         name: table,
                         schema: null,
                         primaryKey: null,
                         primaryKeyFormat: null,
                         foreignKeys: null
                     }
-                    return this.getTableSchema(table).then(() => {
+                    return this.loadTableSchema(table).then(() => {
                         if (this.result[0].length) {
-                            this.tables[table].schema = _.clone(this.result[0])
+                            this.state.tables[table].schema = _.clone(this.result[0])
                         }
                         if (this.result[1].length && Object.keys(this.result[1][0]).length) {
-                            this.tables[table].primaryKey = this.result[1][0].attname || 'id'
-                            this.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
+                            this.state.tables[table].primaryKey = this.result[1][0].attname || 'id'
+                            this.state.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
                         }
                         if (this.result[2].length) {
-                            this.tables[table].foreignKeys = _.clone(this.result[2])
+                            this.state.tables[table].foreignKeys = _.clone(this.result[2])
                         }
-                        return this.tables[table]
+                        this.state.loadingTable = false
+                        return this.state.tables[table]
                     })
                 } else {
-                    return Promise.resolve(this.tables[table])
+                    // eslint-disable-next-line
+                    console.log('loadTable CACHED:', table)
+                    return Promise.resolve(this.state.tables[table])
                 }
             },
             loadPrimaryKey(table) {
@@ -333,8 +329,8 @@
                 return this.selectQuery(sql)
                     .then(() => {
                         if (this.result.length) {
-                            this.tables[table].primaryKey = this.result[0].attname || 'id'
-                            this.tables[table].primaryKeyFormat = this.result[0].format_type || ''
+                            this.state.tables[table].primaryKey = this.result[0].attname || 'id'
+                            this.state.tables[table].primaryKeyFormat = this.result[0].format_type || ''
                         }
                     })
             },
@@ -349,7 +345,7 @@
                     "table_name = '" + table + "'"
                 return this.selectQuery(sql)
                     .then(() => {
-                        this.tables[table].schema = _.clone(this.result)
+                        this.state.tables[table].schema = _.clone(this.result)
                         this.loadForeignKeys(table)
                     })
             },
@@ -367,11 +363,11 @@
                     WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='" + table + "'"
                 return this.selectQuery(sql)
                     .then(() => {
-                        this.tables[table].foreignKeys = _.clone(this.result)
+                        this.state.tables[table].foreignKeys = _.clone(this.result)
                         this.result = null
                     })
             },
-            getTableSchema(table) {
+            loadTableSchema(table) {
                 this.beforeRequestInternal(false)
                 return axios.post(this.server + '/schema', {
                     table: table
@@ -382,33 +378,65 @@
                     this.queryError(error)
                 })
             },
-            getColumn(column) {
+            getTableSchema(table) {
+                return this.state.tables[table].schema
+            },
+            getTablePrimaryKey(table) {
+                return this.state.tables[table].primaryKey
+            },
+            getTablePrimaryKeyFormat(table) {
+                return this.state.tables[table].primaryKeyFormat
+            },
+            getTableForeignKeys(table) {
+                return this.state.tables[table].foreignKeys
+            },
+            getColumn(table, column) {
                 let info = {}
-                if (this.schema) {
-                    let length = this.schema.length
+                if (this.state.tables[table] && this.state.tables[table].schema) {
+                    let length = this.state.tables[table].schema.length
                     for (let i = 0; i < length; i++) {
-                        if (this.schema[i].column_name === column) {
-                            info = this.schema[i]
+                        if (this.state.tables[table].schema[i].column_name === column) {
+                            info = this.state.tables[table].schema[i]
                         }
                     }
                 }
                 return info
             },
-            getColumnForeignKey(column) {
+            getColumnForeignKey(table, column) {
                 let foreign_key = false
-                if (this.tableForeignKeys) {
-                    let length = this.tableForeignKeys.length
+                if (this.state.tables[table].foreignKeys) {
+                    let length = this.state.tables[table].foreignKeys.length
                     for (let i = 0; i < length; i++) {
-                        if (this.tableForeignKeys[i].column_name === column) {
+                        if (this.state.tables[table].foreignKeys[i].column_name === column) {
                             foreign_key = {
-                                name: this.tableForeignKeys[i].constraint_name,
-                                table: this.tableForeignKeys[i].foreign_table_name,
-                                column: this.tableForeignKeys[i].foreign_column_name
+                                name: this.state.tables[table].foreignKeys[i].constraint_name,
+                                table: this.state.tables[table].foreignKeys[i].foreign_table_name,
+                                column: this.state.tables[table].foreignKeys[i].foreign_column_name
                             }
                         }
                     }
                 }
                 return foreign_key
+            },
+            getDefaultSort(table) {
+                let sortBy = table.primaryKey
+                let sortByFallbacks = [
+                    'id', 'created_at', 'updated_at', 'code', 'name', 'reviewed_on'
+                ]
+                let sortByFallbacksCount = sortByFallbacks.length
+                if (table.primaryKeyFormat === "uuid") {
+                    let columnCount = table.schema.length
+                    if (sortBy === table.primaryKey) {
+                        for (let h = 0; h < sortByFallbacksCount; h++) {
+                            for (let i = 0; i < columnCount; i++) {
+                                if (sortBy === table.primaryKey && sortByFallbacks[h] === table.schema[i].column_name) {
+                                    sortBy = table.schema[i].column_name
+                                }
+                            }
+                        }
+                    }
+                }
+                return sortBy
             },
             beforeRequest() {
                 ///
@@ -417,7 +445,7 @@
                 ///
             },
             beforeRequestInternal(track_request_time = true) {
-                this.processing = true
+                this.store.setProcessing(true)
                 if (track_request_time) {
                     this.requestTime = 0
                     this.requestTimeStart = new Date().getTime()
@@ -428,7 +456,7 @@
                 if (track_request_time) {
                     this.requestTime = (new Date().getTime() - this.requestTimeStart)
                 }
-                this.processing = false
+                this.store.setProcessing(false)
                 this.afterRequest()
             },
             beforeQuery(sql) {
@@ -437,28 +465,20 @@
             afterQuery() {
                 //
             },
-            pushHistory(query) {
-                if (query !== this.history[this.history.length-1]) {
-                    this.history.push(query)
-                    if (this.history.length > 15) {
-                        this.history = this.history.slice(0, 16)
-                    }
-                }
-            },
             querySuccess(response) {
                 this.response = response
                 this.result = this.parseResponse(response)
             },
             queryError(error) {
                 let message = this.parseError(error)
-                this.errors.push(message)
+                this.state.errors.push(message)
                 console.error(message)
                 if (typeof message === "string") {
                     alert(message)
                 }
             },
             validationError(message) {
-                this.errors.push(message)
+                this.state.errors.push(message)
                 console.error(message)
                 alert(message)
             },

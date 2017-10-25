@@ -9,13 +9,13 @@
                         {{ name }}
                     </th>
                 </tr>
-                <tr v-else-if="table">
+                <tr v-else-if="tableConfig">
                     <th>
                         <button @click="$emit('insertingRow', true)" type="button" class="btn btn-default btn-xs" aria-label="Insert Row">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         </button>
                     </th>
-                    <th v-for="(value, name) in schema">
+                    <th v-for="(value, name) in tableConfig.schema">
                         <span v-html="keyIcon(value['column_name'])"></span>
                         <a href="#" @click.prevent="$emit('sortColumn', value['column_name'])">{{ value['column_name'] }}<span v-html="sortIcon(value['column_name'])" style="margin-left:5px"></span></a>
                         <br>
@@ -24,35 +24,30 @@
                 </tr>
                 </thead>
                 <transition name="fade">
-                    <tbody v-if="!processing">
+                    <tbody v-if="!state.processing">
                         <insert-table-row
                                 v-if="table && insertingRow"
                                 :tab="tab"
                                 :table="table"
-                                :schema="schema"
-                                :table-primary-key="tablePrimaryKey"
-                                :processing="processing"
-                                :inserting-row="insertingRow"
+                                :schema="tableConfig.schema"
                                 @cancelInsertingRow="$emit('insertingRow', false)"
                                 @insertRow="insertRow"
                         />
                         <result-table-row
                                 v-if="records"
                                 v-for="row in records"
-                                :key="row[tablePrimaryKey]"
+                                :key="(tableConfig? row[tableConfig.primaryKey] : undefined)"
                                 :tab="tab"
                                 :table="table"
-                                :schema="schema"
-                                :table-primary-key="tablePrimaryKey"
+                                :table-config="tableConfig"
                                 :row="row"
-                                :processing="processing"
                                 :editing-row="editingRow"
-                                @editingRow="$emit('editingRow', row[tablePrimaryKey])"
+                                @editingRow="$emit('editingRow', row[tableConfig.primaryKey])"
                                 @cancelEditingRow="$emit('editingRow', null)"
                                 @updateRow="updateRow"
-                                @deleteRow="$emit('deleteRow', row[tablePrimaryKey])"
+                                @deleteRow="$emit('deleteRow', row[tableConfig.primaryKey])"
                         />
-                        <tr v-if="!processing">
+                        <tr v-if="!state.processing">
                             <td
                                     v-if="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
                                     :colspan="colspan"
@@ -82,31 +77,29 @@
         props: [
             'tab',
             'table',
+            'tableConfig',
             'order',
-            'schema',
             'records',
-            'tablePrimaryKey',
-            'processing',
             'insertingRow',
             'editingRow'
         ],
+        mixins: [require('../../mixins/PostgresMixin.vue')],
+        data() {
+            return {
+                store: window.store,
+                state: window.store.state
+            }
+        },
         components: {
             'insert-table-row': require('./InsertTableRow'),
             'result-table-row': require('./ResultTableRow')
         },
         computed: {
-            // a computed getter
             colspan: function () {
-                return this.schema ? (Object.keys(this.schema).length + (this.tab === 'content' ? 1 : 0)) : 2
+                return this.tableConfig ? (Object.keys(this.tableConfig.schema).length + (this.tab === 'content' ? 1 : 0)) : 2
             }
         },
         methods: {
-            getColumn(column) {
-                return this.$parent.getColumn(column)
-            },
-            getColumnForeignKey(column) {
-                return this.$parent.getColumnForeignKey(column)
-            },
             getDataTypeDisplay(input) {
                 let output = input || '_'
                 if (output.includes('timestamp ')) {
@@ -117,9 +110,6 @@
                 }
                 return output
             },
-            getTable(table) {
-                return this.$parent.loadTable(table)
-            },
             insertRow(data) {
                 this.$emit('insertRow', data)
             },
@@ -127,23 +117,31 @@
                 this.$emit('updateRow', data)
             },
             keyIcon(column) {
-                let icon = ''
-                let foreign_key = this.getColumnForeignKey(column)
-                if (column === this.tablePrimaryKey) {
-                    icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
-                } else if (foreign_key) {
-                    icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
+                let icon = '',
+                    foreign_key = ''
+                if (this.tableConfig.schema) {
+                    foreign_key = this.tableConfig.foreignKeys
+                    if (column === this.tableConfig.primaryKey) {
+                        icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
+                    } else if (foreign_key) {
+                        icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
+                    }
                 }
                 return icon
             },
             sortIcon(column) {
                 let icon = ''
-                if (typeof this.order === "string" && this.order === column) {
-                    icon = '<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>'
-                } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
-                    icon = '<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>'
+                if (this.order) {
+                    if (typeof this.order === "string" && this.order === column) {
+                        icon = '<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span>'
+                    } else if (this.order && this.order.constructor === Array && this.order[0] === column) {
+                        icon = '<span class="glyphicon glyphicon-sort-by-attributes-alt" aria-hidden="true"></span>'
+                    }
                 }
                 return icon
+            },
+            schema() {
+                return this.tableConfig.schema
             }
         }
     }
@@ -154,12 +152,18 @@
     .table .rowButtons {
         white-space: nowrap;
     }
-    .results .table td input {
-        border: 0;
-        height: 20px;
-        padding: 3px;
+    .results {
+        .table td {
+            input {
+                border: 0;
+                height: 20px;
+                padding: 3px;
+            }
+            span {
+                white-space: nowrap;
+            }
+        }
     }
-
     .fade-enter-active, .fade-leave-active {
         transition: opacity .5s
     }

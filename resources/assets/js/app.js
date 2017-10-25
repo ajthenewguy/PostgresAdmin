@@ -23,11 +23,37 @@ import _ from 'lodash'
 Vue.component('primary-content', require('./components/Content.vue'));
 Vue.component('admin-content', require('./components/admin/Content.vue'));
 Vue.component('database-switcher', require('./components/admin/DatabaseSwitcher.vue'));
-Vue.component('results-footer', require('./components/admin/ResultsFooter.vue'));
+Vue.component('tabs', require('./components/Tabs.vue'));
+Vue.component('tab', require('./components/admin/Tab.vue'));
+// Vue.component('results-footer', require('./components/admin/ResultsFooter.vue'));
 
 Vue.prototype._ = _
 Vue.prototype.$http = axios
 
+window.store = {
+    debug: true,
+    state: {
+        activeTab: 0,
+        closingTab: false,
+        errors: [],
+        loadingTable: false,
+        processing: false,
+        tables: []
+    },
+    uuid() {
+        return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
+    },
+    setProcessing(newValue) {
+        this.state.processing = !! newValue
+    },
+    isProcessing () {
+        if (this.debug) console.log('clearMessageAction triggered')
+        this.state.message = ''
+    },
+    titleCase(string) {
+        return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+    }
+}
 window.App = new Vue({
     el: '#app',
     created() {

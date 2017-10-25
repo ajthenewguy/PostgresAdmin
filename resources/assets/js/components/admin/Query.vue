@@ -43,28 +43,32 @@
                     let parsedQuery = this.$parent.parseSql(this.query)
                     // eslint-disable-next-line
                     console.log('@todo: use 3rd party lib', parsedQuery)
-
-                    switch(parsedQuery.verb) {
-                        case 'SELECT': {
-                            return this.$parent.selectQuery(this.query).then(this.afterRun)
-                            break
-                        }
-                        case 'INSERT': {
-                            return this.$parent.insertQuery(this.query).then(this.afterRun)
-                            break
-                        }
-                        case 'UPDATE': {
-                            return this.$parent.updateQuery(this.query).then(this.afterRun)
-                            break
-                        }
-                        case 'DELETE': {
-                            return this.$parent.deleteQuery(this.query).then(this.afterRun)
-                            break
-                        }
-                        default: {
-                            return this.$parent.executeQuery(this.query).then(this.afterRun)
-                            break
-                        }
+                    this.executeParsedQuery(parsedQuery)
+                }
+            },
+            executeParsedQuery(parsedQuery) {
+                switch(parsedQuery.verb) {
+                    case 'SELECT': {
+                        // eslint-disable-next-line
+                        console.log(this.query)
+                        return this.$parent.selectQuery(this.query).then(this.afterRun)
+                        break
+                    }
+                    case 'INSERT': {
+                        return this.$parent.insertQuery(this.query).then(this.afterRun)
+                        break
+                    }
+                    case 'UPDATE': {
+                        return this.$parent.updateQuery(this.query).then(this.afterRun)
+                        break
+                    }
+                    case 'DELETE': {
+                        return this.$parent.deleteQuery(this.query).then(this.afterRun)
+                        break
+                    }
+                    default: {
+                        return this.$parent.executeQuery(this.query).then(this.afterRun)
+                        break
                     }
                 }
             },

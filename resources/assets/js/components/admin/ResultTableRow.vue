@@ -1,14 +1,14 @@
 <template>
-    <tr :class="{ warning: editingRow === row[tablePrimaryKey] }">
+    <tr :class="{ warning: (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
         <td v-if="tab !== 'query'" class="rowButtons">
-            <span v-if="editingRow === row[tablePrimaryKey]">
+            <span v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
                 <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
                 <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
                     <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                 </button>
-                <button key="delete" @click="$emit('deleteRow', row[tablePrimaryKey])" type="button" class="btn btn-default btn-xs">
+                <button key="delete" @click="$emit('deleteRow', row[tableConfig.primaryKey])" type="button" class="btn btn-default btn-xs">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
             </span>
@@ -19,7 +19,7 @@
             </span>
         </td>
         <td v-for="(value, name) in data">
-            <span v-if="editingRow === row[tablePrimaryKey]">
+            <span v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
                 <component
                         :is="getFormComponent(name)"
                         v-model="data[name]"
@@ -28,8 +28,8 @@
                         @keyup.enter.native="saveRow"
                 />
             </span>
-            <span v-else>
-                {{ value }}
+            <span v-else v-html="valueDisplay(name)">
+                <!--{{ valueDisplay(name) }}-->
             </span>
         </td>
     </tr>
@@ -41,15 +41,17 @@
         props: [
             'tab',
             'table',
-            'schema',
+            'tableConfig',
             'row',
-            'tablePrimaryKey',
-            'processing',
             'insertingRow',
             'editingRow'
         ],
+        mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
+                store: window.store,
+                state: window.store.state,
+                config: null,
                 data: {}
             }
         },
@@ -63,31 +65,24 @@
         },
         methods: {
             editRow() {
-                this.$parent.getTable(this.table).then(config => {
-                    this.refreshRow()
-                    this.$emit('editingRow', this.row[config.primaryKey])
-                })
+                this.refreshRow()
+                this.$emit('editingRow', this.row[this.tableConfig.primaryKey])
             },
             saveRow() {
-                this.$parent.getTable(this.table).then(config => {
-                    this.$emit('updateRow', {
-                        primaryKey: this.row[config.primaryKey],
-                        data: this.updatedValues()
-                    })
+                this.$emit('updateRow', {
+                    primaryKey: this.row[this.tableConfig.primaryKey],
+                    data: this.updatedValues()
                 })
             },
             refreshRow() {
                 this.data = _.clone(this.row)
             },
             getFieldDefault(column) {
-                let config = this.getColumn(column)
+                let config = this.getColumn(this.table, column)
                 return config.default_value ? config.default_value : ""
             },
-            getColumn(column) {
-                return this.$parent.getColumn(column)
-            },
             getFormComponent(column) {
-                let config = this.$parent.getColumn(column)
+                let config = this.getColumn(this.table, column)
                 let data_type = this.$parent.getDataTypeDisplay(config.type)
                 switch(data_type) {
                     case "boolean": {
@@ -112,7 +107,7 @@
                 }
             },
             getTypeAttr(column) {
-                let config = this.$parent.getColumn(column)
+                let config = this.getColumn(this.table, column)
                 let data_type = this.$parent.getDataTypeDisplay(config.type)
                 switch(data_type) {
                     case "date": {
@@ -129,6 +124,17 @@
                     }
                 }
             },
+            valueDisplay(column) {
+                let value = this.data[column]
+                let config = null
+                if (value === null) {
+                    config = this.getColumn(this.table, column)
+                    if (config.nullable === "YES" || config.nullable === true) {
+                        value = '<code>&lt;null&gt;</code>'
+                    }
+                }
+                return value
+            },
             updatedValues() {
                 var original = this.row
                 var changed = {}
@@ -137,7 +143,7 @@
                     if (!_.isEqual(original[attr], val)) {
                         if (typeof val !== "undefined") {
                             if (val === "") {
-                                let config = $this.getColumn(attr)
+                                let config = $this.getColumn($this.table, attr)
                                 if (config.nullable === "YES" || config.nullable === true) {
                                     val = null
                                 }
@@ -146,7 +152,6 @@
                         }
                     }
                 })
-                console.log('1.', changed)
                 return changed
             }
         }

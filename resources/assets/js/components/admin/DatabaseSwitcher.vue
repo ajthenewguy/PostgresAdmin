@@ -28,15 +28,25 @@
         methods: {
             openDatabase() {
                 window.location = "/" + this.database
-//                this.tableQuery = ''
-//                return axios.post(this.server + '/switch-database', { database: this.database }).then(response => {
-//                    this.tables = response.data.tables
-//                    window.history.pushState({ /* stateObj */}, "PostgresAdmin", "/" + this.database);
-//                }).catch(error => {
-//                    this.result = null
-//                    this.queryError(error)
-//                })
             }
         }
     }
 </script>
+<style>
+    #database-switcher input {
+        height: 26px;
+    }
+    .navbar {
+        min-height: 40px;
+    }
+    .navbar-brand {
+        height: 40px;
+        padding: 10px 12px;
+    }
+    @media (min-width: 768px) {
+        .navbar-nav > li > a {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    }
+</style>
