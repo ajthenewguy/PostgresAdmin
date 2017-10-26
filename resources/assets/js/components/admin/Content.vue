@@ -14,6 +14,7 @@
                         :query="tableQuery"
                         @openTable="openTable"
                         @addStructureTab="addStructureTab"
+                        @refreshTables="refreshTables"
                 />
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -67,14 +68,16 @@
         },
         methods: {
             addTableTab(table, type) {
+                let tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type })
                 this.clearTable()
                 this.table = table
-                this.loadTable(table).then(config => {
-                    this.newTab(type, table, config)
-                })
-            },
-            openTable(table) {
-                this.addTableTab(table, "content")
+                if (tab) {
+                    this.changeTab(tab.id)
+                } else {
+                    this.loadTable(table).then(config => {
+                        this.newTab(type, table, config)
+                    })
+                }
             },
             addStructureTab(table) {
                 this.addTableTab(table, "structure")
@@ -82,15 +85,32 @@
             activeTab() {
                 return this.$refs.tabs.activeTab()
             },
-            newTab(type, title, table) {
-                let tabId = this.$refs.tabs.newTab(...arguments)
-                this.changeTab(tabId)
-            },
             changeTab(id) {
                 this.$refs.tabs.changeTab(id)
             },
             closeTab(id) {
                 return this.$refs.tabs.closeTab(id)
+            },
+            clearTable() {
+                this.table = null
+                this.schema = null
+                this.order = null
+                this.filter = null
+                this.records = []
+            },
+            newTab(type, title, table) {
+                let tabId = this.$refs.tabs.newTab(...arguments)
+                this.changeTab(tabId)
+            },
+            openTable(table) {
+                this.addTableTab(table, "content")
+            },
+            refreshTables() {
+                return axios.post(this.server + '/tables', { database: this.database }).then(response => {
+                    this.tables = response.data
+                }).catch(error => {
+                    this.queryError(error)
+                })
             },
             tabIcon(type) {
                 switch (type) {
@@ -104,13 +124,6 @@
                         return "glyphicon glyphicon-info-sign"
                     }
                 }
-            },
-            clearTable() {
-                this.table = null
-                this.schema = null
-                this.order = null
-                this.filter = null
-                this.records = []
             }
         }
     }
@@ -145,10 +158,21 @@
         opacity: 0.8;
     }
     .list-group-item {
-        padding: 3px 10px
+        padding: 3px 10px;
+        .btn-group {
+            visibility: hidden;
+        }
     }
+    .list-group-item:hover .btn-group {
+        visibility: visible;
+    }
+
     .closeTab {
         margin-left: 5px;
+        visibility: hidden;
+    }
+    .nav-tab-item-a:hover .closeTab {
+        visibility: visible;
     }
     .empty {
         color: #bcbcbc;

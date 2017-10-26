@@ -2,10 +2,11 @@
     <div>
         <div v-if="tabs.length">
             <draggable
-                    class="nav nav-tabs" id="primaryTabContainer"
+                    is="ul"
                     v-model="tabs"
+                    class="nav nav-tabs" id="primaryTabContainer"
                     :options="{ draggable: '.nav-tab-item' }"
-                    :move="moveTab"
+                    :move="onMoveTab"
             >
                 <li
                         class="nav-tab-item"
@@ -55,32 +56,6 @@
             }
         },
         methods: {
-            moveTab(e) {
-                // eslint-disable-next-line
-                console.log(arguments)
-                let from = e.draggedContext.index
-                let to = e.draggedContext.futureIndex
-                if (from === this.activeTabIndex()) {
-                    this.changeTab(to)
-                } else {
-
-                }
-            },
-            addTab() {
-                this.changeTab(this.newTab(...arguments))
-            },
-            uuid() {
-                return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
-            },
-            getTab(key, value) {
-                if (key === 'index') {
-                    return this.tabs[value]
-                }
-                return _.find(this.tabs, [ key, value ])
-            },
-            getTabIndex(key, value) {
-                return _.findIndex(this.tabs, [ key, value ])
-            },
             activeTab() {
                 let index = this.activeTabIndex()
                 return this.tabs[index]
@@ -91,22 +66,8 @@
                 }
                 return this.state.activeTab
             },
-            newTab(type, title, table) {
-                if (! title) {
-                    title = this.titleCase(type)
-                }
-                let tabId = this.uuid()
-                let tab = {
-                    id: tabId,
-                    type: type,
-                    title: title,
-                    table: table
-                }
-                this.tabs.push(tab)
-                if (null === this.activeTabIndex()) {
-                    this.activeTabIndex(this.getTabIndex('id', tabId))
-                }
-                return tabId
+            addTab() {
+                this.changeTab(this.newTab(...arguments))
             },
             changeTab(index) {
                 let $this = this
@@ -145,6 +106,56 @@
 
                 return
             },
+            countTabs() {
+                return this.tabs.length
+            },
+            getTab(key, value) {
+                if (typeof key === "object" && typeof value === "undefined") {
+                    return _.find(this.tabs, key)
+                } else {
+                    if (key === 'index') {
+                        return this.tabs[value]
+                    } else if (key.startsWith('table.')) {
+                        let tabCount = this.countTabs()
+                        for (let i = 0; i < tabCount; i++) {
+                            if (_.get(this.tabs[i], key, null) === value) {
+                                return this.tabs[i]
+                            }
+                        }
+                        return undefined
+                    }
+                }
+                return _.find(this.tabs, [ key, value ])
+            },
+            getTabIndex(key, value) {
+                return _.findIndex(this.tabs, [ key, value ])
+            },
+            newTab(type, title, table) {
+                if (! title) {
+                    title = this.titleCase(type)
+                }
+                let tabId = this.uuid()
+                let tab = {
+                    id: tabId,
+                    type: type,
+                    title: title,
+                    table: table
+                }
+                this.tabs.push(tab)
+                if (null === this.activeTabIndex()) {
+                    this.activeTabIndex(this.getTabIndex('id', tabId))
+                }
+                return tabId
+            },
+            onMoveTab(e) {
+                let from = e.draggedContext.index
+                let to = e.draggedContext.futureIndex
+                if (from === this.activeTabIndex()) {
+                    this.changeTab(to)
+                } else {
+
+                }
+            },
             tabIcon(type) {
                 switch (type) {
                     case "add": {
@@ -163,6 +174,9 @@
             },
             titleCase(string) {
                 return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+            },
+            uuid() {
+                return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
             }
         }
     }

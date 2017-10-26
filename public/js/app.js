@@ -100749,7 +100749,7 @@ exports = module.exports = __webpack_require__(8)(undefined);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.closeTab {\n  margin-left: 5px;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 30px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.list-group-item .btn-group {\n    visibility: hidden;\n}\n.list-group-item:hover .btn-group {\n  visibility: visible;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  margin-bottom: 32px;\n  padding-top: 30px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
 
 // exports
 
@@ -100793,6 +100793,7 @@ module.exports = function listToStyles (parentId, list) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
 //
 //
 //
@@ -100867,14 +100868,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addTableTab: function addTableTab(table, type) {
             var _this = this;
 
+            var tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type });
             this.clearTable();
             this.table = table;
-            this.loadTable(table).then(function (config) {
-                _this.newTab(type, table, config);
-            });
-        },
-        openTable: function openTable(table) {
-            this.addTableTab(table, "content");
+            if (tab) {
+                this.changeTab(tab.id);
+            } else {
+                this.loadTable(table).then(function (config) {
+                    _this.newTab(type, table, config);
+                });
+            }
         },
         addStructureTab: function addStructureTab(table) {
             this.addTableTab(table, "structure");
@@ -100882,17 +100885,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         activeTab: function activeTab() {
             return this.$refs.tabs.activeTab();
         },
+        changeTab: function changeTab(id) {
+            this.$refs.tabs.changeTab(id);
+        },
+        closeTab: function closeTab(id) {
+            return this.$refs.tabs.closeTab(id);
+        },
+        clearTable: function clearTable() {
+            this.table = null;
+            this.schema = null;
+            this.order = null;
+            this.filter = null;
+            this.records = [];
+        },
         newTab: function newTab(type, title, table) {
             var _$refs$tabs;
 
             var tabId = (_$refs$tabs = this.$refs.tabs).newTab.apply(_$refs$tabs, arguments);
             this.changeTab(tabId);
         },
-        changeTab: function changeTab(id) {
-            this.$refs.tabs.changeTab(id);
+        openTable: function openTable(table) {
+            this.addTableTab(table, "content");
         },
-        closeTab: function closeTab(id) {
-            return this.$refs.tabs.closeTab(id);
+        refreshTables: function refreshTables() {
+            var _this2 = this;
+
+            return axios.post(this.server + '/tables', { database: this.database }).then(function (response) {
+                _this2.tables = response.data;
+            }).catch(function (error) {
+                _this2.queryError(error);
+            });
         },
         tabIcon: function tabIcon(type) {
             switch (type) {
@@ -100909,13 +100931,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         return "glyphicon glyphicon-info-sign";
                     }
             }
-        },
-        clearTable: function clearTable() {
-            this.table = null;
-            this.schema = null;
-            this.order = null;
-            this.filter = null;
-            this.records = [];
         }
     }
 });
@@ -101749,7 +101764,7 @@ exports = module.exports = __webpack_require__(8)(undefined);
 
 
 // module
-exports.push([module.i, "\n.list-group {\n  white-space: nowrap;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.title p:hover {\n  background: #fff;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
+exports.push([module.i, "\n.list-group {\n  border-top: 1px solid #e6e5e5;\n  border-bottom: 1px solid #e6e5e5;\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:first-child {\n  border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.title p:hover {\n  background: #fff;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
 
 // exports
 
@@ -101778,6 +101793,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tables', 'table', 'query'],
@@ -101788,6 +101811,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     mounted: function mounted() {
         this.list = this.tables;
+        window.addEventListener('resize', this.onWindowResize);
     },
 
     computed: {
@@ -101803,6 +101827,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         deep: true
     },
     methods: {
+        addTable: function addTable() {
+            alert("This feature will be available soon.");
+        },
         openTable: function openTable(table) {
             this.$emit('openTable', table);
         },
@@ -101827,6 +101854,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     {
                         return "glyphicon glyphicon-info-sign";
                     }
+                case "refresh":
+                    {
+                        return "glyphicon glyphicon-refresh";
+                    }
             }
         },
 
@@ -101842,13 +101873,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         computeList: function computeList() {
             var vm = this;
+            var list = [];
             if (vm.query) {
-                return this.list.filter(function (item) {
+                list = this.list.filter(function (item) {
                     return item.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1;
                 });
             } else {
-                return this.list;
+                list = this.list;
             }
+            this.onWindowResize();
+            return list;
         },
 
         leave: function leave(el, done) {
@@ -101856,6 +101890,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             setTimeout(function () {
                 Velocity(el, { opacity: 0, height: 0 }, { complete: done });
             }, delay);
+        },
+        onWindowResize: function onWindowResize() {
+            $(".list-group").height($(".sidebar").height() - 60);
         }
     }
 });
@@ -101868,82 +101905,129 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.tables
-    ? _c(
-        "div",
-        { staticClass: "list-group" },
-        _vm._l(_vm.computedList, function(value, key) {
-          return _c("li", { key: value, staticClass: "list-group-item" }, [
-            _c(
-              "div",
-              {
-                staticClass: "btn-group btn-group-xs pull-right",
-                attrs: { role: "group", "aria-label": "..." }
-              },
-              [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-default",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        $event.preventDefault()
-                        _vm.addStructureTab(value)
-                      }
-                    }
-                  },
-                  [
-                    _c("span", {
-                      class: _vm.tabIcon("structure"),
-                      attrs: { "aria-hidden": "true" }
-                    }),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "button-title" }, [
-                      _vm._v("Structure")
-                    ])
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-default",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        if (
-                          !("button" in $event) &&
-                          _vm._k($event.keyCode, "blur", undefined, $event.key)
-                        ) {
-                          return null
+  return _c("div", [
+    _vm.tables
+      ? _c(
+          "ul",
+          { staticClass: "list-group" },
+          _vm._l(_vm.computedList, function(value, key) {
+            return _c("li", { key: value, staticClass: "list-group-item" }, [
+              _c(
+                "div",
+                {
+                  staticClass: "btn-group btn-group-xs pull-right",
+                  attrs: { role: "group", "aria-label": "..." }
+                },
+                [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-default",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          _vm.addStructureTab(value)
                         }
-                        $event.preventDefault()
-                        _vm.openTable(value)
                       }
-                    }
-                  },
-                  [
-                    _c("span", {
-                      class: _vm.tabIcon("content"),
-                      attrs: { "aria-hidden": "true" }
-                    }),
-                    _vm._v(" "),
-                    _c("span", { staticClass: "button-title" }, [
-                      _vm._v("Contents")
-                    ])
-                  ]
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c("span", { staticClass: "title" }, [
-              _c("p", [_vm._v(_vm._s(value))])
+                    },
+                    [
+                      _c("span", {
+                        class: _vm.tabIcon("structure"),
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "button-title" }, [
+                        _vm._v("Structure")
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-default",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          if (
+                            !("button" in $event) &&
+                            _vm._k(
+                              $event.keyCode,
+                              "blur",
+                              undefined,
+                              $event.key
+                            )
+                          ) {
+                            return null
+                          }
+                          $event.preventDefault()
+                          _vm.openTable(value)
+                        }
+                      }
+                    },
+                    [
+                      _c("span", {
+                        class: _vm.tabIcon("content"),
+                        attrs: { "aria-hidden": "true" }
+                      }),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "button-title" }, [
+                        _vm._v("Contents")
+                      ])
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c("span", { staticClass: "title" }, [
+                _c("p", [_vm._v(_vm._s(value))])
+              ])
             ])
-          ])
+          })
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c(
+      "a",
+      {
+        staticClass: "btn btn-default btn-xs",
+        attrs: { href: "", title: "Add new table", role: "button" },
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            _vm.addTable($event)
+          }
+        }
+      },
+      [
+        _c("span", {
+          class: _vm.tabIcon("add"),
+          attrs: { "aria-hidden": "true" }
         })
-      )
-    : _vm._e()
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "a",
+      {
+        staticClass: "btn btn-default btn-xs",
+        attrs: { href: "", title: "Refresh tables", role: "button" },
+        on: {
+          click: function($event) {
+            $event.preventDefault()
+            _vm.$emit("refreshTables")
+          }
+        }
+      },
+      [
+        _c("span", {
+          class: _vm.tabIcon("refresh"),
+          attrs: { "aria-hidden": "true" }
+        })
+      ]
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -102486,13 +102570,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('updateRow', data);
         },
         keyIcon: function keyIcon(column) {
-            var icon = '',
-                foreign_key = '';
+            var icon = '';
             if (this.tableConfig.schema) {
-                foreign_key = this.tableConfig.foreignKeys;
                 if (column === this.tableConfig.primaryKey) {
                     icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>';
-                } else if (foreign_key) {
+                } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
                     icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>';
                 }
             }
@@ -103542,7 +103624,8 @@ var render = function() {
             },
             on: {
               openTable: _vm.openTable,
-              addStructureTab: _vm.addStructureTab
+              addStructureTab: _vm.addStructureTab,
+              refreshTables: _vm.refreshTables
             }
           })
         ],
@@ -103855,6 +103938,9 @@ exports.push([module.i, "\n.notabs {\n    margin: 15px 0;\n}\n", ""]);
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable__ = __webpack_require__(355);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuedraggable__);
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+//
 //
 //
 //
@@ -103913,30 +103999,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
-        moveTab: function moveTab(e) {
-            // eslint-disable-next-line
-            console.log(arguments);
-            var from = e.draggedContext.index;
-            var to = e.draggedContext.futureIndex;
-            if (from === this.activeTabIndex()) {
-                this.changeTab(to);
-            } else {}
-        },
-        addTab: function addTab() {
-            this.changeTab(this.newTab.apply(this, arguments));
-        },
-        uuid: function uuid() {
-            return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
-        },
-        getTab: function getTab(key, value) {
-            if (key === 'index') {
-                return this.tabs[value];
-            }
-            return _.find(this.tabs, [key, value]);
-        },
-        getTabIndex: function getTabIndex(key, value) {
-            return _.findIndex(this.tabs, [key, value]);
-        },
         activeTab: function activeTab() {
             var index = this.activeTabIndex();
             return this.tabs[index];
@@ -103947,22 +104009,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
             return this.state.activeTab;
         },
-        newTab: function newTab(type, title, table) {
-            if (!title) {
-                title = this.titleCase(type);
-            }
-            var tabId = this.uuid();
-            var tab = {
-                id: tabId,
-                type: type,
-                title: title,
-                table: table
-            };
-            this.tabs.push(tab);
-            if (null === this.activeTabIndex()) {
-                this.activeTabIndex(this.getTabIndex('id', tabId));
-            }
-            return tabId;
+        addTab: function addTab() {
+            this.changeTab(this.newTab.apply(this, arguments));
         },
         changeTab: function changeTab(index) {
             var $this = this;
@@ -104001,6 +104049,54 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             return;
         },
+        countTabs: function countTabs() {
+            return this.tabs.length;
+        },
+        getTab: function getTab(key, value) {
+            if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) === "object" && typeof value === "undefined") {
+                return _.find(this.tabs, key);
+            } else {
+                if (key === 'index') {
+                    return this.tabs[value];
+                } else if (key.startsWith('table.')) {
+                    var tabCount = this.countTabs();
+                    for (var i = 0; i < tabCount; i++) {
+                        if (_.get(this.tabs[i], key, null) === value) {
+                            return this.tabs[i];
+                        }
+                    }
+                    return undefined;
+                }
+            }
+            return _.find(this.tabs, [key, value]);
+        },
+        getTabIndex: function getTabIndex(key, value) {
+            return _.findIndex(this.tabs, [key, value]);
+        },
+        newTab: function newTab(type, title, table) {
+            if (!title) {
+                title = this.titleCase(type);
+            }
+            var tabId = this.uuid();
+            var tab = {
+                id: tabId,
+                type: type,
+                title: title,
+                table: table
+            };
+            this.tabs.push(tab);
+            if (null === this.activeTabIndex()) {
+                this.activeTabIndex(this.getTabIndex('id', tabId));
+            }
+            return tabId;
+        },
+        onMoveTab: function onMoveTab(e) {
+            var from = e.draggedContext.index;
+            var to = e.draggedContext.futureIndex;
+            if (from === this.activeTabIndex()) {
+                this.changeTab(to);
+            } else {}
+        },
         tabIcon: function tabIcon(type) {
             switch (type) {
                 case "add":
@@ -104025,6 +104121,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
                 return txt.toUpperCase();
             });
+        },
+        uuid: function uuid() {
+            return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
         }
     }
 });
@@ -105923,13 +106022,14 @@ var render = function() {
           "div",
           [
             _c(
-              "draggable",
+              "ul",
               {
+                tag: "draggable",
                 staticClass: "nav nav-tabs",
                 attrs: {
                   id: "primaryTabContainer",
                   options: { draggable: ".nav-tab-item" },
-                  move: _vm.moveTab
+                  move: _vm.onMoveTab
                 },
                 model: {
                   value: _vm.tabs,

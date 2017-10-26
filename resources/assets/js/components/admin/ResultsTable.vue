@@ -117,13 +117,11 @@
                 this.$emit('updateRow', data)
             },
             keyIcon(column) {
-                let icon = '',
-                    foreign_key = ''
+                let icon = ''
                 if (this.tableConfig.schema) {
-                    foreign_key = this.tableConfig.foreignKeys
                     if (column === this.tableConfig.primaryKey) {
                         icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
-                    } else if (foreign_key) {
+                    } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
                         icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
                     }
                 }

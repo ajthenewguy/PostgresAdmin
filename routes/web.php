@@ -17,6 +17,7 @@ Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin', 'AdminController@index')->name('home');
     Route::post('/switch-database', 'AdminController@switchDatabase');
+    Route::post('/tables', 'QueryController@tables');
     Route::post('/select', 'QueryController@select');
     Route::post('/insert', 'QueryController@insert');
     Route::post('/update', 'QueryController@update');

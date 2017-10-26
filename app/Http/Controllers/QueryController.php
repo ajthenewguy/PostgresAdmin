@@ -27,6 +27,12 @@ class QueryController extends AdminController
         return $this->selectDatabase($request);
     }
 
+    public function tables(Request $request)
+    {
+        $this->collection = $this->selectDatabase($request, $request->database);
+        return response()->json($this->collection);
+    }
+
     /**
      * Run a select statement
      *
