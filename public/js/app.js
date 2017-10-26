@@ -103984,7 +103984,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -106022,9 +106021,8 @@ var render = function() {
           "div",
           [
             _c(
-              "ul",
+              "draggable",
               {
-                tag: "draggable",
                 staticClass: "nav nav-tabs",
                 attrs: {
                   id: "primaryTabContainer",

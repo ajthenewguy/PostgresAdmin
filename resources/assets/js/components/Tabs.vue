@@ -2,7 +2,6 @@
     <div>
         <div v-if="tabs.length">
             <draggable
-                    is="ul"
                     v-model="tabs"
                     class="nav nav-tabs" id="primaryTabContainer"
                     :options="{ draggable: '.nav-tab-item' }"
