@@ -5,6 +5,7 @@
                     class="nav nav-tabs" id="primaryTabContainer"
                     v-model="tabs"
                     :options="{ draggable: '.nav-tab-item' }"
+                    :move="moveTab"
             >
                 <li
                         class="nav-tab-item"
@@ -54,6 +55,17 @@
             }
         },
         methods: {
+            moveTab(e) {
+                // eslint-disable-next-line
+                console.log(arguments)
+                let from = e.draggedContext.index
+                let to = e.draggedContext.futureIndex
+                if (from === this.activeTabIndex()) {
+                    this.changeTab(to)
+                } else {
+
+                }
+            },
             addTab() {
                 this.changeTab(this.newTab(...arguments))
             },

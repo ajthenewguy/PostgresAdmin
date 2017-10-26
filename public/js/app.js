@@ -103898,6 +103898,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -103912,6 +103913,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
+        moveTab: function moveTab(e) {
+            // eslint-disable-next-line
+            console.log(arguments);
+            var from = e.draggedContext.index;
+            var to = e.draggedContext.futureIndex;
+            if (from === this.activeTabIndex()) {
+                this.changeTab(to);
+            } else {}
+        },
         addTab: function addTab() {
             this.changeTab(this.newTab.apply(this, arguments));
         },
@@ -105918,7 +105928,8 @@ var render = function() {
                 staticClass: "nav nav-tabs",
                 attrs: {
                   id: "primaryTabContainer",
-                  options: { draggable: ".nav-tab-item" }
+                  options: { draggable: ".nav-tab-item" },
+                  move: _vm.moveTab
                 },
                 model: {
                   value: _vm.tabs,
