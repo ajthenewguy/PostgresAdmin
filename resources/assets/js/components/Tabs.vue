@@ -5,7 +5,7 @@
                     v-model="tabs"
                     class="nav nav-tabs" id="primaryTabContainer"
                     :options="{ draggable: '.nav-tab-item' }"
-                    :move="onMoveTab"
+                    @end="onMoveTab"
             >
                 <li
                         class="nav-tab-item"
@@ -34,6 +34,8 @@
                         :current-tab="activeTabIndex()"
                         :type="tab.type"
                         :table="tab.table"
+                        @loaded="$emit('loaded')"
+                        @refresh="$emit('refresh', $event)"
                 />
             </div>
         </div>
@@ -49,10 +51,20 @@
         props: [],
         data() {
             return {
+                bus: window.bus,
                 store: window.store,
                 state: window.store.state,
                 tabs: []
             }
+        },
+        created() {
+            let $this = this
+            this.bus.$on('tabRefreshed', function (config) {
+                let selectTabIndex = $this.activeTabIndex()
+                $this.tabs[selectTabIndex].table = config
+//                let tab = $this.activeTab()
+//                tab.table = config
+            })
         },
         methods: {
             activeTab() {
@@ -62,6 +74,7 @@
             activeTabIndex(newIndex) {
                 if (typeof newIndex !== "undefined" && newIndex > -1 || newIndex === null) {
                     this.state.activeTab = newIndex
+                    this.$emit('tabChanged', newIndex)
                 }
                 return this.state.activeTab
             },
@@ -77,17 +90,17 @@
                 if (index < 0) {
                     this.activeTabIndex(null)
                 } else {
-                    setTimeout(function() {
+//                    setTimeout(function() {
                         changeToTab = $this.getTab('index', index)
                         if (changeToTab) {
-                            $this.activeTabIndex(index)
-                            // $('.nav-tabs a[href="#tab-' + uuid + '"]').tab('show')
                             $('.nav-tabs a[data-id="' + changeToTab.id + '"]').tab('show')
+                            $this.activeTabIndex(index)
                         }
-                    }, 50)
+//                    }, 5)
                 }
             },
             closeTab(index) {
+                let $this = this
                 let selectTabIndex = this.activeTabIndex()
                 if (isNaN(index)) {
                     index = this.getTabIndex('id', index)
@@ -100,9 +113,10 @@
                     if (selectTabIndex < 0) {
                         selectTabIndex = 0
                     }
-                    this.changeTab(selectTabIndex)
+                    setTimeout(function() {
+                        $this.changeTab(selectTabIndex)
+                    }, 5)
                 }
-
                 return
             },
             countTabs() {
@@ -147,12 +161,14 @@
                 return tabId
             },
             onMoveTab(e) {
-                let from = e.draggedContext.index
-                let to = e.draggedContext.futureIndex
+                let from = e.oldIndex
+                let to = e.newIndex
                 if (from === this.activeTabIndex()) {
                     this.changeTab(to)
-                } else {
-
+                } else if (to <= this.activeTabIndex()) {
+                    this.changeTab(Math.min(this.activeTabIndex() + 1, this.tabs.length - 1))
+                } else if (to > this.activeTabIndex() && from < this.activeTabIndex()) {
+                    this.changeTab(Math.max(this.activeTabIndex() - 1, 0))
                 }
             },
             tabIcon(type) {
@@ -181,6 +197,10 @@
     }
 </script>
 <style>
+    .tab-pane-content {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
     .notabs {
         margin: 15px 0;
     }

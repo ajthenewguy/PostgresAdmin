@@ -10,6 +10,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import _ from 'lodash'
+import VeeValidate from 'vee-validate'
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -17,21 +18,23 @@ import _ from 'lodash'
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-// Mixins
-// Vue.mixin(require('./mixins/PostgresMixin.vue'))
-
-Vue.component('primary-content', require('./components/Content.vue'));
+Vue.component('v-button', require('./components/Button.vue'));
+Vue.component('modal', require('./components/Modal.vue'));
 Vue.component('admin-content', require('./components/admin/Content.vue'));
 Vue.component('database-switcher', require('./components/admin/DatabaseSwitcher.vue'));
+Vue.component('app-form', require('./components/forms/Form.vue'));
+Vue.component('primary-content', require('./components/Content.vue'));
 Vue.component('tabs', require('./components/Tabs.vue'));
 Vue.component('tab', require('./components/admin/Tab.vue'));
-// Vue.component('results-footer', require('./components/admin/ResultsFooter.vue'));
 
 Vue.prototype._ = _
 Vue.prototype.$http = axios
+Vue.use(VeeValidate)
 
+window.bus = new Vue()
 window.store = {
     debug: true,
+    driver: 'postgres',
     state: {
         activeTab: 0,
         closingTab: false,

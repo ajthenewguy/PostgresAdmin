@@ -151,14 +151,17 @@
         white-space: nowrap;
     }
     .results {
-        .table td {
-            input {
-                border: 0;
-                height: 20px;
-                padding: 3px;
-            }
-            span {
-                white-space: nowrap;
+        .table {
+            margin-bottom: 0;
+            td {
+                input {
+                    border: 0;
+                    height: 20px;
+                    padding: 3px;
+                }
+                span {
+                    white-space: nowrap;
+                }
             }
         }
     }

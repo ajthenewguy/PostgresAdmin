@@ -25,7 +25,131 @@
                 response: null,
                 result: null,
                 server: 'http://postgres:5433',
-                sql: ''
+                sql: '',
+                dataTypes: [
+                    {
+                        name: 'bigint',
+                        aliases: [ 'int8' ],
+                        description: 'signed eight-byte integer'
+                    }, {
+                        name: 'bigserial',
+                        aliases: [ 'serial8' ],
+                        description: 'autoincrementing eight-byte integer'
+                    }, {
+                        name: 'bit',
+                        description: 'fixed-length bit string',
+                        size: 1
+                    }, {
+                        name: 'bit varying',
+                        aliases: [ 'varbit' ],
+                        description: 'variable-length bit string',
+                        size: null
+                    }, {
+                        name: 'boolean',
+                        aliases: [ 'bool' ],
+                        description: 'logical Boolean (true/false)'
+                    }, {
+                        name: 'character',
+                        aliases: [ 'char' ],
+                        description: 'fixed-length character string',
+                        size: 1
+                    }, {
+                        name: 'character varying',
+                        aliases: [ 'varchar' ],
+                        description: 'variable-length character string',
+                        size: null
+                    }, {
+                        name: 'cidr',
+                        aliases: [ 'ip' ],
+                        description: 'IPv4 or IPv6 network address'
+                    }, {
+                        name: 'date',
+                        description: 'calendar date (year, month, day)'
+                    }, {
+                        name: 'double precision',
+                        aliases: [ 'float8', 'double' ],
+                        description: 'double precision floating-point number (8 bytes)'
+                    }, {
+                        name: 'integer',
+                        aliases: [ 'int', 'int4' ],
+                        description: 'signed four-byte integer'
+                    }, {
+                        name: 'interval',
+                        description: 'time span',
+                        optionLabel: 'Fields',
+                        options: [
+                            'YEAR',
+                            'MONTH',
+                            'DAY',
+                            'HOUR',
+                            'MINUTE',
+                            'SECOND',
+                            'YEAR TO MONTH',
+                            'DAY TO HOUR',
+                            'DAY TO MINUTE',
+                            'DAY TO SECOND',
+                            'HOUR TO MINUTE',
+                            'HOUR TO SECOND',
+                            'MINUTE TO SECOND'
+                        ],
+                        precision: 6 // applies only to seconds
+                    }, {
+                        name: 'json',
+                        description: 'textual JSON data'
+                    }, {
+                        name: 'jsonb',
+                        description: 'binary JSON data, decomposed'
+                    }, {
+                        name: 'money',
+                        description: 'currency amount'
+                    }, {
+                        name: 'numeric',
+                        aliases: [ 'decimal' ],
+                        description: '',
+                        precision: null, // (12.3) -> 3
+                        scale: 0         // 12.(3) -> 1
+                    }, {
+                        name: 'real',
+                        aliases: [ 'float4' ],
+                        description: 'single precision floating-point number (4 bytes)'
+                    }, {
+                        name: 'smallint',
+                        aliases: [ 'int2' ],
+                        description: 'signed two-byte integer'
+                    }, {
+                        name: 'smallserial',
+                        aliases: [ 'serial2' ],
+                        description: 'autoincrementing two-byte integer'
+                    }, {
+                        name: 'serial',
+                        aliases: [ 'serial4' ],
+                        description: 'autoincrementing four-byte integer'
+                    }, {
+                        name: 'time',
+                        aliases: [ 'timetz' ],
+                        description: 'time of day',
+                        optionLabel: 'With time zone',
+                        options: [
+                            'with time zone',
+                            'without time zone'
+                        ]
+                    }, {
+                        name: 'timestamp',
+                        aliases: [ 'timestamptz' ],
+                        description: 'date and time',
+                        optionLabel: 'With time zone',
+                        options: [
+                            'with time zone',
+                            'without time zone'
+                        ]
+                    }, {
+                        name: 'uuid',
+                        description: 'universally unique identifier'
+                    }, {
+                        name: 'xml',
+                        description: 'XML data'
+                    }
+                ]
             }
         },
         methods: {
@@ -46,6 +170,29 @@
                     }
                 }
             },
+            dataTypeComponent(type) {
+                switch(type) {
+                    case "boolean": {
+                        return 'el-checkbox'
+                        break
+                    }
+                    case "int":
+                    case "json":
+                    case "text":
+                    case "uuid":
+                    case "integer":
+                    case "varchar":
+                    case "character varying": {
+                        return 'el-input'
+                        break
+                    }
+                    case "date":
+                    case "timestamp": {
+                        return 'el-date-picker'
+                        break
+                    }
+                }
+            },
             getKeysValues(data) {
                 let keys = []
                 let values = []
@@ -56,6 +203,30 @@
                     }
                 }
                 return [ keys, values ]
+            },
+            isStringDataType(type) {
+                let is_string = false
+                if (type.indexOf('(') > -1) {
+                    type = type.substring(0, type.indexOf('('))
+                }
+                switch (type) {
+                    case 'bit':
+                    case 'bit varying':
+                    case 'character':
+                    case 'character varying':
+                    case 'cidr':
+                    case 'date':
+                    case 'json':
+                    case 'jsonb':
+                    case 'time':
+                    case 'timestamp':
+                    case 'uuid':
+                    case 'xml': {
+                        is_string = true
+                        break
+                    }
+                }
+                return is_string
             },
             makeBindingsWhere(bindings, conjunction) {
                 let sql = ''
@@ -281,8 +452,11 @@
                     this.afterQuery()
                 })
             },
-            loadTable(table) {
-                if (! this.state.tables.hasOwnProperty(table)) {
+            loadTable(table, bustcache) {
+                if (typeof table === "object" && table.hasOwnProperty('name')) {
+                    table = table.name
+                }
+                if (bustcache || ! this.state.tables.hasOwnProperty(table)) {
                     // eslint-disable-next-line
                     console.log('loadTable FRESH:', table)
                     this.state.tables[table] = {

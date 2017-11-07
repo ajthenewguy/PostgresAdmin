@@ -134,7 +134,21 @@ class QueryController extends AdminController
     public function execute(Request $request)
     {
         $this->beforeQuery($request);
-        $result = DB::statement($request->sql);
+        if (is_array($request->sql)) {
+            $result = [];
+            DB::beginTransaction();
+            try {
+                foreach ($request->sql as $sql) {
+                    $result[] = DB::statement($sql);
+                }
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollback();
+                throw $e;
+            }
+        } else {
+            $result = DB::statement($request->sql);
+        }
         return response()->json($result);
     }
 
@@ -157,7 +171,7 @@ class QueryController extends AdminController
                 is_nullable AS nullable, 
                 is_updatable AS mutable 
             FROM 
-                information_schema.columns 
+                information_schema.columns
             WHERE 
                 table_name = \''.$request->table.'\'',
 

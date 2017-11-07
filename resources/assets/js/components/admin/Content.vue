@@ -18,7 +18,11 @@
                 />
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <tabs ref="tabs"></tabs>
+                <tabs ref="tabs"
+                      @loaded="onTabChange"
+                      @tabChanged="onTabChange"
+                      @refresh="refreshTab"
+                />
             </div>
         </div>
     </div>
@@ -29,6 +33,7 @@
         props: [ 'selectedDatabase', 'loadedTables' ],
         data() {
             return {
+                bus: window.bus,
                 store: window.store,
                 state: window.store.state,
                 database: this.selectedDatabase,
@@ -56,7 +61,11 @@
             'indices-table': require('./IndicesTable')
         },
         mounted() {
-            this.newTab("query")
+            let $this = this
+            $(window).on('load', function () {
+                window.addEventListener('resize', $this.onWindowResize)
+                $this.newTab("query")
+            })
         },
         watch: {
             state: {
@@ -102,8 +111,24 @@
                 let tabId = this.$refs.tabs.newTab(...arguments)
                 this.changeTab(tabId)
             },
+            onTabChange(index) {
+                this.resizeTabContent()
+            },
+            onWindowResize() {
+                this.resizeTabContent()
+            },
             openTable(table) {
                 this.addTableTab(table, "content")
+            },
+            refreshTab() {
+                let tab = this.activeTab()
+                let table = tab.table
+                if (typeof table === "object" && table.hasOwnProperty('name')) {
+                    table = table.name
+                }
+                this.loadTable(tab.table, true).then(config => {
+                    this.bus.$emit('tabRefreshed', config)
+                })
             },
             refreshTables() {
                 return axios.post(this.server + '/tables', { database: this.database }).then(response => {
@@ -111,6 +136,24 @@
                 }).catch(error => {
                     this.queryError(error)
                 })
+            },
+            resizeTabContent() {
+                let sidebarHeight = 0
+                let contentHeight = 0
+                setTimeout(function () {
+                    sidebarHeight = $(".sidebar").height()
+                    contentHeight = sidebarHeight - 3
+                    if ($('#primaryTabContainer').length) {
+                        contentHeight -= $('#primaryTabContainer').height() + 10 // 53
+                    }
+                    if ($('#contentFilter').length) {
+                        contentHeight -= $('#contentFilter').height() // 35
+                    }
+                    if ($('#tabFooter .el-pagination').length) {
+                        contentHeight -= $('#tabFooter .el-pagination').height() // 28
+                    }
+                    $(".tab-pane-content").height(contentHeight)
+                }, 50)
             },
             tabIcon(type) {
                 switch (type) {
@@ -213,7 +256,6 @@
 
     /* Move down content because we have a fixed navbar that is 50px tall */
     body {
-        margin-bottom: 32px;
         padding-top: 30px;
     }
 
@@ -281,7 +323,7 @@
      */
 
     .main {
-        padding: 20px;
+        padding: 20px 20px 10px 20px;
     }
     .main .page-header {
         margin-top: 0;

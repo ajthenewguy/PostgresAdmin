@@ -1,14 +1,18 @@
 <template>
     <div class="tab-pane" :class="{ active: getTabIndex('id', id) === currentTab }" :id="'tab-' + id">
         <template v-if="type === 'structure'">
-            <div v-if="table && table.schema">
+            <div v-if="table && table.schema" class="tab-pane-content">
                 <structure-table
                         :table="table.name"
                         :schema="table.schema"
+                        :primary-key="table.primaryKey"
+                        :foreign-keys="table.foreignKeys"
+                        @refresh="$emit('refresh', $event)"
                 />
                 <indices-table
                         :table="table.name"
                         :table-foreign-keys="table.foreignKeys"
+                        @refresh="$emit('refresh', $event)"
                 />
             </div>
             <div v-else>
@@ -29,17 +33,16 @@
         />
         <content-filter
                 v-else-if="type === 'content' && (records && records.length > 0) || where"
+                id="contentFilter"
                 @filterWhere="filterWhere"
         />
         <results-table
+                :class="{ 'tab-pane-content': type !== 'query' }"
                 v-if="type === 'query' || type === 'content'"
                 :tab="type"
                 :table="(table ? table.name : null)"
                 :table-config="(table ? table : null)"
                 :order="order"
-                :schema="(table ? table.schema : null)"
-                :table-primary-key="(table ? table.primaryKey : null)"
-                :table-foriegn-keys="(table ? table.foreignKeys : null)"
                 :records="records"
                 :editing-row="editingRow"
                 :inserting-row="insertingRow"
@@ -49,9 +52,11 @@
                 @insertRow="insertRow"
                 @updateRow="updateRow"
                 @deleteRow="deleteRow"
+                @refresh="$emit('refresh', $event)"
         />
         <results-footer
                 v-if="type === 'query' || type === 'content'"
+                id="tabFooter"
                 :pagination="(type === 'content' ? pagination : false)"
                 :records="records"
                 :request-time="requestTime"
@@ -94,7 +99,8 @@
             'results-table': require('./ResultsTable'),
             'results-footer': require('./ResultsFooter.vue'),
             'structure-table': require('./StructureTable'),
-            'indices-table': require('./IndicesTable')
+            'indices-table': require('./IndicesTable'),
+
         },
         methods: {
             beforeQuery(query) {
@@ -137,6 +143,7 @@
                 }
                 return this.selectQuery(sql, page).then(response => {
                     this.records = this.result
+                    this.$emit('loaded')
                 })
             },
             recordCount() {
