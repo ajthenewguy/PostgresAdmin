@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -11,18 +12,15 @@ class FrontController extends Controller
 {
     public function index(Request $request, $database = null)
     {
-        if (is_null($database)) {
-            return redirect('/'.$this->getSelectedDatabase($request));
-        }
-
+//        Setting::set('connection', null);
+        $connectionName = $this->getConnection($database);
         $data = [
-            'databases' => collect(array_keys(Config::get('database.connections'))),
-            'selectedDatabase' => $this->getSelectedDatabase($request, $database)
+            'connections' => collect(Setting::get('connections')),
+            'selectedDatabase' => $connectionName
         ];
 
-
         if (Auth::check()) {
-            $data['tables'] = $this->selectDatabase($request, $data['selectedDatabase']);
+            $data['tables'] = $this->setConnection($connectionName);
         } else {
             return redirect('/login');
         }
@@ -30,32 +28,35 @@ class FrontController extends Controller
         return view('app', $data);
     }
 
-    protected function getSelectedDatabase(Request $request, $database = null)
+    protected function getConnection($connectionName = null)
     {
-        if (is_null($database)) {
-            $database = env('DB_CONNECTION');
+        if (is_null($connectionName)) {
+            $connectionName = Setting::get('connection');
         } else {
-            $request->session()->put('selectedDatabase', $database);
+            Setting::set('connection', $connectionName);
         }
-        if (! $request->session()->get('selectedDatabase')) {
-            $request->session()->put('selectedDatabase', $database);
+        if (! Setting::get('connection')) {
+            Setting::set('connection', $connectionName);
         }
-        return $request->session()->get('selectedDatabase');
+        return Setting::get('connection');
     }
 
-    protected function selectDatabase(Request $request, $database = null)
+    protected function setConnection($connectionName = null)
     {
-        if (is_null($database)) {
-            $database = $this->getSelectedDatabase($request);
+        $tables = [];
+        $connections = Setting::get('connections');
+        if (is_null($connectionName)) {
+            $connectionName = $this->getConnection();
         }
-
-        if (in_array($database, array_keys(Config::get('database.connections')))) {
-            $request->session()->put('selectedDatabase', $database);
-            Config::set('database.default', $database);
-            DB::reconnect($database);
+        foreach ($connections as $connection) {
+            if ($connection['name'] === $connectionName) {
+                Setting::set('connection', $connectionName);
+                Config::set('database.default', $connection['database']);
+                DB::reconnect($connection['database']);
+                $tables = $this->getTables();
+            }
         }
-
-        return $this->getTables();
+        return $tables;
     }
 
     protected function getTables()

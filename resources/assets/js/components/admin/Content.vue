@@ -36,7 +36,6 @@
                 bus: window.bus,
                 store: window.store,
                 state: window.store.state,
-                database: this.selectedDatabase,
                 table: null,
                 tables: this.loadedTables,
                 editingRow: null,
@@ -51,7 +50,9 @@
                 tabs: []
             }
         },
-        mixins: [ require( '../../mixins/PostgresMixin.vue') ],
+        mixins: [
+            require( '../../mixins/PostgresMixin.vue')
+        ],
         components: {
             'list': require('./TableList'),
             'content-filter': require('./Filter'),
@@ -60,11 +61,21 @@
             'structure-table': require('./StructureTable'),
             'indices-table': require('./IndicesTable')
         },
+        created() {
+            let $this = this
+            this.bus.$on('databaseConnected', function() {
+                $this.refreshTables().then(() => {
+                    $this.addDefaultTab()
+                })
+            })
+        },
         mounted() {
             let $this = this
             $(window).on('load', function () {
                 window.addEventListener('resize', $this.onWindowResize)
-                $this.newTab("query")
+                if ($this.state.connection) {
+                    $this.addDefaultTab()
+                }
             })
         },
         watch: {
@@ -76,6 +87,11 @@
             }
         },
         methods: {
+            addDefaultTab() {
+                if (this.$refs.tabs.countTabs() < 1) {
+                    this.newTab("query")
+                }
+            },
             addTableTab(table, type) {
                 let tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type })
                 this.clearTable()
@@ -131,7 +147,7 @@
                 })
             },
             refreshTables() {
-                return axios.post(this.server + '/tables', { database: this.database }).then(response => {
+                return axios.post(this.server + '/tables').then(response => {
                     this.tables = response.data
                 }).catch(error => {
                     this.queryError(error)
@@ -256,7 +272,7 @@
 
     /* Move down content because we have a fixed navbar that is 50px tall */
     body {
-        padding-top: 30px;
+        padding-top: 37px;
     }
 
     /*
@@ -287,7 +303,7 @@
     @media (min-width: 768px) {
         .sidebar {
             position: fixed;
-            top: 42px;
+            top: 49px;
             bottom: 0;
             left: 0;
             z-index: 1000;

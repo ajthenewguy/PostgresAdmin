@@ -21,7 +21,7 @@ import VeeValidate from 'vee-validate'
 Vue.component('v-button', require('./components/Button.vue'));
 Vue.component('modal', require('./components/Modal.vue'));
 Vue.component('admin-content', require('./components/admin/Content.vue'));
-Vue.component('database-switcher', require('./components/admin/DatabaseSwitcher.vue'));
+Vue.component('database-connections', require('./components/Connections.vue'));
 Vue.component('app-form', require('./components/forms/Form.vue'));
 Vue.component('primary-content', require('./components/Content.vue'));
 Vue.component('tabs', require('./components/Tabs.vue'));
@@ -30,6 +30,7 @@ Vue.component('tab', require('./components/admin/Tab.vue'));
 Vue.prototype._ = _
 Vue.prototype.$http = axios
 Vue.use(VeeValidate)
+Vue.mixin(require( './mixins/Settings.vue'))
 
 window.bus = new Vue()
 window.store = {
@@ -38,6 +39,7 @@ window.store = {
     state: {
         activeTab: 0,
         closingTab: false,
+        connection: null,
         errors: [],
         loadingTable: false,
         processing: false,
@@ -55,6 +57,39 @@ window.store = {
     },
     titleCase(string) {
         return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+    }
+}
+window.util = {
+    icon(type) {
+        switch (type) {
+            case "add": {
+                return "glyphicon glyphicon-plus"
+            }
+            case "cog": {
+                return "glyphicon glyphicon-cog"
+            }
+            case "content": {
+                return "glyphicon glyphicon-th-list"
+            }
+            case "link": {
+                return "glyphicon glyphicon-link"
+            }
+            case "query": {
+                return "glyphicon glyphicon-search"
+            }
+            case "refresh": {
+                return "glyphicon glyphicon-refresh"
+            }
+            case "structure": {
+                return "glyphicon glyphicon-info-sign"
+            }
+            case "trash": {
+                return "glyphicon glyphicon-trash"
+            }
+        }
+    },
+    uuid() {
+        return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
     }
 }
 window.App = new Vue({

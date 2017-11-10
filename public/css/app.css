@@ -8358,7 +8358,10 @@ body {
   margin-top: 150px;
 }
 
-#database-switcher input {
+.navbar.navbar-inverse input.dark,
+.navbar.navbar-inverse button.dark,
+.navbar.navbar-inverse .dark input,
+.navbar.navbar-inverse .dark button {
   background-color: #222;
   color: #f5f5f5;
   border-color: #666;

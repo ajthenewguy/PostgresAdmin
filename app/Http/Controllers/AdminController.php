@@ -29,7 +29,7 @@ class AdminController extends FrontController
 
     public function switchDatabase(Request $request)
     {
-        $result['tables'] = $this->selectDatabase($request, $request->database);
+        $result['tables'] = $this->setConnection($request->database);
 
         return response()->json($result);
     }

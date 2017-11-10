@@ -5,6 +5,7 @@
             :name="name"
             :control="control"
             :label="label"
+            :layout="layout"
             :options="typeOptions"
             :group-size="groupSize"
             :value="value"
@@ -13,6 +14,7 @@
         <field v-if="isTimestamp || isTime"
                :control="(control.startsWith('el-') ? 'el-input' : 'input')"
                :label="'With time zone'"
+               :layout="layout"
                :name="'with_timezone-' + name"
                type="radio"
                :options="timezoneOptions"
@@ -23,6 +25,7 @@
         <field v-if="hasLength"
                :control="(control.startsWith('el-') ? 'el-input' : 'input')"
                :label="'Length'"
+               :layout="layout"
                :name="'size-' + name"
                :group-size="groupSize"
                :value="length"
@@ -47,6 +50,7 @@
         <field v-if="hasOptions"
                :control="control"
                :label="dataType && dataType.optionLabel ? dataType.optionLabel : ''"
+               :layout="layout"
                :multiple="multiple === true"
                :name="'options-' + name"
                :options="dataType ? dataType.options : undefined"
@@ -84,6 +88,10 @@
             label: {
                 type: String,
                 default: 'Type'
+            },
+            layout: {
+                type: String,
+                default: ''
             },
             length: {
                 type: Number,
@@ -164,6 +172,12 @@
                         text: dataType.name
                     }
                 })
+            },
+            isHorizontal: function () {
+                return this.layout === 'horizontal'
+            },
+            isInline: function () {
+                return this.layout === 'inline'
             }
         },
         data() {

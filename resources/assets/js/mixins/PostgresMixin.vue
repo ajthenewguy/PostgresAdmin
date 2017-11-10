@@ -5,7 +5,6 @@
             return {
                 store: window.store,
                 state: window.store.state,
-                cacheData: {},
                 customQuery: false,
                 pagination: {
                     current_page: 1,
@@ -153,23 +152,6 @@
             }
         },
         methods: {
-            cache(key, value) {
-                let argCount = arguments.length
-                let returnVal = null
-                if (argCount === 1) {
-                    if (this.cache.hasOwnProperty(key)) {
-                        returnVal = this.cacheData[key]
-                    }
-                } else if (argCount === 2) {
-                    if (value === null) {
-                        if (this.cacheData.hasOwnProperty(key)) {
-                            delete this.cacheData[key]
-                        }
-                    } else {
-                        returnVal = this.cacheData[key]
-                    }
-                }
-            },
             dataTypeComponent(type) {
                 switch(type) {
                     case "boolean": {

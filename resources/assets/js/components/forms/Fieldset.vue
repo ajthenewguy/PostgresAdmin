@@ -12,7 +12,11 @@
                    :options="field.options"
                    :placeholder="field.placeholder"
                    :value="field.value"
+                   :layout="field.layout || layout"
+                   :column-width="field.columnWidth"
                    :footer="false"
+                   :autofocus="field.autofocus"
+                   @input="$emit('input', $event)"
             />
             <hr v-if="footer" />
         </slot>
@@ -20,7 +24,7 @@
 </template>
 <script>
     export default {
-        props: [ 'formfields', 'footer' ],
+        props: [ 'formfields', 'layout', 'footer' ],
         components: {
             'field': require('./fields/Field')
         }

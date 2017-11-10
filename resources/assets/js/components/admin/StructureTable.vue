@@ -21,7 +21,7 @@
             </el-table>
         </div>
         <div v-else>
-            <app-form :horizontal="true">
+            <app-form layout="horizontal">
                 <template slot="header">
                     <v-button @click.prevent="showModal = true" icon="plus" text="Column" size="sm"></v-button>
                 </template>
@@ -33,6 +33,7 @@
                         :formfields="fieldset.fields"
                         :schema_deletes="schema_deletes"
                         :schema_changes="schema_changes"
+                        layout="horizontal"
                         @dropColumn="dropColumn"
                         @cancelDropColumn="cancelDropColumn"
                         @cancelNewColumn="cancelNewColumn"
@@ -53,6 +54,7 @@
                             :control="'el-input'"
                             :id="'newColumnName'"
                             :placeholder="'required'"
+                            :autofocus="true"
                             :value="newColumnName"
                             @input="e => { newColumnName = e.target.value }"
                         ></field>
@@ -340,7 +342,7 @@
                         value: 'NO',
                         text: 'No'
                     }],
-                    value: (schema ? schema.nullable : undefined),
+                    value: (schema ? schema.nullable : 'YES'),
                     groupSize: 'form-group-sm'
                 })
 

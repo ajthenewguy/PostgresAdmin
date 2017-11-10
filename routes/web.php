@@ -24,6 +24,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/delete', 'QueryController@delete');
     Route::post('/execute', 'QueryController@execute');
     Route::post('/schema', 'QueryController@schema');
+    Route::get('/settings', 'SettingsController@get');
+    Route::post('/settings', 'SettingsController@set');
 });
 
 
@@ -31,3 +33,6 @@ Route::group(['middleware' => ['auth']], function () {
 //    return redirect('/'.($request->session()->get('selectedDatabase') ?: env('DB_CONNECTION')));
 //});
 Route::get('/{database?}', 'FrontController@index');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -1,24 +1,26 @@
 <template>
     <div class="form-wrapper">
-        <form :class="{ 'form-horizontal': horizontal }">
+        <form :class="formClass">
             <header>
                 <slot name="header"></slot>
             </header>
             <main>
                 <slot>
                     <field-set
-                            v-if="field_sets"
-                            v-for="(form_fields, key) in field_sets"
+                            v-if="formFieldsets"
+                            v-for="(fieldset, key) in formFieldsets"
                             :key="key"
-                            :formfields="form_fields"
-                            :horizontal="horizontal"
-                            :footer="horizontal"
+                            :class="fieldset.class"
+                            :formfields="fieldset.fields"
+                            :layout="layout"
+                            :footer="isHorizontal"
+                            @input="$emit('input', $event)"
                     />
                 </slot>
             </main>
             <footer>
                 <slot name="footer">
-                    <button @click.prevent="onSubmit" class="btn btn-default" href="" title="Submit" role="button">
+                    <button @click.prevent="$emit('submit', $event)" class="btn btn-default" href="" title="Submit" role="button">
                         Submit
                     </button>
                 </slot>
@@ -28,30 +30,42 @@
 </template>
 <script>
     export default {
-        props: [ 'fieldsets', 'formfields', 'horizontal' ],
+        props: [ 'fieldsets', 'formfields', 'layout' ],
         components: {
             'field': require('./fields/Field'),
             'field-set': require('./Fieldset')
         },
         data() {
             return {
-                field_sets: [[]]
+                formFieldsets: [[]]
             }
         },
-        mounted() {
-            if (this.fieldsets && this.fieldsets.length > 0) {
-                this.field_sets = this.fieldsets
-            } else {
-                if (this.formfields && this.formfields.length) {
-                    for (let i = 0; i < this.formfields.length; i++) {
-                        this.field_sets[0].push(this.formfields[i])
-                    }
+        computed: {
+            formClass: function () {
+                return {
+                    'form-inline': this.layout === 'inline',
+                    'form-horizontal': this.layout === 'horizontal'
                 }
+            },
+            isHorizontal: function () {
+                return this.layout === 'horizontal'
+            },
+            isInline: function () {
+                return this.layout === 'inline'
             }
         },
-        methods: {
-            onSubmit() {
-                this.$emit('submit')
+        created() {
+            if (this.fieldsets) {
+                this.formFieldsets = this.fieldsets
+            }
+
+//            if (this.formfields) {
+//                for (let i = 0; i < this.formfields.length; i++) {
+//                    this.formFieldsets[0].push(this.formfields[i])
+//                }
+//            }
+            if (this.formfields) {
+                this.formFieldsets[0] = this.formfields
             }
         }
     }

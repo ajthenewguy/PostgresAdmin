@@ -65,6 +65,12 @@
 //                let tab = $this.activeTab()
 //                tab.table = config
             })
+            this.bus.$on('databaseConnected', function (config) {
+                $this.tabs = []
+                $this.addTab('query')
+//                $this.generateFieldsets(config.schema);
+//                $this.editing = false;
+            });
         },
         methods: {
             activeTab() {

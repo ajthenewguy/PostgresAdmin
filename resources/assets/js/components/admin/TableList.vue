@@ -4,11 +4,11 @@
             <li v-for="(value, key) in computedList" :key="value" class="list-group-item">
                 <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" @click.prevent="addStructureTab(value)">
-                        <span :class="tabIcon('structure')" aria-hidden="true"></span>
+                        <span :class="util.icon('structure')" aria-hidden="true"></span>
                         <span class="button-title">Structure</span>
                     </button>
                     <button type="button" class="btn btn-default" @click.prevent.blur="openTable(value)">
-                        <span :class="tabIcon('content')" aria-hidden="true"></span>
+                        <span :class="util.icon('content')" aria-hidden="true"></span>
                         <span class="button-title">Contents</span>
                     </button>
                 </div>
@@ -16,10 +16,10 @@
             </li>
         </ul>
         <a @click.prevent="addTable" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
-            <span :class="tabIcon('add')" aria-hidden="true"></span>
+            <span :class="util.icon('add')" aria-hidden="true"></span>
         </a>
         <a @click.prevent="$emit('refreshTables')" class="btn btn-default btn-xs" href="" title="Refresh tables" role="button">
-            <span :class="tabIcon('refresh')" aria-hidden="true"></span>
+            <span :class="util.icon('refresh')" aria-hidden="true"></span>
         </a>
     </div>
 </template>
@@ -29,6 +29,7 @@
         props: [ 'tables', 'table', 'query' ],
         data() {
             return {
+                util: window.util,
                 list: []
             }
         },
@@ -115,7 +116,7 @@
                 }, delay)
             },
             onWindowResize() {
-                $(".list-group").height($(".sidebar").height() - 60)
+                $(".sidebar .list-group").height($(".sidebar").height() - 60)
             }
         }
     }

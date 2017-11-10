@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use \Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\Paginator;
 
 class QueryController extends AdminController
 {
@@ -24,12 +24,12 @@ class QueryController extends AdminController
 
     protected function beforeQuery(Request $request)
     {
-        return $this->selectDatabase($request);
+        return $this->setConnection($request->database);
     }
 
     public function tables(Request $request)
     {
-        $this->collection = $this->selectDatabase($request, $request->database);
+        $this->collection = $this->setConnection($request->database);
         return response()->json($this->collection);
     }
 

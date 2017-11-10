@@ -16,6 +16,7 @@
                     :placeholder="field.placeholder"
                     :value="field.value"
                     :group-size="field.groupSize ? field.groupSize : ''"
+                    :layout="layout"
                     :footer="false"
                     @input="input_value => { onInput(input_value, column_name, field.name ) }"
             />
@@ -29,7 +30,7 @@
 </template>
 <script>
     export default {
-        props: [ 'column_name', 'formfields', 'schema_deletes', 'schema_changes', 'is_new' ],
+        props: [ 'column_name', 'formfields', 'layout', 'schema_deletes', 'schema_changes', 'is_new' ],
         mixins: [require('../../../mixins/PostgresMixin.vue')],
         components: {
             'field': require('./Field'),

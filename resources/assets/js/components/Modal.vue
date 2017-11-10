@@ -52,7 +52,7 @@
     }
 
     .modal-container {
-        width: 1000px;
+        width: 800px;
         margin: 0px auto;
         padding: 20px 30px;
         background-color: #fff;
@@ -60,6 +60,12 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
         transition: all .3s ease;
         font-family: Helvetica, Arial, sans-serif;
+    }
+
+    .big .modal-container,
+    .wide .modal-container {
+        width: 1200px;
+        max-width: 90%;
     }
 
     .modal-header h3 {

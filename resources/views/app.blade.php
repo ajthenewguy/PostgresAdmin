@@ -4,18 +4,14 @@
     @guest
         <primary-content></primary-content>
     @else
-        <admin-content selected-database="{{ $selectedDatabase }}" :loaded-tables="{{ (isset($tables) ? $tables : '') }}"></admin-content>
+        <admin-content selected-database="{{ ($selectedDatabase ?: '') }}" :loaded-tables="{{ (isset($tables) && $tables ? $tables : '{}') }}"></admin-content>
     @endguest
 @endsection
 
 @section('nav-right')
     @guest
     @else
-        <form class="navbar-form navbar-right">
-            <div class="form-group">
-                <database-switcher :databases="{{ (isset($databases) ? $databases : '') }}" selected-database="{{ $selectedDatabase }}"></database-switcher>
-            </div>
-        </form>
+        <database-connections default-connection="{{ $selectedDatabase }}"></database-connections>
     @endguest
 @endsection
 
