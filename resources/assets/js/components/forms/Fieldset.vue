@@ -16,6 +16,7 @@
                    :column-width="field.columnWidth"
                    :footer="false"
                    :autofocus="field.autofocus"
+                   :disabled="field.disabled"
                    @input="$emit('input', $event)"
             />
             <hr v-if="footer" />

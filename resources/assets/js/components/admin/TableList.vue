@@ -139,7 +139,16 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .title p
+    .sidebar .list-group-item {
+        padding: 3px 10px;
+        .btn-group {
+            visibility: hidden;
+        }
+    }
+    .sidebar .list-group-item:hover .btn-group {
+        visibility: visible;
+    }
+    .sidebar .title p
     {
         margin: 0;
         padding: 0;
@@ -149,14 +158,14 @@
         display: block;
         min-height: 16px;
     }
-    .title p:hover
+    .sidebar .title p:hover
     {
         background: #fff;
         position: relative;
         z-index: 1;
         display: inline-block;
     }
-    .button-title {
+    .sidebar .button-title {
         display: none
     }
     .list-group-item {

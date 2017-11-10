@@ -516,4 +516,7 @@
     .row.field:last-of-type {
         margin-bottom: 15px;
     }
+    .el-table__body-wrapper {
+        overflow: inherit;
+    }
 </style>

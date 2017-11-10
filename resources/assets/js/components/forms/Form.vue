@@ -40,6 +40,14 @@
                 formFieldsets: [[]]
             }
         },
+        watch: {
+            fieldsets: function (data) {
+                this.makeFields()
+            },
+            formfields: function (data) {
+                this.makeFields()
+            }
+        },
         computed: {
             formClass: function () {
                 return {
@@ -55,17 +63,25 @@
             }
         },
         created() {
-            if (this.fieldsets) {
-                this.formFieldsets = this.fieldsets
-            }
+            this.makeFields()
+        },
+//        mounted() {
+//            this.makeFields()
+//        },
+        methods: {
+            makeFields() {
+                if (this.fieldsets) {
+                    this.formFieldsets = this.fieldsets
+                }
 
 //            if (this.formfields) {
 //                for (let i = 0; i < this.formfields.length; i++) {
 //                    this.formFieldsets[0].push(this.formfields[i])
 //                }
 //            }
-            if (this.formfields) {
-                this.formFieldsets[0] = this.formfields
+                if (this.formfields) {
+                    this.formFieldsets[0] = this.formfields
+                }
             }
         }
     }

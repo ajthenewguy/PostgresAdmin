@@ -88,6 +88,9 @@ window.util = {
             }
         }
     },
+    titleCase(string) {
+        return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+    },
     uuid() {
         return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
     }

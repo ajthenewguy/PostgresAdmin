@@ -49417,6 +49417,11 @@ window.util = {
                 }
         }
     },
+    titleCase: function titleCase(string) {
+        return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
+            return txt.toUpperCase();
+        });
+    },
     uuid: function uuid() {
         return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
     }
@@ -110370,7 +110375,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.list-group-item {\n  padding: 3px 10px;\n}\n.list-group-item .btn-group {\n    visibility: hidden;\n}\n.list-group-item:hover .btn-group {\n  visibility: visible;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 37px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 49px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  padding: 20px 20px 10px 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\n", ""]);
 
 // exports
 
@@ -111552,7 +111557,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.list-group {\n  border-top: 1px solid #e6e5e5;\n  border-bottom: 1px solid #e6e5e5;\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:first-child {\n  border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.title p:hover {\n  background: #fff;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
+exports.push([module.i, "\n.list-group {\n  border-top: 1px solid #e6e5e5;\n  border-bottom: 1px solid #e6e5e5;\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:first-child {\n  border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.sidebar .list-group-item {\n  padding: 3px 10px;\n}\n.sidebar .list-group-item .btn-group {\n    visibility: hidden;\n}\n.sidebar .list-group-item:hover .btn-group {\n  visibility: visible;\n}\n.sidebar .title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.sidebar .title p:hover {\n  background: #fff;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.sidebar .button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
 
 // exports
 
@@ -113248,7 +113253,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.btn:focus {\n    outline: none;\n}\n.row.field {\n    border-bottom: 1px solid #ccc;\n    padding: 15px 0 5px 0;\n}\n.row.field:last-of-type {\n    margin-bottom: 15px;\n}\n", ""]);
+exports.push([module.i, "\n.btn:focus {\n    outline: none;\n}\n.row.field {\n    border-bottom: 1px solid #ccc;\n    padding: 15px 0 5px 0;\n}\n.row.field:last-of-type {\n    margin-bottom: 15px;\n}\n.el-table__body-wrapper {\n    overflow: inherit;\n}\n", ""]);
 
 // exports
 
@@ -113822,6 +113827,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -113833,6 +113840,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         control: {
             type: String,
             default: 'input'
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         },
         footer: {
             type: Boolean,
@@ -113900,10 +113911,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 label_class += ' col-sm-' + this.columnWidth;
             }
             return label_class;
-            //                return {
-            //                    'form-group': (this.type !== 'checkbox' && this.type !== 'radio'),
-            //                    'checkbox': (this.type === 'checkbox' || this.type === 'radio')
-            //                }
         },
         labelClass: function labelClass() {
             return {
@@ -113941,16 +113948,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             deep: true
         }
     },
-    //        mounted() {
-    //            this.input_id = this.id || this.uuid()
-    //            this.input_value = this.value
-    //            if (this.autofocus) {
-    //                this.$nextTick(() => {
-    //                    this.$refs[this.input_id].focus()
-    //                })
-    //
-    //            }
-    //        },
     methods: {
         uuid: function uuid() {
             return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
@@ -114074,6 +114071,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: {
@@ -114084,6 +114086,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         control: {
             type: String,
             default: 'input'
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         },
         footer: {
             type: Boolean,
@@ -114126,14 +114132,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        var _this = this;
+        this.init();
+    },
 
-        this.input_id = this.id || this.util.uuid();
-        this.input_value = this.value;
-        if (this.autofocus) {
-            this.$nextTick(function () {
-                _this.$refs[_this.input_id].focus();
-            });
+    watch: {
+        id: function id(data) {
+            this.init();
+        },
+        value: function value(data) {
+            this.init();
+        }
+    },
+    methods: {
+        init: function init() {
+            var _this = this;
+
+            this.input_id = this.id || this.util.uuid();
+            this.input_value = this.value;
+            if (this.autofocus) {
+                this.$nextTick(function () {
+                    _this.$refs[_this.input_id].focus();
+                });
+            }
         }
     }
 });
@@ -114171,6 +114191,7 @@ var render = function() {
           id: _vm.input_id,
           name: _vm.name,
           placeholder: _vm.placeholder,
+          disabled: _vm.disabled,
           type: "checkbox"
         },
         domProps: {
@@ -114228,6 +114249,7 @@ var render = function() {
             id: _vm.input_id,
             name: _vm.name,
             placeholder: _vm.placeholder,
+            disabled: _vm.disabled,
             type: "radio"
           },
           domProps: { checked: _vm._q(_vm.input_value, null) },
@@ -114264,6 +114286,7 @@ var render = function() {
               id: _vm.input_id,
               name: _vm.name,
               placeholder: _vm.placeholder,
+              disabled: _vm.disabled,
               type: _vm.type
             },
             domProps: { value: _vm.input_value },
@@ -114303,7 +114326,8 @@ var render = function() {
               attrs: {
                 id: _vm.input_id,
                 name: _vm.name,
-                placeholder: _vm.placeholder
+                placeholder: _vm.placeholder,
+                disabled: _vm.disabled
               },
               domProps: { value: _vm.input_value },
               on: {
@@ -114340,6 +114364,7 @@ var render = function() {
                             ],
                             attrs: {
                               id: _vm.input_id + "-" + key,
+                              disabled: _vm.disabled,
                               type: "checkbox"
                             },
                             domProps: {
@@ -114388,6 +114413,7 @@ var render = function() {
                               ],
                               attrs: {
                                 id: _vm.input_id + "-" + key,
+                                disabled: _vm.disabled,
                                 type: "radio"
                               },
                               domProps: {
@@ -114416,6 +114442,7 @@ var render = function() {
                               ],
                               attrs: {
                                 id: _vm.input_id + "-" + key,
+                                disabled: _vm.disabled,
                                 type: _vm.type
                               },
                               domProps: {
@@ -114454,7 +114481,8 @@ var render = function() {
                     staticClass: "form-control",
                     attrs: {
                       id: _vm.input_id,
-                      multiple: _vm.multiple === true
+                      multiple: _vm.multiple === true,
+                      disabled: _vm.disabled
                     },
                     on: {
                       input: function(input_value) {
@@ -114489,7 +114517,8 @@ var render = function() {
                     {
                       attrs: {
                         id: _vm.input_id,
-                        multiple: _vm.multiple === true
+                        multiple: _vm.multiple === true,
+                        disabled: _vm.disabled
                       },
                       on: {
                         input: function(input_value) {
@@ -114569,7 +114598,8 @@ var render = function() {
                   options: _vm.options,
                   placeholder: _vm.placeholder,
                   value: _vm.value,
-                  autofocus: _vm.autofocus
+                  autofocus: _vm.autofocus,
+                  disabled: _vm.disabled
                 },
                 on: {
                   input: function($event) {
@@ -114617,7 +114647,8 @@ var render = function() {
                 options: _vm.options,
                 placeholder: _vm.placeholder,
                 value: _vm.value,
-                autofocus: _vm.autofocus
+                autofocus: _vm.autofocus,
+                disabled: _vm.disabled
               },
               on: {
                 input: function($event) {
@@ -115849,6 +115880,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['defaultConnection'],
@@ -115861,9 +115909,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             bus: window.bus,
             store: window.store,
             state: window.store.state,
+            util: window.util,
             route: 'index',
             connections: [],
-            connection: {},
+            connection: null,
             modalHeader: 'Connections',
             newConnection: {},
             showModal: false,
@@ -115878,14 +115927,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         sidebarClass: function sidebarClass() {
             return {
-                'col-md-2': this.route === 'add',
-                'col-md-8': this.route === 'index'
+                'col-md-3': this.route !== 'index',
+                'col-md-6': this.route === 'index'
             };
         },
-        mainPanelClass: function mainPanelClass() {
+        contentClass: function contentClass() {
             return {
-                'col-md-10': this.route === 'add'
+                'col-md-9': this.route !== 'index',
+                'col-md-6': this.route === 'index'
             };
+        },
+        currentConnection: function currentConnection() {
+            return _.find(this.connections, ['name', this.connection]);
         }
     },
     mounted: function mounted() {
@@ -115933,10 +115986,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.newConnection[e.target.name] = e.target.value;
         },
         onSubmit: function onSubmit(e) {
-            this.connections.push(this.newConnection);
-            this.settings.set('connections', this.connections).then(function () {
-                alert('Connection saved');
-            });
+            var index = null;
+            var connection = {};
+            var connectionName = this.newConnection.name;
+            if (connection = _.find(this.connections, ['name', connectionName])) {
+                index = _.indexOf(this.connections, connection);
+                this.connections[index] = this.newConnection;
+            } else {
+                this.connections.push(this.newConnection);
+            }
+            this.settings.set('connections', this.connections);
+            this.route = 'index';
         },
         onConnect: function onConnect(name) {
             var connection = null;
@@ -115962,6 +116022,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         showAddConnection: function showAddConnection() {
             this.route = 'add';
+        },
+        showEditConnection: function showEditConnection(name) {
+            // eslint-disable-next-line
+            console.log('edit', name);
+            this.route = 'edit';
+            this.newConnection = _.find(this.connections, ['name', name]);
+            this.newConnection.password = '';
         }
     }
 });
@@ -116053,7 +116120,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.list-group {\n  border-top: 1px solid #e6e5e5;\n  border-bottom: 1px solid #e6e5e5;\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:first-child {\n  border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.title p:hover {\n  background: #fff;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
+exports.push([module.i, "", ""]);
 
 // exports
 
@@ -116082,15 +116149,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['connections', 'table', 'route'],
+    props: ['connection', 'connections', 'table', 'route'],
     data: function data() {
         return {
             store: window.store,
@@ -116103,22 +116164,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         connect: function connect(name) {
             this.$emit('connect', name);
         },
-
-        beforeEnter: function beforeEnter(el) {
-            el.style.opacity = 0;
-            el.style.height = 0;
-        },
-        enter: function enter(el, done) {
-            var delay = el.dataset.index * 150;
-            setTimeout(function () {
-                Velocity(el, { opacity: 1, height: '1.6em' }, { complete: done });
-            }, delay);
-        },
-        leave: function leave(el, done) {
-            var delay = el.dataset.index * 150;
-            setTimeout(function () {
-                Velocity(el, { opacity: 0, height: 0 }, { complete: done });
-            }, delay);
+        editConnection: function editConnection(name) {
+            this.$emit('editConnection', name);
         }
     }
 });
@@ -116139,19 +116186,27 @@ var render = function() {
         attrs: { role: "group", "aria-label": "..." }
       },
       [
-        _c("v-button", {
-          attrs: { size: "small", icon: "plus", disabled: _vm.route === "add" },
-          on: {
-            click: function($event) {
-              _vm.$emit("showAddConnection")
-            }
-          }
-        }),
+        _vm.route !== "add"
+          ? _c("v-button", {
+              attrs: {
+                size: "small",
+                icon: "plus",
+                text: "Add Connection",
+                disabled: _vm.state.processing
+              },
+              on: {
+                click: function($event) {
+                  _vm.$emit("showAddConnection")
+                }
+              }
+            })
+          : _vm._e(),
         _vm._v(" "),
         _c("v-button", {
           attrs: {
             size: "small",
             icon: "refresh",
+            text: _vm.route === "index" ? "Refresh" : "",
             disabled: _vm.state.processing
           },
           on: {
@@ -116171,7 +116226,11 @@ var render = function() {
           _vm._l(_vm.connections, function(value, key) {
             return _c(
               "li",
-              { key: value.name, staticClass: "list-group-item" },
+              {
+                key: value.name,
+                staticClass: "list-group-item",
+                class: { "bg-info": value.name === _vm.connection }
+              },
               [
                 _c(
                   "div",
@@ -116180,29 +116239,35 @@ var render = function() {
                     attrs: { role: "group", "aria-label": "..." }
                   },
                   [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-default",
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            _vm.connect(value.name)
+                    value.name !== _vm.connection
+                      ? _c("v-button", {
+                          attrs: {
+                            icon: "link",
+                            text: _vm.route === "index" ? "Connect" : ""
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.connect(value.name)
+                            }
                           }
-                        }
-                      },
-                      [
-                        _c("span", {
-                          class: _vm.util.icon("link"),
-                          attrs: { "aria-hidden": "true" }
-                        }),
-                        _vm._v(" "),
-                        _c("span", { staticClass: "button-title" }, [
-                          _vm._v("Connect")
-                        ])
-                      ]
-                    )
-                  ]
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    value.name !== _vm.connection
+                      ? _c("v-button", {
+                          attrs: {
+                            icon: "pencil",
+                            text: _vm.route === "index" ? "Edit" : ""
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.editConnection(value.name)
+                            }
+                          }
+                        })
+                      : _vm._e()
+                  ],
+                  1
                 ),
                 _vm._v(" "),
                 _c("span", { staticClass: "title" }, [
@@ -116292,76 +116357,92 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['connection'],
+    props: ['connection', 'route'],
     data: function data() {
         return {
-            fieldsets: [],
-            fielddata: {}
+            fieldsets: []
         };
     },
+
+    watch: {
+        connection: function connection(data) {
+            this.fieldsets = this.makeFields(data);
+        }
+    },
     mounted: function mounted() {
-        var fields = [];
-        fields.push({
-            name: 'name',
-            label: 'Name',
-            value: this.connection ? this.connection.name : '',
-            columnWidth: 12,
-            autofocus: true
-        });
-        this.fieldsets.push({
-            fields: fields
-        });
+        this.fieldsets = this.makeFields(this.connection);
+    },
 
-        fields = [];
-        fields.push({
-            name: 'host',
-            label: 'Host',
-            value: this.connection ? this.connection.host : '',
-            groupSize: 'form-group-sm',
-            columnWidth: 6
-        });
-        fields.push({
-            name: 'port',
-            label: 'Port',
-            value: this.connection ? this.connection.port : '',
-            groupSize: 'form-group-sm',
-            columnWidth: 6
-        });
-        this.fieldsets.push({
-            fields: fields
-        });
+    methods: {
+        makeFields: function makeFields(data) {
+            var fields = [];
+            var fieldsets = [];
+            fields.push({
+                name: 'name',
+                label: 'Name',
+                value: data ? data.name : '',
+                columnWidth: 12,
+                autofocus: this.route !== 'edit',
+                disabled: this.route === 'edit'
+            });
+            fieldsets.push({
+                fields: fields
+            });
 
-        fields = [];
-        fields.push({
-            name: 'database',
-            label: 'Database',
-            value: this.connection ? this.connection.database : '',
-            groupSize: 'form-group-sm',
-            columnWidth: 12
-        });
-        this.fieldsets.push({
-            fields: fields
-        });
+            fields = [];
+            fields.push({
+                name: 'host',
+                label: 'Host',
+                value: data ? data.host : '',
+                groupSize: 'form-group-sm',
+                autofocus: this.route === 'edit',
+                columnWidth: 6
+            });
+            fields.push({
+                name: 'port',
+                label: 'Port',
+                value: data ? data.port : '',
+                groupSize: 'form-group-sm',
+                columnWidth: 6
+            });
+            fieldsets.push({
+                fields: fields
+            });
 
-        fields = [];
-        fields.push({
-            name: 'username',
-            label: 'User',
-            value: this.connection ? this.connection.username : '',
-            groupSize: 'form-group-sm',
-            columnWidth: 6
-        });
-        fields.push({
-            name: 'password',
-            label: 'Password',
-            type: 'password',
-            value: this.connection ? this.connection.password : '',
-            groupSize: 'form-group-sm',
-            columnWidth: 6
-        });
-        this.fieldsets.push({
-            fields: fields
-        });
+            fields = [];
+            fields.push({
+                name: 'database',
+                label: 'Database',
+                value: data ? data.database : '',
+                groupSize: 'form-group-sm',
+                columnWidth: 12
+            });
+            fieldsets.push({
+                fields: fields
+            });
+
+            fields = [];
+            fields.push({
+                name: 'username',
+                label: 'User',
+                value: data ? data.username : '',
+                groupSize: 'form-group-sm',
+                columnWidth: 6
+            });
+            fields.push({
+                name: 'password',
+                label: 'Password',
+                type: 'password',
+                rules: 'required',
+                value: data ? data.password : '',
+                groupSize: 'form-group-sm',
+                columnWidth: 6
+            });
+            fieldsets.push({
+                fields: fields
+            });
+            return fieldsets;
+        }
     }
 });
 
@@ -116511,9 +116592,14 @@ var render = function() {
                 { class: _vm.sidebarClass },
                 [
                   _c("connection-list", {
-                    attrs: { route: _vm.route, connections: _vm.connections },
+                    attrs: {
+                      route: _vm.route,
+                      connection: _vm.connection,
+                      connections: _vm.connections
+                    },
                     on: {
                       connect: _vm.onConnect,
+                      editConnection: _vm.showEditConnection,
                       showAddConnection: _vm.showAddConnection,
                       refreshConnections: _vm.loadConnections
                     }
@@ -116523,7 +116609,7 @@ var render = function() {
               ),
               _vm._v(" "),
               _vm.route === "add"
-                ? _c("div", { staticClass: "col-md-10" }, [
+                ? _c("div", { class: _vm.contentClass }, [
                     _c("div", { staticClass: "panel panel-default" }, [
                       _c("div", { staticClass: "panel-heading" }, [
                         _vm._v("Connection Setup")
@@ -116534,6 +116620,36 @@ var render = function() {
                         { staticClass: "panel-body" },
                         [
                           _c("connection-form", {
+                            attrs: { route: _vm.route },
+                            on: {
+                              input: _vm.onInput,
+                              submit: _vm.onSubmit,
+                              cancel: _vm.cancelAddConnection
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.route === "edit"
+                ? _c("div", { class: _vm.contentClass }, [
+                    _c("div", { staticClass: "panel panel-default" }, [
+                      _c("div", { staticClass: "panel-heading" }, [
+                        _vm._v("Connection Setup")
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "panel-body" },
+                        [
+                          _c("connection-form", {
+                            attrs: {
+                              route: _vm.route,
+                              connection: _vm.newConnection
+                            },
                             on: {
                               input: _vm.onInput,
                               submit: _vm.onSubmit,
@@ -116680,6 +116796,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
 
+    watch: {
+        fieldsets: function fieldsets(data) {
+            this.makeFields();
+        },
+        formfields: function formfields(data) {
+            this.makeFields();
+        }
+    },
     computed: {
         formClass: function formClass() {
             return {
@@ -116695,17 +116819,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     created: function created() {
-        if (this.fieldsets) {
-            this.formFieldsets = this.fieldsets;
-        }
+        this.makeFields();
+    },
 
-        //            if (this.formfields) {
-        //                for (let i = 0; i < this.formfields.length; i++) {
-        //                    this.formFieldsets[0].push(this.formfields[i])
-        //                }
-        //            }
-        if (this.formfields) {
-            this.formFieldsets[0] = this.formfields;
+    //        mounted() {
+    //            this.makeFields()
+    //        },
+    methods: {
+        makeFields: function makeFields() {
+            if (this.fieldsets) {
+                this.formFieldsets = this.fieldsets;
+            }
+
+            //            if (this.formfields) {
+            //                for (let i = 0; i < this.formfields.length; i++) {
+            //                    this.formFieldsets[0].push(this.formfields[i])
+            //                }
+            //            }
+            if (this.formfields) {
+                this.formFieldsets[0] = this.formfields;
+            }
         }
     }
 });
@@ -116788,6 +116921,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['formfields', 'layout', 'footer'],
@@ -116824,7 +116958,8 @@ var render = function() {
               layout: field.layout || _vm.layout,
               "column-width": field.columnWidth,
               footer: false,
-              autofocus: field.autofocus
+              autofocus: field.autofocus,
+              disabled: field.disabled
             },
             on: {
               input: function($event) {

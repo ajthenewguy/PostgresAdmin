@@ -20,6 +20,7 @@
                    :placeholder="placeholder"
                    :value="value"
                    :autofocus="autofocus"
+                   :disabled="disabled"
                    :class="{'input': (type !== 'checkbox' && type !== 'radio'), 'form-control': (type !== 'checkbox' && type !== 'radio' && ! control.startsWith('el-')), 'is-danger': errors.has(name) }"
                    @input="$emit('input', $event)"
             />
@@ -38,6 +39,7 @@
                     :placeholder="placeholder"
                     :value="value"
                     :autofocus="autofocus"
+                    :disabled="disabled"
                     :class="{'input': (type !== 'checkbox' && type !== 'radio'), 'form-control': (type !== 'checkbox' && type !== 'radio' && ! control.startsWith('el-')), 'is-danger': errors.has(name) }"
                     @input="$emit('input', $event)"
             />
@@ -57,6 +59,10 @@
             control:  {
                 type: String,
                 default: 'input'
+            },
+            disabled: {
+                type: Boolean,
+                default: false
             },
             footer: {
                 type: Boolean,
@@ -123,10 +129,6 @@
                     label_class += ' col-sm-' + this.columnWidth
                 }
                 return label_class
-//                return {
-//                    'form-group': (this.type !== 'checkbox' && this.type !== 'radio'),
-//                    'checkbox': (this.type === 'checkbox' || this.type === 'radio')
-//                }
             },
             labelClass: function () {
                 return {
@@ -162,16 +164,6 @@
                 deep: true
             }
         },
-//        mounted() {
-//            this.input_id = this.id || this.uuid()
-//            this.input_value = this.value
-//            if (this.autofocus) {
-//                this.$nextTick(() => {
-//                    this.$refs[this.input_id].focus()
-//                })
-//
-//            }
-//        },
         methods: {
             uuid() {
                 return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)

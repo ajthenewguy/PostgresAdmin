@@ -11,78 +11,90 @@
 </template>
 <script>
     export default {
-        props: [ 'connection' ],
+        props: [ 'connection', 'route' ],
         data() {
             return {
-                fieldsets: [],
-                fielddata: {
-
-                }
+                fieldsets: []
+            }
+        },
+        watch: {
+            connection: function (data) {
+                this.fieldsets = this.makeFields(data)
             }
         },
         mounted() {
-            let fields = []
-            fields.push({
-                name: 'name',
-                label: 'Name',
-                value: (this.connection ? this.connection.name : ''),
-                columnWidth: 12,
-                autofocus: true
-            })
-            this.fieldsets.push({
-                fields: fields
-            })
+            this.fieldsets = this.makeFields(this.connection)
+        },
+        methods: {
+            makeFields(data) {
+                let fields = []
+                let fieldsets = []
+                fields.push({
+                    name: 'name',
+                    label: 'Name',
+                    value: (data ? data.name : ''),
+                    columnWidth: 12,
+                    autofocus: this.route !== 'edit',
+                    disabled: this.route === 'edit'
+                })
+                fieldsets.push({
+                    fields: fields
+                })
 
-            fields = []
-            fields.push({
-                name: 'host',
-                label: 'Host',
-                value: (this.connection ? this.connection.host : ''),
-                groupSize: 'form-group-sm',
-                columnWidth: 6
-            })
-            fields.push({
-                name: 'port',
-                label: 'Port',
-                value: (this.connection ? this.connection.port : ''),
-                groupSize: 'form-group-sm',
-                columnWidth: 6
-            })
-            this.fieldsets.push({
-                fields: fields
-            })
+                fields = []
+                fields.push({
+                    name: 'host',
+                    label: 'Host',
+                    value: (data ? data.host : ''),
+                    groupSize: 'form-group-sm',
+                    autofocus: this.route === 'edit',
+                    columnWidth: 6
+                })
+                fields.push({
+                    name: 'port',
+                    label: 'Port',
+                    value: (data ? data.port : ''),
+                    groupSize: 'form-group-sm',
+                    columnWidth: 6
+                })
+                fieldsets.push({
+                    fields: fields
+                })
 
-            fields = []
-            fields.push({
-                name: 'database',
-                label: 'Database',
-                value: (this.connection ? this.connection.database : ''),
-                groupSize: 'form-group-sm',
-                columnWidth: 12
-            })
-            this.fieldsets.push({
-                fields: fields
-            })
+                fields = []
+                fields.push({
+                    name: 'database',
+                    label: 'Database',
+                    value: (data ? data.database : ''),
+                    groupSize: 'form-group-sm',
+                    columnWidth: 12
+                })
+                fieldsets.push({
+                    fields: fields
+                })
 
-            fields = []
-            fields.push({
-                name: 'username',
-                label: 'User',
-                value: (this.connection ? this.connection.username : ''),
-                groupSize: 'form-group-sm',
-                columnWidth: 6
-            })
-            fields.push({
-                name: 'password',
-                label: 'Password',
-                type: 'password',
-                value: (this.connection ? this.connection.password : ''),
-                groupSize: 'form-group-sm',
-                columnWidth: 6
-            })
-            this.fieldsets.push({
-                fields: fields
-            })
+                fields = []
+                fields.push({
+                    name: 'username',
+                    label: 'User',
+                    value: (data ? data.username : ''),
+                    groupSize: 'form-group-sm',
+                    columnWidth: 6
+                })
+                fields.push({
+                    name: 'password',
+                    label: 'Password',
+                    type: 'password',
+                    rules: 'required',
+                    value: (data ? data.password : ''),
+                    groupSize: 'form-group-sm',
+                    columnWidth: 6
+                })
+                fieldsets.push({
+                    fields: fields
+                })
+                return fieldsets
+            }
         }
     }
 </script>

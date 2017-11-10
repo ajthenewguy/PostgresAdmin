@@ -8,6 +8,7 @@
            :name="name"
            :type="type"
            :placeholder="placeholder"
+           :disabled="disabled"
            :ref="input_id"
            @input="input_value => { $emit('input', input_value) }"
     />
@@ -19,6 +20,7 @@
               :id="input_id"
               :name="name"
               :placeholder="placeholder"
+              :disabled="disabled"
               :ref="input_id"
               @input="input_value => { $emit('input', input_value) }"
     />
@@ -31,6 +33,7 @@
                         :type="type"
                         :id="input_id + '-' + key"
                         :value="option.value"
+                        :disabled="disabled"
                         @change="input_value => { $emit('input', input_value) }"
                 /> {{ option.text }}
             </label>
@@ -41,6 +44,7 @@
             v-model="input_value"
             :id="input_id"
             :multiple="multiple === true"
+            :disabled="disabled"
             class="form-control"
             @input="input_value => { $emit('input', input_value) }"
     >
@@ -52,6 +56,7 @@
             v-model="input_value"
             :id="input_id"
             :multiple="multiple === true"
+               :disabled="disabled"
             @input="input_value => { $emit('input', input_value) }"
     >
         <el-option v-for="option in options" :key="option.value" :label="option.text" :value="option.value" />
@@ -70,6 +75,10 @@
             control:  {
                 type: String,
                 default: 'input'
+            },
+            disabled: {
+                type: Boolean,
+                default: false
             },
             footer: {
                 type: Boolean,
@@ -112,13 +121,26 @@
             }
         },
         mounted() {
-            this.input_id = this.id || this.util.uuid()
-            this.input_value = this.value
-            if (this.autofocus) {
-                this.$nextTick(() => {
-                    this.$refs[this.input_id].focus()
-                })
+            this.init()
+        },
+        watch: {
+            id: function (data) {
+                this.init()
+            },
+            value: function (data) {
+                this.init()
+            }
+        },
+        methods: {
+            init() {
+                this.input_id = this.id || this.util.uuid()
+                this.input_value = this.value
+                if (this.autofocus) {
+                    this.$nextTick(() => {
+                        this.$refs[this.input_id].focus()
+                    })
 
+                }
             }
         }
     }

@@ -16,17 +16,34 @@
                     <div :class="sidebarClass">
                         <connection-list
                                 :route="route"
+                                :connection="connection"
                                 :connections="connections"
                                 @connect="onConnect"
+                                @editConnection="showEditConnection"
                                 @showAddConnection="showAddConnection"
                                 @refreshConnections="loadConnections"
                         />
                     </div>
-                    <div class="col-md-10" v-if="route === 'add'">
+                    <div :class="contentClass" v-if="route === 'add'">
                         <div class="panel panel-default">
                             <div class="panel-heading">Connection Setup</div>
                             <div class="panel-body">
                                 <connection-form
+                                        :route="route"
+                                        @input="onInput"
+                                        @submit="onSubmit"
+                                        @cancel="cancelAddConnection"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div :class="contentClass" v-if="route === 'edit'">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Connection Setup</div>
+                            <div class="panel-body">
+                                <connection-form
+                                        :route="route"
+                                        :connection="newConnection"
                                         @input="onInput"
                                         @submit="onSubmit"
                                         @cancel="cancelAddConnection"
@@ -56,9 +73,10 @@
                 bus: window.bus,
                 store: window.store,
                 state: window.store.state,
+                util: window.util,
                 route: 'index',
                 connections: [],
-                connection: {},
+                connection: null,
                 modalHeader: 'Connections',
                 newConnection: {},
                 showModal: false,
@@ -72,14 +90,18 @@
         computed: {
             sidebarClass: function () {
                 return {
-                    'col-md-2': this.route === 'add',
-                    'col-md-8': this.route === 'index'
+                    'col-md-3': this.route !== 'index',
+                    'col-md-6': this.route === 'index'
                 }
             },
-            mainPanelClass: function () {
+            contentClass: function () {
                 return {
-                    'col-md-10': this.route === 'add'
+                    'col-md-9': this.route !== 'index',
+                    'col-md-6': this.route === 'index'
                 }
+            },
+            currentConnection: function () {
+                return _.find(this.connections, [ 'name', this.connection ])
             }
         },
         mounted() {
@@ -122,10 +144,17 @@
                 this.newConnection[e.target.name] = e.target.value
             },
             onSubmit(e) {
-                this.connections.push(this.newConnection)
-                this.settings.set('connections', this.connections).then(() => {
-                    alert('Connection saved')
-                })
+                let index = null
+                let connection = {}
+                let connectionName = this.newConnection.name
+                if (connection = _.find(this.connections, [ 'name', connectionName ])) {
+                    index = _.indexOf(this.connections, connection)
+                    this.connections[index] = this.newConnection
+                } else {
+                    this.connections.push(this.newConnection)
+                }
+                this.settings.set('connections', this.connections)
+                this.route = 'index'
             },
             onConnect(name) {
                 let connection = null
@@ -149,6 +178,13 @@
             },
             showAddConnection() {
                 this.route = 'add'
+            },
+            showEditConnection(name) {
+                // eslint-disable-next-line
+                console.log('edit', name)
+                this.route = 'edit'
+                this.newConnection = _.find(this.connections, [ 'name', name ])
+                this.newConnection.password = ''
             }
         }
     }

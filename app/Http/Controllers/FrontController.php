@@ -6,6 +6,7 @@ use DB;
 use Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Config;
 
 class FrontController extends Controller
@@ -51,8 +52,14 @@ class FrontController extends Controller
         foreach ($connections as $connection) {
             if ($connection['name'] === $connectionName) {
                 Setting::set('connection', $connectionName);
-                Config::set('database.default', $connection['database']);
-                DB::reconnect($connection['database']);
+                DB::purge('dynamic');
+                Config::set('database.connections.dynamic.host', $connection['host']);
+                Config::set('database.connections.dynamic.database', $connection['database']);
+                Config::set('database.connections.dynamic.username', $connection['username']);
+                Config::set('database.connections.dynamic.password', $connection['password']);
+                Config::set('database.default', 'dynamic');
+                DB::reconnect('dynamic');
+                Schema::connection('dynamic')->getConnection()->reconnect();
                 $tables = $this->getTables();
             }
         }
