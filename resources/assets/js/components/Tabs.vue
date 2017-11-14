@@ -1,7 +1,8 @@
 <template>
-    <div>
-        <div v-if="tabs.length">
+    <table v-if="tabs.length" class="layout">
+        <thead>
             <draggable
+                    element="ul"
                     v-model="tabs"
                     class="nav nav-tabs" id="primaryTabContainer"
                     :options="{ draggable: '.nav-tab-item' }"
@@ -26,6 +27,8 @@
                     </a>
                 </li>
             </draggable>
+        </thead>
+        <tbody>
             <div class="tab-content">
                 <tab
                         v-for="(tab, key) in tabs"
@@ -38,10 +41,10 @@
                         @refresh="$emit('refresh', $event)"
                 />
             </div>
-        </div>
-        <div class="notabs" v-else>
-            <el-button @click="newTab('query')" type="primary" icon="search">New Query</el-button>
-        </div>
+        </tbody>
+    </table>
+    <div class="notabs" v-else>
+        <el-button @click="newTab('query')" type="primary" icon="search">New Query</el-button>
     </div>
 </template>
 <script>
@@ -203,6 +206,17 @@
     }
 </script>
 <style>
+    table.layout {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+    }
+    table.layout tbody {
+        flex: 1;
+    }
+    .tab-content, .tab-pane {
+        max-height: 100%;
+    }
     .tab-pane-content {
         overflow-x: hidden;
         overflow-y: auto;

@@ -70,14 +70,12 @@ class QueryController extends AdminController
      */
     public function insert(Request $request)
     {
-        $sql = $request->sql;
-
         $this->beforeQuery($request);
 
         if ($bindings = $request->bindings) {
-            $result = DB::insert($sql, $bindings);
+            $result = DB::insert($request->sql, $bindings);
         } else {
-            $result = DB::insert($sql);
+            $result = DB::insert($request->sql);
         }
 
         return response()->json($result);
@@ -90,17 +88,15 @@ class QueryController extends AdminController
      */
     public function update(Request $request)
     {
-        $sql = $request->sql;
-
         $this->beforeQuery($request);
 
         if ($bindings = $request->bindings) {
 //            if (false !== strpos($sql, '?')) {
 //                $bindings = array_values($bindings);
 //            }
-            $affected = DB::update($sql, $bindings);
+            $affected = DB::update($request->sql, $bindings);
         } else {
-            $affected = DB::update($sql);
+            $affected = DB::update($request->sql);
         }
 
         return response()->json($affected);
@@ -113,14 +109,12 @@ class QueryController extends AdminController
      */
     public function delete(Request $request)
     {
-        $sql = $request->sql;
-
         $this->beforeQuery($request);
 
         if ($bindings = $request->bindings) {
-            $deleted = DB::delete($sql, $bindings);
+            $deleted = DB::delete($request->sql, $bindings);
         } else {
-            $deleted = DB::delete($sql);
+            $deleted = DB::delete($request->sql);
         }
 
         return response()->json($deleted);

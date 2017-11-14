@@ -1,20 +1,20 @@
 <template>
-    <div class="row">
-        <div class="col-sm-12">
+    <thead>
+        <div id="content-filter">
             <el-input
-                id="content-filter"
                 placeholder="WHERE clause"
                 v-model="where"
+                class="input-with-select"
                 @keyup.enter.native="$emit('filterWhere', where)"
             >
                 <el-button
-                    slot="append"
-                    icon="cstm-filter"
-                    @click="$emit('filterWhere', where)"
+                        slot="append"
+                        icon="el-icon-search"
+                        @click="$emit('filterWhere', where)"
                 />
             </el-input>
         </div>
-    </div>
+    </thead>
 </template>
 <script>
     export default {

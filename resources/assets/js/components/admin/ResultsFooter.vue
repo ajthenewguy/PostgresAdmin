@@ -1,13 +1,13 @@
 <template>
-    <div class="row">
-        <div class="col-sm-2">
+    <tfoot>
+        <div class="col-sm-2 request-time">
             <span v-if="state.processing">
                 <span class="glyphicon glyphicon-refresh spinning"></span>
             </span>
             <span v-else-if="table">
                 <a @click.prevent="$emit('refresh')" href="#"><span class="glyphicon glyphicon-refresh"></span></a>
             </span>
-            <span v-if="requestTime" class="request-time">
+            <span v-if="requestTime">
                 {{ requestTimeStr }}
             </span>
         </div>
@@ -24,7 +24,7 @@
                     @current-change="handleCurrentChange"
             />
         </div>
-    </div>
+    </tfoot>
 </template>
 <script>
     import moment from 'moment'
@@ -41,9 +41,9 @@
                 let time = ""
                 if (this.requestTime) {
                     if (this.requestTime > 999) {
-                        time = moment.duration(this.requestTime, 'seconds').format("ss") + " s"
+                        time = (this.requestTime / 1000) + " s"
                     } else {
-                        time = moment.duration(this.requestTime) + " ms"
+                        time = this.requestTime + " ms"
                     }
                 }
                 return time

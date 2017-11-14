@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Config;
 
 class FrontController extends Controller
 {
+    /**
+     * @var array $tables
+     */
+    protected $tables = [];
+
     public function index(Request $request, $database = null)
     {
 //        Setting::set('connection', null);
@@ -21,7 +26,12 @@ class FrontController extends Controller
         ];
 
         if (Auth::check()) {
-            $data['tables'] = $this->setConnection($connectionName);
+            try {
+                $data['tables'] = $this->setConnection($connectionName);
+            } catch (\Throwable $e) {
+                Setting::set('connection', null);
+                return redirect('/');
+            }
         } else {
             return redirect('/login');
         }
@@ -51,24 +61,34 @@ class FrontController extends Controller
         }
         foreach ($connections as $connection) {
             if ($connection['name'] === $connectionName) {
-                Setting::set('connection', $connectionName);
-                DB::purge('dynamic');
-                Config::set('database.connections.dynamic.host', $connection['host']);
-                Config::set('database.connections.dynamic.database', $connection['database']);
-                Config::set('database.connections.dynamic.username', $connection['username']);
-                Config::set('database.connections.dynamic.password', $connection['password']);
-                Config::set('database.default', 'dynamic');
-                DB::reconnect('dynamic');
-                Schema::connection('dynamic')->getConnection()->reconnect();
-                $tables = $this->getTables();
+                if (Setting::get('connection') !== $connectionName) {
+                    Setting::set('connection', $connectionName);
+                }
+                if (DB::connection()->getDatabaseName() !== $connection['database']) {
+                    DB::purge('dynamic');
+                    Config::set('database.connections.dynamic.host', $connection['host']);
+                    Config::set('database.connections.dynamic.database', $connection['database']);
+                    Config::set('database.connections.dynamic.username', $connection['username']);
+                    Config::set('database.connections.dynamic.password', $connection['password']);
+                    Config::set('database.default', 'dynamic');
+                    DB::reconnect('dynamic');
+                    Schema::connection('dynamic')->getConnection()->reconnect();
+                }
+                $tables = $this->getTables($connection['database']);
             }
         }
         return $tables;
     }
 
-    protected function getTables()
+    protected function getTables($database = null, $bustcache = false)
     {
         $sql = 'SELECT * FROM pg_catalog.pg_tables WHERE schemaname = \'public\' ORDER BY tablename';
-        return collect(DB::select($sql))->pluck('tablename');
+        if (is_null($database)) {
+            $database = DB::connection()->getDatabaseName();
+        }
+        if (! isset($this->tables[$database]) && ! $bustcache) {
+            $this->tables[$database] = collect(DB::select($sql))->pluck('tablename');
+        }
+        return $this->tables[$database];
     }
 }

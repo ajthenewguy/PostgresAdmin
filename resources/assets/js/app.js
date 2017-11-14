@@ -9,9 +9,6 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-import _ from 'lodash'
-import VeeValidate from 'vee-validate'
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -27,9 +24,7 @@ Vue.component('primary-content', require('./components/Content.vue'));
 Vue.component('tabs', require('./components/Tabs.vue'));
 Vue.component('tab', require('./components/admin/Tab.vue'));
 
-Vue.prototype._ = _
 Vue.prototype.$http = axios
-Vue.use(VeeValidate)
 Vue.mixin(require( './mixins/Settings.vue'))
 
 window.bus = new Vue()

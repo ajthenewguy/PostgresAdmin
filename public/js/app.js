@@ -49313,10 +49313,6 @@ module.exports = __webpack_require__(409);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vee_validate__ = __webpack_require__(313);
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -49327,9 +49323,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 __webpack_require__(206);
 
 window.Vue = __webpack_require__(5);
-
-
-
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -49346,9 +49339,7 @@ Vue.component('primary-content', __webpack_require__(391));
 Vue.component('tabs', __webpack_require__(394));
 Vue.component('tab', __webpack_require__(401));
 
-Vue.prototype._ = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a;
 Vue.prototype.$http = axios;
-Vue.use(__WEBPACK_IMPORTED_MODULE_1_vee_validate__["a" /* default */]);
 Vue.mixin(__webpack_require__(407));
 
 window.bus = new Vue();
@@ -49455,6 +49446,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_element_ui_lib_theme_chalk_index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_element_ui_lib_theme_chalk_index_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_vee_validate__ = __webpack_require__(313);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_lodash__);
 
 window._ = __webpack_require__(21);
 
@@ -49517,6 +49511,12 @@ if (token) {
 
 
 __WEBPACK_IMPORTED_MODULE_3_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_0_element_ui___default.a, { locale: __WEBPACK_IMPORTED_MODULE_1_element_ui_lib_locale_lang_en___default.a });
+
+
+__WEBPACK_IMPORTED_MODULE_3_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_4_vee_validate__["a" /* default */]);
+
+
+__WEBPACK_IMPORTED_MODULE_3_vue___default.a.prototype._ = __WEBPACK_IMPORTED_MODULE_5_lodash___default.a;
 
 // moment
 window.moment = __webpack_require__(0);
@@ -109986,7 +109986,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var text = '';
             text += this.$slots.default ? this.$slots.default[0].text : this.text ? this.text : '';
             if (this.icon) {
-                text = '<span class="glyphicon glyphicon-' + this.icon + '" aria-hidden="true"></span>' + (text ? ' &nbsp;' + text : '');
+                text = '<span class="glyphicon glyphicon-' + this.icon + '" aria-hidden="true"></span>' + (text ? ' ' + text : '');
             }
             return text;
         }
@@ -110375,7 +110375,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\n.request-time {\n  margin-left: 5px;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n  text-align: center;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 30px;\n}\n\n/*\n * Global add-ons\n */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n * Top navigation\n * Hide default border to remove 1px line.\n */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n * Sidebar\n */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f5f5f5;\n    border-right: 1px solid #eee;\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n * Main content\n */\n.main {\n  height: 100%;\n  padding: 20px 20px 10px 20px;\n}\n.main .page-header {\n  margin-top: 0;\n}\n", ""]);
 
 // exports
 
@@ -110426,6 +110426,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             bus: window.bus,
             store: window.store,
             state: window.store.state,
+            util: window.util,
             table: null,
             tables: this.loadedTables,
             editingRow: null,
@@ -110559,32 +110560,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 sidebarHeight = $(".sidebar").height();
                 contentHeight = sidebarHeight - 3;
                 if ($('#primaryTabContainer').length) {
-                    contentHeight -= $('#primaryTabContainer').height() + 10; // 53
+                    contentHeight -= $('#primaryTabContainer').height() + 10; // 54
                 }
                 if ($('#contentFilter').length) {
                     contentHeight -= $('#contentFilter').height(); // 35
                 }
                 if ($('#tabFooter .el-pagination').length) {
                     contentHeight -= $('#tabFooter .el-pagination').height(); // 28
+                } else {
+                    contentHeight -= 22;
                 }
                 $(".tab-pane-content").height(contentHeight);
             }, 50);
-        },
-        tabIcon: function tabIcon(type) {
-            switch (type) {
-                case "query":
-                    {
-                        return "glyphicon glyphicon-search";
-                    }
-                case "content":
-                    {
-                        return "glyphicon glyphicon-th-list";
-                    }
-                case "structure":
-                    {
-                        return "glyphicon glyphicon-info-sign";
-                    }
-            }
         }
     }
 });
@@ -110605,6 +110592,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return {
             store: window.store,
             state: window.store.state,
+            useElementUI: true,
             customQuery: false,
             pagination: {
                 current_page: 1,
@@ -110628,134 +110616,154 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             dataTypes: [{
                 name: 'bigint',
                 aliases: ['int8'],
-                description: 'signed eight-byte integer'
+                description: 'signed eight-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'bigserial',
                 aliases: ['serial8'],
-                description: 'autoincrementing eight-byte integer'
+                description: 'autoincrementing eight-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'bit',
                 description: 'fixed-length bit string',
+                interfaceFacet: 'el-input',
                 size: 1
             }, {
                 name: 'bit varying',
                 aliases: ['varbit'],
                 description: 'variable-length bit string',
+                interfaceFacet: 'el-input',
                 size: null
             }, {
                 name: 'boolean',
                 aliases: ['bool'],
-                description: 'logical Boolean (true/false)'
+                description: 'logical Boolean (true/false)',
+                interfaceFacet: 'el-checkbox'
             }, {
                 name: 'character',
                 aliases: ['char'],
                 description: 'fixed-length character string',
+                interfaceFacet: 'el-input',
                 size: 1
             }, {
                 name: 'character varying',
                 aliases: ['varchar'],
                 description: 'variable-length character string',
+                interfaceFacet: 'el-input',
                 size: null
             }, {
                 name: 'cidr',
                 aliases: ['ip'],
-                description: 'IPv4 or IPv6 network address'
+                description: 'IPv4 or IPv6 network address',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'date',
-                description: 'calendar date (year, month, day)'
+                description: 'calendar date (year, month, day)',
+                interfaceFacet: 'el-date-picker'
             }, {
                 name: 'double precision',
                 aliases: ['float8', 'double'],
-                description: 'double precision floating-point number (8 bytes)'
+                description: 'double precision floating-point number (8 bytes)',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'integer',
                 aliases: ['int', 'int4'],
-                description: 'signed four-byte integer'
+                description: 'signed four-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'interval',
                 description: 'time span',
+                interfaceFacet: 'el-input',
                 optionLabel: 'Fields',
                 options: ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'SECOND', 'YEAR TO MONTH', 'DAY TO HOUR', 'DAY TO MINUTE', 'DAY TO SECOND', 'HOUR TO MINUTE', 'HOUR TO SECOND', 'MINUTE TO SECOND'],
                 precision: 6 // applies only to seconds
             }, {
                 name: 'json',
-                description: 'textual JSON data'
+                description: 'textual JSON data',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'jsonb',
-                description: 'binary JSON data, decomposed'
+                description: 'binary JSON data, decomposed',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'money',
-                description: 'currency amount'
+                description: 'currency amount',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'numeric',
                 aliases: ['decimal'],
                 description: '',
+                interfaceFacet: 'el-input',
                 precision: null, // (12.3) -> 3
                 scale: 0 // 12.(3) -> 1
             }, {
                 name: 'real',
                 aliases: ['float4'],
-                description: 'single precision floating-point number (4 bytes)'
+                description: 'single precision floating-point number (4 bytes)',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'smallint',
                 aliases: ['int2'],
-                description: 'signed two-byte integer'
+                description: 'signed two-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'smallserial',
                 aliases: ['serial2'],
-                description: 'autoincrementing two-byte integer'
+                description: 'autoincrementing two-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'serial',
                 aliases: ['serial4'],
-                description: 'autoincrementing four-byte integer'
+                description: 'autoincrementing four-byte integer',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'time',
                 aliases: ['timetz'],
                 description: 'time of day',
+                interfaceFacet: 'el-date-picker',
                 optionLabel: 'With time zone',
                 options: ['with time zone', 'without time zone']
             }, {
                 name: 'timestamp',
                 aliases: ['timestamptz'],
                 description: 'date and time',
+                interfaceFacet: 'el-date-picker',
                 optionLabel: 'With time zone',
                 options: ['with time zone', 'without time zone']
             }, {
                 name: 'uuid',
-                description: 'universally unique identifier'
+                description: 'universally unique identifier',
+                interfaceFacet: 'el-input'
             }, {
                 name: 'xml',
-                description: 'XML data'
+                description: 'XML data',
+                interfaceFacet: 'el-input'
             }]
         };
     },
 
     methods: {
-        dataTypeComponent: function dataTypeComponent(type) {
-            switch (type) {
-                case "boolean":
-                    {
-                        return 'el-checkbox';
-                        break;
-                    }
-                case "int":
-                case "json":
-                case "text":
-                case "uuid":
-                case "integer":
-                case "varchar":
-                case "character varying":
-                    {
-                        return 'el-input';
-                        break;
-                    }
-                case "date":
-                case "timestamp":
-                    {
-                        return 'el-date-picker';
-                        break;
-                    }
+        interfaceFacet: function interfaceFacet(type) {
+            var interfaceFacet = 'input';
+            if (type.includes('timestamp ') || type.includes('time ')) {
+                type = type.split(' ')[0];
             }
+            type = _.find(this.dataTypes, ['name', type]);
+            if (type) {
+                interfaceFacet = type.interfaceFacet;
+                if (this.useElementUI !== true) {
+                    switch (type) {
+                        case 'el-input':
+                        case 'el-checkbox':
+                        case 'el-date-picker':
+                            {
+                                type = 'input';
+                                break;
+                            }
+                    }
+                }
+            }
+            return interfaceFacet;
         },
         getKeysValues: function getKeysValues(data) {
             var keys = [];
@@ -111454,18 +111462,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
             return query;
-        },
-        requestTimeStr: function requestTimeStr(tab) {
-            console.log('deprecated');
-            var time = "";
-            if (this.requestTime[tab]) {
-                if (this.requestTime[tab] > 999) {
-                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab], 'seconds').format("ss") + " s";
-                } else {
-                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime[tab]) + " ms";
-                }
-            }
-            return time;
         }
     }
 });
@@ -111914,15 +111910,16 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
+  return _c("thead", [
     _c(
       "div",
-      { staticClass: "col-sm-12" },
+      { attrs: { id: "content-filter" } },
       [
         _c(
           "el-input",
           {
-            attrs: { id: "content-filter", placeholder: "WHERE clause" },
+            staticClass: "input-with-select",
+            attrs: { placeholder: "WHERE clause" },
             nativeOn: {
               keyup: function($event) {
                 if (
@@ -111944,7 +111941,7 @@ var render = function() {
           },
           [
             _c("el-button", {
-              attrs: { slot: "append", icon: "cstm-filter" },
+              attrs: { slot: "append", icon: "el-icon-search" },
               on: {
                 click: function($event) {
                   _vm.$emit("filterWhere", _vm.where)
@@ -112333,7 +112330,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             store: window.store,
-            state: window.store.state
+            state: window.store.state,
+            util: window.util
         };
     },
 
@@ -112491,35 +112489,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         getFormComponent: function getFormComponent(column) {
             var config = this.getColumn(this.table, column);
-            var data_type = this.$parent.getDataTypeDisplay(config.type);
-
-            // eslint-disable-next-line
-            console.log(config);
-
-            switch (data_type) {
-                case "boolean":
-                    {
-                        return 'el-checkbox';
-                        break;
-                    }
-                case "int":
-                case "json":
-                case "text":
-                case "uuid":
-                case "integer":
-                case "varchar":
-                case "character varying":
-                    {
-                        return 'el-input';
-                        break;
-                    }
-                case "date":
-                case "timestamp":
-                    {
-                        return 'el-date-picker';
-                        break;
-                    }
-            }
+            return this.interfaceFacet(config.type);
         },
         getTypeAttr: function getTypeAttr(column) {
             var config = this.getColumn(column);
@@ -112768,31 +112738,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         getFormComponent: function getFormComponent(column) {
             var config = this.getColumn(this.table, column);
-            var data_type = this.$parent.getDataTypeDisplay(config.type);
-            switch (data_type) {
-                case "boolean":
-                    {
-                        return 'el-checkbox';
-                        break;
-                    }
-                case "int":
-                case "json":
-                case "text":
-                case "uuid":
-                case "integer":
-                case "varchar":
-                case "character varying":
-                    {
-                        return 'el-input';
-                        break;
-                    }
-                case "date":
-                case "timestamp":
-                    {
-                        return 'el-date-picker';
-                        break;
-                    }
-            }
+            return this.interfaceFacet(config.type);
         },
         getTypeAttr: function getTypeAttr(column) {
             var config = this.getColumn(this.table, column);
@@ -113015,7 +112961,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("tbody", { staticStyle: { flex: "1", overflow: "auto" } }, [
     _vm.tab === "query" || (_vm.tab === "content" && _vm.table)
       ? _c("div", { staticClass: "results table-responsive" }, [
           _c(
@@ -113117,87 +113063,133 @@ var render = function() {
               ]),
               _vm._v(" "),
               _c("transition", { attrs: { name: "fade" } }, [
-                !_vm.state.processing
-                  ? _c(
-                      "tbody",
+                _c(
+                  "tbody",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: !_vm.state.processing,
+                        expression: "!state.processing"
+                      }
+                    ]
+                  },
+                  [
+                    _vm.table && _vm.insertingRow
+                      ? _c("insert-table-row", {
+                          attrs: {
+                            tab: _vm.tab,
+                            table: _vm.table,
+                            schema: _vm.tableConfig.schema
+                          },
+                          on: {
+                            cancelInsertingRow: function($event) {
+                              _vm.$emit("insertingRow", false)
+                            },
+                            insertRow: _vm.insertRow
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm._l(_vm.records, function(row) {
+                      return _c("result-table-row", {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.records,
+                            expression: "records"
+                          }
+                        ],
+                        key: _vm.tableConfig
+                          ? row[_vm.tableConfig.primaryKey]
+                          : undefined,
+                        attrs: {
+                          tab: _vm.tab,
+                          table: _vm.table,
+                          "table-config": _vm.tableConfig,
+                          row: row,
+                          "editing-row": _vm.editingRow
+                        },
+                        on: {
+                          editingRow: function($event) {
+                            _vm.$emit(
+                              "editingRow",
+                              row[_vm.tableConfig.primaryKey]
+                            )
+                          },
+                          cancelEditingRow: function($event) {
+                            _vm.$emit("editingRow", null)
+                          },
+                          updateRow: _vm.updateRow,
+                          deleteRow: function($event) {
+                            _vm.$emit(
+                              "deleteRow",
+                              row[_vm.tableConfig.primaryKey]
+                            )
+                          }
+                        }
+                      })
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "tr",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: !_vm.state.processing,
+                            expression: "!state.processing"
+                          }
+                        ]
+                      },
                       [
-                        _vm.table && _vm.insertingRow
-                          ? _c("insert-table-row", {
-                              attrs: {
-                                tab: _vm.tab,
-                                table: _vm.table,
-                                schema: _vm.tableConfig.schema
-                              },
-                              on: {
-                                cancelInsertingRow: function($event) {
-                                  _vm.$emit("insertingRow", false)
-                                },
-                                insertRow: _vm.insertRow
+                        _c(
+                          "td",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  (_vm.tab === "query" ||
+                                    _vm.tab === "content") &&
+                                  (!_vm.records || _vm.records.length < 1),
+                                expression:
+                                  "(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
                               }
-                            })
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm._l(_vm.records, function(row) {
-                          return _vm.records
-                            ? _c("result-table-row", {
-                                key: _vm.tableConfig
-                                  ? row[_vm.tableConfig.primaryKey]
-                                  : undefined,
-                                attrs: {
-                                  tab: _vm.tab,
-                                  table: _vm.table,
-                                  "table-config": _vm.tableConfig,
-                                  row: row,
-                                  "editing-row": _vm.editingRow
-                                },
-                                on: {
-                                  editingRow: function($event) {
-                                    _vm.$emit(
-                                      "editingRow",
-                                      row[_vm.tableConfig.primaryKey]
-                                    )
-                                  },
-                                  cancelEditingRow: function($event) {
-                                    _vm.$emit("editingRow", null)
-                                  },
-                                  updateRow: _vm.updateRow,
-                                  deleteRow: function($event) {
-                                    _vm.$emit(
-                                      "deleteRow",
-                                      row[_vm.tableConfig.primaryKey]
-                                    )
-                                  }
-                                }
-                              })
-                            : _vm._e()
-                        }),
-                        _vm._v(" "),
-                        !_vm.state.processing
-                          ? _c("tr", [
-                              (_vm.tab === "query" || _vm.tab === "content") &&
-                              (!_vm.records || _vm.records.length < 1)
-                                ? _c(
-                                    "td",
-                                    { attrs: { colspan: _vm.colspan } },
-                                    [
-                                      _c("div", { staticClass: "empty" }, [
-                                        _c("span", [_vm._v("No records found")])
-                                      ])
-                                    ]
-                                  )
-                                : _vm._e(),
-                              _vm._v(" "),
-                              (_vm.tab === "structure" ||
-                                _vm.tab === "content") &&
-                              !_vm.table
-                                ? _c("td", { attrs: { colspan: _vm.colspan } })
-                                : _vm._e()
+                            ],
+                            attrs: { colspan: _vm.colspan }
+                          },
+                          [
+                            _c("div", { staticClass: "empty" }, [
+                              _c("span", [_vm._v("No records found")])
                             ])
-                          : _vm._e()
-                      ],
-                      2
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("td", {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value:
+                                (_vm.tab === "structure" ||
+                                  _vm.tab === "content") &&
+                                !_vm.table,
+                              expression:
+                                "(tab === 'structure' || tab === 'content') && ! table"
+                            }
+                          ],
+                          attrs: { colspan: _vm.colspan }
+                        })
+                      ]
                     )
-                  : _vm._e()
+                  ],
+                  2
+                )
               ])
             ],
             1
@@ -115897,6 +115889,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['defaultConnection'],
@@ -115911,6 +115904,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             state: window.store.state,
             util: window.util,
             route: 'index',
+            editingConnection: null,
             connections: [],
             connection: null,
             modalHeader: 'Connections',
@@ -115936,9 +115930,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 'col-md-9': this.route !== 'index',
                 'col-md-6': this.route === 'index'
             };
-        },
-        currentConnection: function currentConnection() {
-            return _.find(this.connections, ['name', this.connection]);
         }
     },
     mounted: function mounted() {
@@ -115959,6 +115950,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     methods: {
         cancelAddConnection: function cancelAddConnection() {
             this.route = 'index';
+        },
+        deleteConnection: function deleteConnection(name) {
+            if (confirm('Are you sure?')) {
+                var index = _.findIndex(this.connections, ['name', name]);
+                this.connections.splice(index, 1);
+                this.settings.set('connections', this.connections);
+                if (name === this.editingConnection) {
+                    this.route = 'index';
+                }
+            }
         },
         loadConnections: function loadConnections() {
             var _this2 = this;
@@ -115992,6 +115993,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (connection = _.find(this.connections, ['name', connectionName])) {
                 index = _.indexOf(this.connections, connection);
                 this.connections[index] = this.newConnection;
+                this.editingConnection = null;
             } else {
                 this.connections.push(this.newConnection);
             }
@@ -116024,8 +116026,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.route = 'add';
         },
         showEditConnection: function showEditConnection(name) {
-            // eslint-disable-next-line
-            console.log('edit', name);
+            this.editingConnection = name;
             this.route = 'edit';
             this.newConnection = _.find(this.connections, ['name', name]);
             this.newConnection.password = '';
@@ -116038,10 +116039,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(376)
-}
 var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(378)
@@ -116050,7 +116047,7 @@ var __vue_template__ = __webpack_require__(379)
 /* template functional */
   var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = injectStyle
+var __vue_styles__ = null
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
@@ -116086,51 +116083,19 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 376 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(377);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(7)("2284bce6", content, false);
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1335c6da\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./ConnectionList.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1335c6da\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/sass-loader/lib/loader.js!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./ConnectionList.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 377 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(6)(undefined);
-// imports
-
-
-// module
-exports.push([module.i, "", ""]);
-
-// exports
-
-
-/***/ }),
+/* 376 */,
+/* 377 */,
 /* 378 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -116160,12 +116125,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
 
+    computed: {
+        currentConnection: function currentConnection() {
+            return _.find(this.connections, ['name', this.connection]);
+        }
+    },
     methods: {
         connect: function connect(name) {
             this.$emit('connect', name);
         },
         editConnection: function editConnection(name) {
             this.$emit('editConnection', name);
+        },
+        deleteConnection: function deleteConnection(name) {
+            this.$emit('deleteConnection', name);
         }
     }
 });
@@ -116239,6 +116212,22 @@ var render = function() {
                     attrs: { role: "group", "aria-label": "..." }
                   },
                   [
+                    value.name === _vm.connection
+                      ? _c("span", [
+                          _c("small", [
+                            _vm.route === "index"
+                              ? _c("strong", [_vm._v("Connected: ")])
+                              : _vm._e(),
+                            _vm._v(
+                              _vm._s(_vm.currentConnection.username) +
+                                "@" +
+                                _vm._s(_vm.currentConnection.host) +
+                                "\n                    "
+                            )
+                          ])
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     value.name !== _vm.connection
                       ? _c("v-button", {
                           attrs: {
@@ -116262,6 +116251,20 @@ var render = function() {
                           on: {
                             click: function($event) {
                               _vm.editConnection(value.name)
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    value.name !== _vm.connection
+                      ? _c("v-button", {
+                          attrs: {
+                            icon: "trash",
+                            text: _vm.route === "index" ? "Delete" : ""
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.deleteConnection(value.name)
                             }
                           }
                         })
@@ -116600,6 +116603,7 @@ var render = function() {
                     on: {
                       connect: _vm.onConnect,
                       editConnection: _vm.showEditConnection,
+                      deleteConnection: _vm.deleteConnection,
                       showAddConnection: _vm.showAddConnection,
                       refreshConnections: _vm.loadConnections
                     }
@@ -116638,7 +116642,7 @@ var render = function() {
                 ? _c("div", { class: _vm.contentClass }, [
                     _c("div", { staticClass: "panel panel-default" }, [
                       _c("div", { staticClass: "panel-heading" }, [
-                        _vm._v("Connection Setup")
+                        _vm._v("Edit Connection")
                       ]),
                       _vm._v(" "),
                       _c(
@@ -117261,7 +117265,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\n.tab-pane-content {\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.notabs {\n    margin: 15px 0;\n}\n", ""]);
+exports.push([module.i, "\ntable.layout {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    height: 100%;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\ntable.layout tbody {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n}\n.tab-content, .tab-pane {\n    max-height: 100%;\n}\n.tab-pane-content {\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.notabs {\n    margin: 15px 0;\n}\n", ""]);
 
 // exports
 
@@ -117276,6 +117280,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuedraggable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vuedraggable__);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+//
+//
+//
 //
 //
 //
@@ -119433,16 +119440,17 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm.tabs.length
-      ? _c(
-          "div",
+  return _vm.tabs.length
+    ? _c("table", { staticClass: "layout" }, [
+        _c(
+          "thead",
           [
             _c(
               "draggable",
               {
                 staticClass: "nav nav-tabs",
                 attrs: {
+                  element: "ul",
                   id: "primaryTabContainer",
                   options: { draggable: ".nav-tab-item" }
                 },
@@ -119532,54 +119540,56 @@ var render = function() {
                 ])
               ],
               2
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "tab-content" },
-              _vm._l(_vm.tabs, function(tab, key) {
-                return _c("tab", {
-                  key: tab.id,
-                  attrs: {
-                    id: tab.id,
-                    "current-tab": _vm.activeTabIndex(),
-                    type: tab.type,
-                    table: tab.table
-                  },
-                  on: {
-                    loaded: function($event) {
-                      _vm.$emit("loaded")
-                    },
-                    refresh: function($event) {
-                      _vm.$emit("refresh", $event)
-                    }
-                  }
-                })
-              })
             )
           ],
           1
-        )
-      : _c(
-          "div",
-          { staticClass: "notabs" },
-          [
-            _c(
-              "el-button",
-              {
-                attrs: { type: "primary", icon: "search" },
+        ),
+        _vm._v(" "),
+        _c("tbody", [
+          _c(
+            "div",
+            { staticClass: "tab-content" },
+            _vm._l(_vm.tabs, function(tab, key) {
+              return _c("tab", {
+                key: tab.id,
+                attrs: {
+                  id: tab.id,
+                  "current-tab": _vm.activeTabIndex(),
+                  type: tab.type,
+                  table: tab.table
+                },
                 on: {
-                  click: function($event) {
-                    _vm.newTab("query")
+                  loaded: function($event) {
+                    _vm.$emit("loaded")
+                  },
+                  refresh: function($event) {
+                    _vm.$emit("refresh", $event)
                   }
                 }
-              },
-              [_vm._v("New Query")]
-            )
-          ],
-          1
-        )
-  ])
+              })
+            })
+          )
+        ])
+      ])
+    : _c(
+        "div",
+        { staticClass: "notabs" },
+        [
+          _c(
+            "el-button",
+            {
+              attrs: { type: "primary", icon: "search" },
+              on: {
+                click: function($event) {
+                  _vm.newTab("query")
+                }
+              }
+            },
+            [_vm._v("New Query")]
+          )
+        ],
+        1
+      )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -119645,6 +119655,9 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
 //
 //
 //
@@ -119978,9 +119991,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var time = "";
             if (this.requestTime) {
                 if (this.requestTime > 999) {
-                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime, 'seconds').format("ss") + " s";
+                    time = this.requestTime / 1000 + " s";
                 } else {
-                    time = __WEBPACK_IMPORTED_MODULE_0_moment___default.a.duration(this.requestTime) + " ms";
+                    time = this.requestTime + " ms";
                 }
             }
             return time;
@@ -120004,8 +120017,8 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col-sm-2" }, [
+  return _c("tfoot", [
+    _c("div", { staticClass: "col-sm-2 request-time" }, [
       _vm.state.processing
         ? _c("span", [
             _c("span", { staticClass: "glyphicon glyphicon-refresh spinning" })
@@ -120029,7 +120042,7 @@ var render = function() {
           : _vm._e(),
       _vm._v(" "),
       _vm.requestTime
-        ? _c("span", { staticClass: "request-time" }, [
+        ? _c("span", [
             _vm._v("\n            " + _vm._s(_vm.requestTimeStr) + "\n        ")
           ])
         : _vm._e()
@@ -120147,56 +120160,81 @@ var render = function() {
               error: _vm.queryError
             }
           })
-        : (_vm.type === "content" && (_vm.records && _vm.records.length > 0)) ||
-          _vm.where
-          ? _c("content-filter", {
-              attrs: { id: "contentFilter" },
-              on: { filterWhere: _vm.filterWhere }
-            })
-          : _vm._e(),
-      _vm._v(" "),
-      _vm.type === "query" || _vm.type === "content"
-        ? _c("results-table", {
-            class: { "tab-pane-content": _vm.type !== "query" },
-            attrs: {
-              tab: _vm.type,
-              table: _vm.table ? _vm.table.name : null,
-              "table-config": _vm.table ? _vm.table : null,
-              order: _vm.order,
-              records: _vm.records,
-              "editing-row": _vm.editingRow,
-              "inserting-row": _vm.insertingRow
-            },
-            on: {
-              sortColumn: _vm.sortColumn,
-              insertingRow: _vm.setInsertingRow,
-              editingRow: _vm.setEditingRow,
-              insertRow: _vm.insertRow,
-              updateRow: _vm.updateRow,
-              deleteRow: _vm.deleteRow,
-              refresh: function($event) {
-                _vm.$emit("refresh", $event)
-              }
-            }
-          })
         : _vm._e(),
       _vm._v(" "),
       _vm.type === "query" || _vm.type === "content"
-        ? _c("results-footer", {
-            attrs: {
-              id: "tabFooter",
-              pagination: _vm.type === "content" ? _vm.pagination : false,
-              records: _vm.records,
-              "request-time": _vm.requestTime,
-              tab: _vm.type,
-              table: _vm.type === "content" ? _vm.table.name : false
+        ? _c(
+            "table",
+            {
+              staticStyle: {
+                display: "flex",
+                height: "100%",
+                "flex-direction": "column"
+              }
             },
-            on: {
-              refresh: _vm.refresh,
-              changePage: _vm.getRecords,
-              changePerPage: _vm.handleSizeChange
-            }
-          })
+            [
+              (_vm.type === "content" &&
+                (_vm.records && _vm.records.length > 0)) ||
+              _vm.where
+                ? _c("content-filter", {
+                    attrs: { id: "contentFilter" },
+                    on: { filterWhere: _vm.filterWhere }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _c("results-table", {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm.type === "query" || _vm.type === "content",
+                    expression: "type === 'query' || type === 'content'"
+                  }
+                ],
+                class: { "tab-pane-content": _vm.type !== "query" },
+                attrs: {
+                  tab: _vm.type,
+                  table: _vm.table ? _vm.table.name : null,
+                  "table-config": _vm.table ? _vm.table : null,
+                  order: _vm.order,
+                  records: _vm.records,
+                  "editing-row": _vm.editingRow,
+                  "inserting-row": _vm.insertingRow
+                },
+                on: {
+                  sortColumn: _vm.sortColumn,
+                  insertingRow: _vm.setInsertingRow,
+                  editingRow: _vm.setEditingRow,
+                  insertRow: _vm.insertRow,
+                  updateRow: _vm.updateRow,
+                  deleteRow: _vm.deleteRow,
+                  refresh: function($event) {
+                    _vm.$emit("refresh", $event)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _vm.type === "query" || _vm.type === "content"
+                ? _c("results-footer", {
+                    attrs: {
+                      id: "tabFooter",
+                      pagination:
+                        _vm.type === "content" ? _vm.pagination : false,
+                      records: _vm.records,
+                      "request-time": _vm.requestTime,
+                      tab: _vm.type,
+                      table: _vm.type === "content" ? _vm.table.name : false
+                    },
+                    on: {
+                      refresh: _vm.refresh,
+                      changePage: _vm.getRecords,
+                      changePerPage: _vm.handleSizeChange
+                    }
+                  })
+                : _vm._e()
+            ],
+            1
+          )
         : _vm._e()
     ],
     2

@@ -62,5 +62,11 @@ import 'element-ui/lib/theme-chalk/index.css'
 import Vue from 'vue'
 Vue.use(ElementUI, { locale })
 
+import VeeValidate from 'vee-validate'
+Vue.use(VeeValidate)
+
+import _ from 'lodash'
+Vue.prototype._ = _
+
 // moment
 window.moment = require('moment')

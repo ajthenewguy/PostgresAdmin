@@ -83,28 +83,7 @@
             },
             getFormComponent(column) {
                 let config = this.getColumn(this.table, column)
-                let data_type = this.$parent.getDataTypeDisplay(config.type)
-                switch(data_type) {
-                    case "boolean": {
-                        return 'el-checkbox'
-                        break
-                    }
-                    case "int":
-                    case "json":
-                    case "text":
-                    case "uuid":
-                    case "integer":
-                    case "varchar":
-                    case "character varying": {
-                        return 'el-input'
-                        break
-                    }
-                    case "date":
-                    case "timestamp": {
-                        return 'el-date-picker'
-                        break
-                    }
-                }
+                return this.interfaceFacet(config.type)
             },
             getTypeAttr(column) {
                 let config = this.getColumn(this.table, column)

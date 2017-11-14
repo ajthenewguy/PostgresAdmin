@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <tbody style="flex: 1; overflow: auto">
         <div class="results table-responsive" v-if="(tab === 'query' || tab === 'content' && table)">
             <table class="table table-hover table-striped table-condensed">
                 <thead>
@@ -24,7 +24,7 @@
                 </tr>
                 </thead>
                 <transition name="fade">
-                    <tbody v-if="!state.processing">
+                    <tbody v-show="!state.processing">
                         <insert-table-row
                                 v-if="table && insertingRow"
                                 :tab="tab"
@@ -34,7 +34,7 @@
                                 @insertRow="insertRow"
                         />
                         <result-table-row
-                                v-if="records"
+                                v-show="records"
                                 v-for="row in records"
                                 :key="(tableConfig? row[tableConfig.primaryKey] : undefined)"
                                 :tab="tab"
@@ -47,9 +47,9 @@
                                 @updateRow="updateRow"
                                 @deleteRow="$emit('deleteRow', row[tableConfig.primaryKey])"
                         />
-                        <tr v-if="!state.processing">
+                        <tr v-show="!state.processing">
                             <td
-                                    v-if="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
+                                    v-show="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
                                     :colspan="colspan"
                             >
                                 <div class="empty">
@@ -57,7 +57,7 @@
                                 </div>
                             </td>
                             <td
-                                    v-if="(tab === 'structure' || tab === 'content') && ! table"
+                                    v-show="(tab === 'structure' || tab === 'content') && ! table"
                                     :colspan="colspan"
                             >
                             </td>
@@ -69,7 +69,7 @@
         <div v-else class="empty">
             <span>No table selected</span>
         </div>
-    </div>
+    </tbody>
 </template>
 
 <script>
@@ -87,7 +87,8 @@
         data() {
             return {
                 store: window.store,
-                state: window.store.state
+                state: window.store.state,
+                util: window.util
             }
         },
         components: {

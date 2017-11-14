@@ -31,41 +31,44 @@
                 @afterQuery="afterCustomQuery"
                 @error="queryError"
         />
-        <content-filter
-                v-else-if="type === 'content' && (records && records.length > 0) || where"
-                id="contentFilter"
-                @filterWhere="filterWhere"
-        />
-        <results-table
-                :class="{ 'tab-pane-content': type !== 'query' }"
-                v-if="type === 'query' || type === 'content'"
-                :tab="type"
-                :table="(table ? table.name : null)"
-                :table-config="(table ? table : null)"
-                :order="order"
-                :records="records"
-                :editing-row="editingRow"
-                :inserting-row="insertingRow"
-                @sortColumn="sortColumn"
-                @insertingRow="setInsertingRow"
-                @editingRow="setEditingRow"
-                @insertRow="insertRow"
-                @updateRow="updateRow"
-                @deleteRow="deleteRow"
-                @refresh="$emit('refresh', $event)"
-        />
-        <results-footer
-                v-if="type === 'query' || type === 'content'"
-                id="tabFooter"
-                :pagination="(type === 'content' ? pagination : false)"
-                :records="records"
-                :request-time="requestTime"
-                :tab="type"
-                :table="(type === 'content' ? table.name : false)"
-                @refresh="refresh"
-                @changePage="getRecords"
-                @changePerPage="handleSizeChange"
-        />
+        <table v-if="type === 'query' || type === 'content'" style="display: flex; height: 100%; flex-direction: column">
+            <content-filter
+                    v-if="type === 'content' && (records && records.length > 0) || where"
+                    id="contentFilter"
+                    @filterWhere="filterWhere"
+            />
+            <results-table
+                    :class="{ 'tab-pane-content': type !== 'query' }"
+                    v-show="type === 'query' || type === 'content'"
+                    :tab="type"
+                    :table="(table ? table.name : null)"
+                    :table-config="(table ? table : null)"
+                    :order="order"
+                    :records="records"
+                    :editing-row="editingRow"
+                    :inserting-row="insertingRow"
+                    @sortColumn="sortColumn"
+                    @insertingRow="setInsertingRow"
+                    @editingRow="setEditingRow"
+                    @insertRow="insertRow"
+                    @updateRow="updateRow"
+                    @deleteRow="deleteRow"
+                    @refresh="$emit('refresh', $event)"
+            />
+            <results-footer
+                    v-if="type === 'query' || type === 'content'"
+                    id="tabFooter"
+                    :pagination="(type === 'content' ? pagination : false)"
+                    :records="records"
+                    :request-time="requestTime"
+                    :tab="type"
+                    :table="(type === 'content' ? table.name : false)"
+                    @refresh="refresh"
+                    @changePage="getRecords"
+                    @changePerPage="handleSizeChange"
+            />
+        </table>
+
     </div>
 </template>
 <script>

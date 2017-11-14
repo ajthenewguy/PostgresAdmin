@@ -71,7 +71,7 @@
                 let text = ''
                 text += (this.$slots.default ? this.$slots.default[0].text : (this.text ? this.text : ''))
                 if (this.icon) {
-                    text = '<span class="glyphicon glyphicon-' + this.icon + '" aria-hidden="true"></span>' + (text ? ' &nbsp;' + text : '')
+                    text = '<span class="glyphicon glyphicon-' + this.icon + '" aria-hidden="true"></span>' + (text ? ' ' + text : '')
                 }
                 return text
             }

@@ -20,6 +20,7 @@
                                 :connections="connections"
                                 @connect="onConnect"
                                 @editConnection="showEditConnection"
+                                @deleteConnection="deleteConnection"
                                 @showAddConnection="showAddConnection"
                                 @refreshConnections="loadConnections"
                         />
@@ -39,7 +40,7 @@
                     </div>
                     <div :class="contentClass" v-if="route === 'edit'">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Connection Setup</div>
+                            <div class="panel-heading">Edit Connection</div>
                             <div class="panel-body">
                                 <connection-form
                                         :route="route"
@@ -75,6 +76,7 @@
                 state: window.store.state,
                 util: window.util,
                 route: 'index',
+                editingConnection: null,
                 connections: [],
                 connection: null,
                 modalHeader: 'Connections',
@@ -99,9 +101,6 @@
                     'col-md-9': this.route !== 'index',
                     'col-md-6': this.route === 'index'
                 }
-            },
-            currentConnection: function () {
-                return _.find(this.connections, [ 'name', this.connection ])
             }
         },
         mounted() {
@@ -119,6 +118,16 @@
         methods: {
             cancelAddConnection() {
                 this.route = 'index'
+            },
+            deleteConnection(name) {
+                if (confirm('Are you sure?')) {
+                    let index = _.findIndex(this.connections, [ 'name', name ])
+                    this.connections.splice(index, 1)
+                    this.settings.set('connections', this.connections)
+                    if (name === this.editingConnection) {
+                        this.route = 'index'
+                    }
+                }
             },
             loadConnections() {
                 return this.settings.get([ 'connection', 'connections' ]).then(values => {
@@ -150,6 +159,7 @@
                 if (connection = _.find(this.connections, [ 'name', connectionName ])) {
                     index = _.indexOf(this.connections, connection)
                     this.connections[index] = this.newConnection
+                    this.editingConnection = null
                 } else {
                     this.connections.push(this.newConnection)
                 }
@@ -180,8 +190,7 @@
                 this.route = 'add'
             },
             showEditConnection(name) {
-                // eslint-disable-next-line
-                console.log('edit', name)
+                this.editingConnection = name
                 this.route = 'edit'
                 this.newConnection = _.find(this.connections, [ 'name', name ])
                 this.newConnection.password = ''

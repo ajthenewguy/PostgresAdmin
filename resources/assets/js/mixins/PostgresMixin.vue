@@ -5,6 +5,7 @@
             return {
                 store: window.store,
                 state: window.store.state,
+                useElementUI: true,
                 customQuery: false,
                 pagination: {
                     current_page: 1,
@@ -29,52 +30,64 @@
                     {
                         name: 'bigint',
                         aliases: [ 'int8' ],
-                        description: 'signed eight-byte integer'
+                        description: 'signed eight-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'bigserial',
                         aliases: [ 'serial8' ],
-                        description: 'autoincrementing eight-byte integer'
+                        description: 'autoincrementing eight-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'bit',
                         description: 'fixed-length bit string',
+                        interfaceFacet: 'el-input',
                         size: 1
                     }, {
                         name: 'bit varying',
                         aliases: [ 'varbit' ],
                         description: 'variable-length bit string',
+                        interfaceFacet: 'el-input',
                         size: null
                     }, {
                         name: 'boolean',
                         aliases: [ 'bool' ],
-                        description: 'logical Boolean (true/false)'
+                        description: 'logical Boolean (true/false)',
+                        interfaceFacet: 'el-checkbox'
                     }, {
                         name: 'character',
                         aliases: [ 'char' ],
                         description: 'fixed-length character string',
+                        interfaceFacet: 'el-input',
                         size: 1
                     }, {
                         name: 'character varying',
                         aliases: [ 'varchar' ],
                         description: 'variable-length character string',
+                        interfaceFacet: 'el-input',
                         size: null
                     }, {
                         name: 'cidr',
                         aliases: [ 'ip' ],
-                        description: 'IPv4 or IPv6 network address'
+                        description: 'IPv4 or IPv6 network address',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'date',
-                        description: 'calendar date (year, month, day)'
+                        description: 'calendar date (year, month, day)',
+                        interfaceFacet: 'el-date-picker'
                     }, {
                         name: 'double precision',
                         aliases: [ 'float8', 'double' ],
-                        description: 'double precision floating-point number (8 bytes)'
+                        description: 'double precision floating-point number (8 bytes)',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'integer',
                         aliases: [ 'int', 'int4' ],
-                        description: 'signed four-byte integer'
+                        description: 'signed four-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'interval',
                         description: 'time span',
+                        interfaceFacet: 'el-input',
                         optionLabel: 'Fields',
                         options: [
                             'YEAR',
@@ -94,39 +107,48 @@
                         precision: 6 // applies only to seconds
                     }, {
                         name: 'json',
-                        description: 'textual JSON data'
+                        description: 'textual JSON data',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'jsonb',
-                        description: 'binary JSON data, decomposed'
+                        description: 'binary JSON data, decomposed',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'money',
-                        description: 'currency amount'
+                        description: 'currency amount',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'numeric',
                         aliases: [ 'decimal' ],
                         description: '',
+                        interfaceFacet: 'el-input',
                         precision: null, // (12.3) -> 3
                         scale: 0         // 12.(3) -> 1
                     }, {
                         name: 'real',
                         aliases: [ 'float4' ],
-                        description: 'single precision floating-point number (4 bytes)'
+                        description: 'single precision floating-point number (4 bytes)',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'smallint',
                         aliases: [ 'int2' ],
-                        description: 'signed two-byte integer'
+                        description: 'signed two-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'smallserial',
                         aliases: [ 'serial2' ],
-                        description: 'autoincrementing two-byte integer'
+                        description: 'autoincrementing two-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'serial',
                         aliases: [ 'serial4' ],
-                        description: 'autoincrementing four-byte integer'
+                        description: 'autoincrementing four-byte integer',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'time',
                         aliases: [ 'timetz' ],
                         description: 'time of day',
+                        interfaceFacet: 'el-date-picker',
                         optionLabel: 'With time zone',
                         options: [
                             'with time zone',
@@ -136,6 +158,7 @@
                         name: 'timestamp',
                         aliases: [ 'timestamptz' ],
                         description: 'date and time',
+                        interfaceFacet: 'el-date-picker',
                         optionLabel: 'With time zone',
                         options: [
                             'with time zone',
@@ -143,37 +166,37 @@
                         ]
                     }, {
                         name: 'uuid',
-                        description: 'universally unique identifier'
+                        description: 'universally unique identifier',
+                        interfaceFacet: 'el-input'
                     }, {
                         name: 'xml',
-                        description: 'XML data'
+                        description: 'XML data',
+                        interfaceFacet: 'el-input'
                     }
                 ]
             }
         },
         methods: {
-            dataTypeComponent(type) {
-                switch(type) {
-                    case "boolean": {
-                        return 'el-checkbox'
-                        break
-                    }
-                    case "int":
-                    case "json":
-                    case "text":
-                    case "uuid":
-                    case "integer":
-                    case "varchar":
-                    case "character varying": {
-                        return 'el-input'
-                        break
-                    }
-                    case "date":
-                    case "timestamp": {
-                        return 'el-date-picker'
-                        break
+            interfaceFacet(type) {
+                let interfaceFacet = 'input'
+                if (type.includes('timestamp ') || type.includes('time ')) {
+                    type = type.split(' ')[0]
+                }
+                type = _.find(this.dataTypes, [ 'name', type ])
+                if (type) {
+                    interfaceFacet = type.interfaceFacet
+                    if (this.useElementUI !== true) {
+                        switch (type) {
+                            case 'el-input':
+                            case 'el-checkbox':
+                            case 'el-date-picker': {
+                                type = 'input'
+                                break
+                            }
+                        }
                     }
                 }
+                return interfaceFacet
             },
             getKeysValues(data) {
                 let keys = []
@@ -847,18 +870,6 @@
                     }
                 }
                 return query
-            },
-            requestTimeStr(tab) {
-                console.log('deprecated')
-                let time = ""
-                if (this.requestTime[tab]) {
-                    if (this.requestTime[tab] > 999) {
-                        time = moment.duration(this.requestTime[tab], 'seconds').format("ss") + " s"
-                    } else {
-                        time = moment.duration(this.requestTime[tab]) + " ms"
-                    }
-                }
-                return time
             }
         }
     }
