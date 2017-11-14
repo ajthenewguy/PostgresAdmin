@@ -65,14 +65,10 @@
             this.bus.$on('tabRefreshed', function (config) {
                 let selectTabIndex = $this.activeTabIndex()
                 $this.tabs[selectTabIndex].table = config
-//                let tab = $this.activeTab()
-//                tab.table = config
             })
             this.bus.$on('databaseConnected', function (config) {
                 $this.tabs = []
                 $this.addTab('query')
-//                $this.generateFieldsets(config.schema);
-//                $this.editing = false;
             });
         },
         methods: {
@@ -213,13 +209,22 @@
     }
     table.layout tbody {
         flex: 1;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
     .tab-content, .tab-pane {
+        height: 100%;
         max-height: 100%;
     }
     .tab-pane-content {
         overflow-x: hidden;
         overflow-y: auto;
+    }
+    .results-table-container {
+        display: flex;
+        height: 99%;
+        max-height: 99%;
+        flex-direction: column;
     }
     .notabs {
         margin: 15px 0;

@@ -72,12 +72,12 @@
         },
         mounted() {
             let $this = this
-            $(window).on('load', function () {
-                window.addEventListener('resize', $this.onWindowResize)
-                if ($this.state.connection) {
-                    $this.addDefaultTab()
-                }
-            })
+//            $(window).on('load', function () {
+//                window.addEventListener('resize', $this.onWindowResize)
+//                if ($this.state.connection) {
+//                    $this.addDefaultTab()
+//                }
+//            })
         },
         watch: {
             state: {
@@ -155,24 +155,24 @@
                 })
             },
             resizeTabContent() {
-                let sidebarHeight = 0
-                let contentHeight = 0
-                setTimeout(function () {
-                    sidebarHeight = $(".sidebar").height()
-                    contentHeight = sidebarHeight - 3
-                    if ($('#primaryTabContainer').length) {
-                        contentHeight -= $('#primaryTabContainer').height() + 10 // 54
-                    }
-                    if ($('#contentFilter').length) {
-                        contentHeight -= $('#contentFilter').height() // 35
-                    }
-                    if ($('#tabFooter .el-pagination').length) {
-                        contentHeight -= $('#tabFooter .el-pagination').height() // 28
-                    } else {
-                        contentHeight -= 22
-                    }
-                    $(".tab-pane-content").height(contentHeight)
-                }, 50)
+//                let sidebarHeight = 0
+//                let contentHeight = 0
+//                setTimeout(function () {
+//                    sidebarHeight = $(".sidebar").height()
+//                    contentHeight = sidebarHeight - 3
+//                    if ($('#primaryTabContainer').length) {
+//                        contentHeight -= $('#primaryTabContainer').height() + 10 // 54
+//                    }
+//                    if ($('#contentFilter').length) {
+//                        contentHeight -= $('#contentFilter').height() // 35
+//                    }
+//                    if ($('#tabFooter .el-pagination').length) {
+//                        contentHeight -= $('#tabFooter .el-pagination').height() // 28
+//                    } else {
+//                        contentHeight -= 22
+//                    }
+//                    $(".tab-pane-content").height(contentHeight)
+//                }, 50)
             }
         }
     }

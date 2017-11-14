@@ -58,12 +58,11 @@ class FrontController extends Controller
         $connections = Setting::get('connections');
         if (is_null($connectionName)) {
             $connectionName = $this->getConnection();
+        } elseif (Setting::get('connection') !== $connectionName) {
+            Setting::set('connection', $connectionName);
         }
         foreach ($connections as $connection) {
             if ($connection['name'] === $connectionName) {
-                if (Setting::get('connection') !== $connectionName) {
-                    Setting::set('connection', $connectionName);
-                }
                 if (DB::connection()->getDatabaseName() !== $connection['database']) {
                     DB::purge('dynamic');
                     Config::set('database.connections.dynamic.host', $connection['host']);

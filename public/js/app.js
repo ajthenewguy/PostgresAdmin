@@ -110461,12 +110461,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     },
     mounted: function mounted() {
         var $this = this;
-        $(window).on('load', function () {
-            window.addEventListener('resize', $this.onWindowResize);
-            if ($this.state.connection) {
-                $this.addDefaultTab();
-            }
-        });
+        //            $(window).on('load', function () {
+        //                window.addEventListener('resize', $this.onWindowResize)
+        //                if ($this.state.connection) {
+        //                    $this.addDefaultTab()
+        //                }
+        //            })
     },
 
     watch: {
@@ -110554,24 +110554,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             });
         },
         resizeTabContent: function resizeTabContent() {
-            var sidebarHeight = 0;
-            var contentHeight = 0;
-            setTimeout(function () {
-                sidebarHeight = $(".sidebar").height();
-                contentHeight = sidebarHeight - 3;
-                if ($('#primaryTabContainer').length) {
-                    contentHeight -= $('#primaryTabContainer').height() + 10; // 54
-                }
-                if ($('#contentFilter').length) {
-                    contentHeight -= $('#contentFilter').height(); // 35
-                }
-                if ($('#tabFooter .el-pagination').length) {
-                    contentHeight -= $('#tabFooter .el-pagination').height(); // 28
-                } else {
-                    contentHeight -= 22;
-                }
-                $(".tab-pane-content").height(contentHeight);
-            }, 50);
+            //                let sidebarHeight = 0
+            //                let contentHeight = 0
+            //                setTimeout(function () {
+            //                    sidebarHeight = $(".sidebar").height()
+            //                    contentHeight = sidebarHeight - 3
+            //                    if ($('#primaryTabContainer').length) {
+            //                        contentHeight -= $('#primaryTabContainer').height() + 10 // 54
+            //                    }
+            //                    if ($('#contentFilter').length) {
+            //                        contentHeight -= $('#contentFilter').height() // 35
+            //                    }
+            //                    if ($('#tabFooter .el-pagination').length) {
+            //                        contentHeight -= $('#tabFooter .el-pagination').height() // 28
+            //                    } else {
+            //                        contentHeight -= 22
+            //                    }
+            //                    $(".tab-pane-content").height(contentHeight)
+            //                }, 50)
         }
     }
 });
@@ -117265,7 +117265,7 @@ exports = module.exports = __webpack_require__(6)(undefined);
 
 
 // module
-exports.push([module.i, "\ntable.layout {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    height: 100%;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\ntable.layout tbody {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n}\n.tab-content, .tab-pane {\n    max-height: 100%;\n}\n.tab-pane-content {\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.notabs {\n    margin: 15px 0;\n}\n", ""]);
+exports.push([module.i, "\ntable.layout {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    height: 100%;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\ntable.layout tbody {\n    -webkit-box-flex: 1;\n        -ms-flex: 1;\n            flex: 1;\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.tab-content, .tab-pane {\n    height: 100%;\n    max-height: 100%;\n}\n.tab-pane-content {\n    overflow-x: hidden;\n    overflow-y: auto;\n}\n.results-table-container {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    height: 99%;\n    max-height: 99%;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n}\n.notabs {\n    margin: 15px 0;\n}\n", ""]);
 
 // exports
 
@@ -117347,14 +117347,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.bus.$on('tabRefreshed', function (config) {
             var selectTabIndex = $this.activeTabIndex();
             $this.tabs[selectTabIndex].table = config;
-            //                let tab = $this.activeTab()
-            //                tab.table = config
         });
         this.bus.$on('databaseConnected', function (config) {
             $this.tabs = [];
             $this.addTab('query');
-            //                $this.generateFieldsets(config.schema);
-            //                $this.editing = false;
         });
     },
 
@@ -120165,13 +120161,7 @@ var render = function() {
       _vm.type === "query" || _vm.type === "content"
         ? _c(
             "table",
-            {
-              staticStyle: {
-                display: "flex",
-                height: "100%",
-                "flex-direction": "column"
-              }
-            },
+            { staticClass: "results-table-container" },
             [
               (_vm.type === "content" &&
                 (_vm.records && _vm.records.length > 0)) ||

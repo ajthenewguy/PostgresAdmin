@@ -31,7 +31,7 @@
                 @afterQuery="afterCustomQuery"
                 @error="queryError"
         />
-        <table v-if="type === 'query' || type === 'content'" style="display: flex; height: 100%; flex-direction: column">
+        <table v-if="type === 'query' || type === 'content'" class="results-table-container">
             <content-filter
                     v-if="type === 'content' && (records && records.length > 0) || where"
                     id="contentFilter"
