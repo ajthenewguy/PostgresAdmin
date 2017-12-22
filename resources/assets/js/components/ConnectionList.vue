@@ -39,7 +39,7 @@
         },
         methods: {
             connect(name) {
-                this.$emit('connect', name)
+                this.$emit('attemptConnect', name)
             },
             editConnection(name) {
                 this.$emit('editConnection', name)

@@ -202,16 +202,6 @@
     }
 </script>
 <style>
-    table.layout {
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-    }
-    table.layout tbody {
-        flex: 1;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
     .tab-content, .tab-pane {
         height: 100%;
         max-height: 100%;
@@ -220,6 +210,9 @@
         overflow-x: hidden;
         overflow-y: auto;
     }
+	div.tab-pane-content {
+		padding: 10px;
+	}
     .results-table-container {
         display: flex;
         height: 99%;

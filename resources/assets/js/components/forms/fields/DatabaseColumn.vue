@@ -22,9 +22,9 @@
             />
         </fieldset>
         <div class="col-md-2">
-            <v-button v-if="showDropButton()" @click.prevent="dropColumn" text="Drop"></v-button>
-            <v-button v-if="showKeepButton()" @click.prevent="cancelDropColumn" type="primary" text="Keep"></v-button>
-            <v-button v-if="showCancelButton()" @click.prevent="cancelNewColumn" text="Discard"></v-button>
+            <v-button v-if="showDropButton()" @click.prevent="dropColumn" size="sm" text="Drop"></v-button>
+            <v-button v-if="showKeepButton()" @click.prevent="cancelDropColumn" size="sm" type="primary" text="Keep"></v-button>
+            <v-button v-if="showCancelButton()" @click.prevent="cancelNewColumn" size="sm" text="Discard"></v-button>
         </div>
     </div>
 </template>
@@ -98,11 +98,23 @@
                         break
                     }
                     case 'default[]': {
-                        alter['default_value'] = value
+                        alter.default_value = value
                         break
                     }
                     case 'nullable[]': {
-                        alter['not_null'] = value !== 'YES'
+                        alter.not_null = value
+                        break
+                    }
+					case 'auto_inc[]': {
+						alter.auto_inc = value
+                        break
+					}
+					case 'unique[]': {
+						alter.unique = value
+                        break
+					}
+                    case 'primary_key[]': {
+                        alter.primary_key = value
                         break
                     }
                 }
@@ -111,3 +123,13 @@
         }
     }
 </script>
+<style>
+    .row.field {
+        border-bottom: 1px solid #f5f5f5;
+        padding: 15px 0 5px 0;
+    }
+    .row.field:last-of-type {
+        /*border-bottom: 1px solid #f5f5f5;*/
+        margin-bottom: 15px;
+    }
+</style>

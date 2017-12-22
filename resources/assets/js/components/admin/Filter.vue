@@ -28,6 +28,7 @@
 <style lang="scss">
     #content-filter {
         margin-top: 5px;
+        padding: 0 20px;
         input {
             height: 30px;
         }

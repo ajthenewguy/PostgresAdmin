@@ -1,7 +1,7 @@
 <template>
     <tbody style="flex: 1; overflow: auto">
-        <div class="results table-responsive" v-if="(tab === 'query' || tab === 'content' && table)">
-            <table class="table table-hover table-striped table-condensed">
+        <div class="results table-responsive" v-if="(tab === 'query' || tab === 'content' && table)" :style="tableWrapperStyleLoading">
+            <table class="table table-hover table-condensed" :id="id">
                 <thead>
                 <tr v-if="tab === 'query'">
                     <th v-for="(value, name) in records[0]">
@@ -23,7 +23,7 @@
                     </th>
                 </tr>
                 </thead>
-                <transition name="fade">
+                <transition v-if="records && records.length > 0" name="fade">
                     <tbody v-show="!state.processing">
                         <insert-table-row
                                 v-if="table && insertingRow"
@@ -47,23 +47,15 @@
                                 @updateRow="updateRow"
                                 @deleteRow="$emit('deleteRow', row[tableConfig.primaryKey])"
                         />
-                        <tr v-show="!state.processing">
-                            <td
-                                    v-show="(tab === 'query' || tab === 'content') && (! records || records.length < 1)"
-                                    :colspan="colspan"
-                            >
-                                <div class="empty">
-                                    <span>No records found</span>
-                                </div>
-                            </td>
-                            <td
-                                    v-show="(tab === 'structure' || tab === 'content') && ! table"
-                                    :colspan="colspan"
-                            >
-                            </td>
-                        </tr>
                     </tbody>
                 </transition>
+                <tbody v-else>
+                    <tr>
+                        <td :colspan="tableConfig.schema.length + 1">
+                            <div class="empty">No records</div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <div v-else class="empty">
@@ -75,6 +67,7 @@
 <script>
     export default {
         props: [
+            'id',
             'tab',
             'table',
             'tableConfig',
@@ -98,6 +91,9 @@
         computed: {
             colspan: function () {
                 return this.tableConfig ? (Object.keys(this.tableConfig.schema).length + (this.tab === 'content' ? 1 : 0)) : 2
+            },
+            tableWrapperStyleLoading: function () {
+                return (this.state.processing ? 'overflow: hidden;' : '')
             }
         },
         methods: {
@@ -153,6 +149,7 @@
     }
     .results {
         .table {
+            font-size: 13px;
             margin-bottom: 0;
             td {
                 input {
@@ -164,6 +161,32 @@
                     white-space: nowrap;
                 }
             }
+            td.rowButtons {
+                width: 34px;
+                max-width: 84px;
+            }
+            .rowButtons > span {
+                visibility: hidden;
+            }
+            tr:hover, tr.warning {
+                .rowButtons > span {
+                    visibility: visible;
+                }
+            }
+            .el-input__prefix {
+                left: 1px;
+            }
+            .el-input__icon {
+                width: 22px;
+                line-height: 20px;
+            }
+            .el-input--prefix .el-input__inner,
+            .el-input--suffix .el-input__inner {
+                padding-left: 22px;
+            }
+        }
+        .table-condensed > tbody > tr > td {
+            padding: 2px;
         }
     }
     .fade-enter-active, .fade-leave-active {

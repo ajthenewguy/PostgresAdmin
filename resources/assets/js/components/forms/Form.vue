@@ -20,7 +20,7 @@
             </main>
             <footer>
                 <slot name="footer">
-                    <button @click.prevent="$emit('submit', $event)" class="btn btn-default" href="" title="Submit" role="button">
+                    <button v-show="!hideSubmit" @click.prevent="$emit('submit', $event)" class="btn btn-default" href="" title="Submit" role="button">
                         Submit
                     </button>
                 </slot>
@@ -30,7 +30,7 @@
 </template>
 <script>
     export default {
-        props: [ 'fieldsets', 'formfields', 'layout' ],
+        props: [ 'fieldsets', 'formfields', 'layout', 'hideSubmit' ],
         components: {
             'field': require('./fields/Field'),
             'field-set': require('./Fieldset')

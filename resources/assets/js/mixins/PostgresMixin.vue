@@ -27,7 +27,12 @@
                 server: 'http://postgres:5433',
                 sql: '',
                 dataTypes: [
-                    {
+					{
+                        name: 'ARRAY',
+                        aliases: [ 'array', 'arr' ],
+                        description: 'collection of values',
+                        interfaceFacet: 'multi-input-text'
+                    }, {
                         name: 'bigint',
                         aliases: [ 'int8' ],
                         description: 'signed eight-byte integer',
@@ -145,6 +150,10 @@
                         description: 'autoincrementing four-byte integer',
                         interfaceFacet: 'el-input'
                     }, {
+                        name: 'text',
+                        description: 'variable-length character string',
+                        interfaceFacet: 'el-input'
+                    }, {
                         name: 'time',
                         aliases: [ 'timetz' ],
                         description: 'time of day',
@@ -173,7 +182,25 @@
                         description: 'XML data',
                         interfaceFacet: 'el-input'
                     }
-                ]
+                ],
+				foreignKeyRules: [
+					{
+						text: "no action",
+						value: ""
+					}, {
+						text: "cascade",
+						value: "CASCADE"
+					}, {
+						text: "restrict",
+						value: ""
+					}, {
+						text: "set null",
+						value: "SET NULL"
+					}, {
+						text: "set default",
+						value: "SET DEFAULT"
+					}
+				]
             }
         },
         methods: {
@@ -464,26 +491,33 @@
                 if (bustcache || ! this.state.tables.hasOwnProperty(table)) {
                     // eslint-disable-next-line
                     console.log('loadTable FRESH:', table)
-                    this.state.tables[table] = {
-                        name: table,
-                        schema: null,
-                        primaryKey: null,
-                        primaryKeyFormat: null,
-                        foreignKeys: null
-                    }
+
                     return this.loadTableSchema(table).then(() => {
-                        if (this.result[0].length) {
-                            this.state.tables[table].schema = _.clone(this.result[0])
-                        }
-                        if (this.result[1].length && Object.keys(this.result[1][0]).length) {
-                            this.state.tables[table].primaryKey = this.result[1][0].attname || 'id'
-                            this.state.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
-                        }
-                        if (this.result[2].length) {
-                            this.state.tables[table].foreignKeys = _.clone(this.result[2])
-                        }
-                        this.state.loadingTable = false
-                        return this.state.tables[table]
+						if (this.result !== null) {
+							this.state.tables[table] = {
+		                        name: table,
+		                        schema: null,
+		                        primaryKey: null,
+		                        primaryKeyFormat: null,
+		                        foreignKeys: null
+		                    }
+							if (this.result[0].length) {
+	                            this.state.tables[table].schema = _.clone(this.result[0])
+	                        }
+	                        if (this.result[1].length && Object.keys(this.result[1][0]).length) {
+	                            this.state.tables[table].primaryKey = this.result[1][0].attname || 'id'
+	                            this.state.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
+	                        }
+	                        if (this.result[2].length) {
+	                            this.state.tables[table].foreignKeys = _.clone(this.result[2])
+	                        }
+							if (this.result[3].length) {
+								this.state.tables[table].indexes = _.clone(this.result[3])
+							}
+	                        this.state.loadingTable = false
+	                        return this.state.tables[table]
+						}
+						return false
                     })
                 } else {
                     // eslint-disable-next-line
@@ -569,6 +603,9 @@
             getTableForeignKeys(table) {
                 return this.state.tables[table].foreignKeys
             },
+            getTableIndexes(table) {
+                return this.state.tables[table].indexes
+            },
             getColumn(table, column) {
                 let info = {}
                 if (this.state.tables[table] && this.state.tables[table].schema) {
@@ -653,7 +690,11 @@
                 this.state.errors.push(message)
                 console.error(message)
                 if (typeof message === "string") {
-                    alert(message)
+					this.$notify.error({
+						title: 'Database Error',
+						message: message,
+						type: 'success'
+					})
                 }
             },
             validationError(message) {
@@ -667,8 +708,9 @@
                     errorText = error
                     if (error.response) {
                         errorText = error.response.statusText
-                        if (error.response.status === 419) {
-                            window.location = '/'
+						if (error.response.status === 419) {
+                            // window.location = '/'
+							this.bus.$emit('expiredSession')
                         }
                         if (error.response.data) {
                             errorText = error.response.data

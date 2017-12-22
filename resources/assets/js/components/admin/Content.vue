@@ -25,12 +25,46 @@
                 />
             </div>
         </div>
+
+
+		<div class="content-mask" v-show="state.masked">
+				<div class="form-horizontal" id="sessionRestoreLogin">
+					<h2>Login</h2>
+					<div v-show="loginError">
+						{{ loginError }}
+					</div>
+					<div class="form-group">
+						<label for="email" class="col-md-4 control-label">E-Mail Address</label>
+
+						<div class="col-md-6">
+							<input id="email" type="email" class="form-control" name="email" v-model="login.email" required autofocus>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="password" class="col-md-4 control-label">Password</label>
+
+						<div class="col-md-6">
+							<input id="password" type="password" class="form-control" name="password" v-model="login.password" required>
+						</div>
+					</div>
+					<div class="form-group" v-show="login._token">
+						<div class="col-md-8 col-md-offset-4">
+							<button @click="postLogin" class="btn btn-primary">
+								Login
+							</button>
+							<a class="btn btn-link" :href="server + '/password/reset'">
+								Forgot Your Password?
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
     </div>
 </template>
 
 <script>
     export default {
-        props: [ 'selectedDatabase', 'loadedTables' ],
+        props: [ 'csrfToken', 'selectedDatabase', 'loadedTables' ],
         data() {
             return {
                 bus: window.bus,
@@ -48,7 +82,13 @@
                 tableQuery: '',
                 order: null,
                 where: null,
-                tabs: []
+                tabs: [],
+				login: {
+					_token: '',
+					email: '',
+					password: ''
+				},
+				loginError: ''
             }
         },
         mixins: [
@@ -64,14 +104,15 @@
         },
         created() {
             let $this = this
-            this.bus.$on('databaseConnected', function() {
-                $this.refreshTables().then(() => {
-                    $this.addDefaultTab()
-                })
-            })
+            this.bus.$on('Connections.databaseSelected', this.refreshTables)
+            this.bus.$on('App.databaseTablesLoaded', this.addDefaultTab)
         },
         mounted() {
             let $this = this
+			this.bus.$on('expiredSession', () => {
+				this.state.masked = true
+				this.refreshToken()
+			})
 //            $(window).on('load', function () {
 //                window.addEventListener('resize', $this.onWindowResize)
 //                if ($this.state.connection) {
@@ -129,10 +170,10 @@
                 this.changeTab(tabId)
             },
             onTabChange(index) {
-                this.resizeTabContent()
+                //
             },
             onWindowResize() {
-                this.resizeTabContent()
+                //
             },
             openTable(table) {
                 this.addTableTab(table, "content")
@@ -147,33 +188,63 @@
                     this.bus.$emit('tabRefreshed', config)
                 })
             },
-            refreshTables() {
+            refreshTables(connection) {
                 return axios.post(this.server + '/tables').then(response => {
                     this.tables = response.data
+					this.state.tables = response.data
+					this.bus.$emit('App.databaseTablesLoaded')
                 }).catch(error => {
-                    this.queryError(error)
+					console.log('databaseConnectError')
+                    this.bus.$emit('databaseConnectError')
+					this.$notify.error({
+						title: 'Connection Error',
+						message: this.parseError(error),
+						type: 'success'
+					})
                 })
             },
-            resizeTabContent() {
-//                let sidebarHeight = 0
-//                let contentHeight = 0
-//                setTimeout(function () {
-//                    sidebarHeight = $(".sidebar").height()
-//                    contentHeight = sidebarHeight - 3
-//                    if ($('#primaryTabContainer').length) {
-//                        contentHeight -= $('#primaryTabContainer').height() + 10 // 54
-//                    }
-//                    if ($('#contentFilter').length) {
-//                        contentHeight -= $('#contentFilter').height() // 35
-//                    }
-//                    if ($('#tabFooter .el-pagination').length) {
-//                        contentHeight -= $('#tabFooter .el-pagination').height() // 28
-//                    } else {
-//                        contentHeight -= 22
-//                    }
-//                    $(".tab-pane-content").height(contentHeight)
-//                }, 50)
-            }
+			refreshToken() {
+				axios.get(this.server + '/token').then(response => {
+                    this.login._token = response.data
+					window.Laravel.csrfToken = response.data
+					window.axios.defaults.headers.common = {
+					    'X-CSRF-TOKEN': response.data,
+					    'X-Requested-With': 'XMLHttpRequest'
+					}
+                }).catch(error => {
+					console.log('tokenFetchError')
+                    this.bus.$emit('tokenFetchError')
+					this.$notify.error({
+						title: 'Token Fetch Error',
+						message: this.parseError(error),
+						type: 'success'
+					})
+                })
+			},
+			postLogin() {
+				return axios.post(this.server + '/login', this.login).then(response => {
+					this.state.masked = false
+                }).catch(error => {
+					console.log('loginError', error)
+                    this.bus.$emit('loginError')
+					if (error) {
+	                    errorText = error
+	                    if (error.response) {
+	                        errorText = error.response.statusText
+	                        if (error.response.data) {
+	                            errorText = error.response.data
+	                            if (error.response.data.message) {
+	                                errorText = error.response.data.message
+	                            }
+	                        }
+							if (error.response.status === 422) {
+								this.bus.$emit('invalidLogin')
+								this.loginError = errorText
+	                        }
+	                    }
+	                }
+                })
+			}
         }
     }
 </script>
@@ -288,8 +359,8 @@
             padding: 5px;
             overflow-x: hidden;
             overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-            background-color: #f5f5f5;
-            border-right: 1px solid #eee;
+            background-color: #f9f9f9;
+            /*border-right: 1px solid #eee;*/
         }
     }
 
@@ -317,9 +388,31 @@
 
     .main {
         height: 100%;
-        padding: 20px 20px 10px 20px;
+        padding: 20px 0 0 0;
     }
     .main .page-header {
         margin-top: 0;
     }
+
+	.content-mask {
+		position: fixed;
+		z-index: 9999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		/*background-color: #000;*/
+		background: linear-gradient(135deg, #000, #3c3c3c);
+		transition: opacity .3s ease;
+	}
+	.content-mask > * {
+		z-index: 10000;
+	}
+
+	#sessionRestoreLogin {
+		width: 50%;
+	    left: 25%;
+	    top: 25%;
+	    position: fixed;
+	}
 </style>

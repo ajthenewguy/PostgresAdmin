@@ -12,6 +12,7 @@
 */
 
 //Route::get('/', 'FrontController@index');
+Route::get('/token', 'FrontController@token');
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {

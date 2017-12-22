@@ -15,14 +15,15 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('v-button', require('./components/Button.vue'));
-Vue.component('modal', require('./components/Modal.vue'));
-Vue.component('admin-content', require('./components/admin/Content.vue'));
-Vue.component('database-connections', require('./components/Connections.vue'));
-Vue.component('app-form', require('./components/forms/Form.vue'));
-Vue.component('primary-content', require('./components/Content.vue'));
-Vue.component('tabs', require('./components/Tabs.vue'));
-Vue.component('tab', require('./components/admin/Tab.vue'));
+Vue.component('v-button', require('./components/Button.vue'))
+Vue.component('modal', require('./components/Modal.vue'))
+Vue.component('admin-content', require('./components/admin/Content.vue'))
+Vue.component('database-connections', require('./components/Connections.vue'))
+Vue.component('app-form', require('./components/forms/Form.vue'))
+Vue.component('multi-input-text', require('./components/forms/fields/MultiInputText'))
+Vue.component('primary-content', require('./components/Content.vue'))
+Vue.component('tabs', require('./components/Tabs.vue'))
+Vue.component('tab', require('./components/admin/Tab.vue'))
 
 Vue.prototype.$http = axios
 Vue.mixin(require( './mixins/Settings.vue'))
@@ -38,7 +39,8 @@ window.store = {
         errors: [],
         loadingTable: false,
         processing: false,
-        tables: []
+        tables: [],
+		masked: false
     },
     uuid() {
         return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
@@ -78,6 +80,14 @@ window.util = {
             case "structure": {
                 return "glyphicon glyphicon-info-sign"
             }
+			case "star":
+			case "primary-key": {
+				return "glyphicon glyphicon-star"
+			}
+			case "star-empty":
+			case "foreign-key": {
+				return "glyphicon glyphicon-star-empty"
+			}
             case "trash": {
                 return "glyphicon glyphicon-trash"
             }

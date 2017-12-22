@@ -82,10 +82,10 @@
 <style>
     #query-wrapper {
         margin-bottom: 10px;
+        padding: 10px;
     }
     #query_input {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-        margin-top: 10px;
         width: 100%;
     }
 </style>

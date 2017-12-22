@@ -157,49 +157,52 @@ class QueryController extends AdminController
         $results = [];
         $queries = [
             // columns
-            'SELECT 
-                column_name, 
-                data_type AS type, 
-                character_maximum_length AS length, 
-                column_default AS default_value, 
-                is_nullable AS nullable, 
-                is_updatable AS mutable 
-            FROM 
+            'SELECT
+                column_name,
+                data_type AS type,
+                character_maximum_length AS length,
+                column_default AS default_value,
+                is_nullable AS nullable,
+                is_updatable AS mutable
+            FROM
                 information_schema.columns
-            WHERE 
+            WHERE
                 table_name = \''.$request->table.'\'',
 
             // primary keys
-            'SELECT 
-                pg_attribute.attname, 
-                pg_attribute.attlen, 
-                format_type(pg_attribute.atttypid, pg_attribute.atttypmod) 
-            FROM 
-                pg_index, pg_class, pg_attribute, pg_namespace 
-            WHERE 
-                pg_class.oid = \''.$request->table.'\'::regclass 
-                AND indrelid = pg_class.oid 
-                AND nspname = \'public\' 
-                AND pg_class.relnamespace = pg_namespace.oid 
-                AND pg_attribute.attrelid = pg_class.oid 
-                AND pg_attribute.attnum = any(pg_index.indkey) 
+            'SELECT
+                pg_attribute.attname,
+                pg_attribute.attlen,
+                format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+            FROM
+                pg_index, pg_class, pg_attribute, pg_namespace
+            WHERE
+                pg_class.oid = \''.$request->table.'\'::regclass
+                AND indrelid = pg_class.oid
+                AND nspname = \'public\'
+                AND pg_class.relnamespace = pg_namespace.oid
+                AND pg_attribute.attrelid = pg_class.oid
+                AND pg_attribute.attnum = any(pg_index.indkey)
                 AND indisprimary',
 
             // foreign keys
-            'SELECT 
-                tc.constraint_name, 
-                kcu.column_name, 
-                ccu.table_name AS foreign_table_name, 
-                ccu.column_name AS foreign_column_name 
-            FROM 
-                information_schema.table_constraints AS tc 
-            JOIN 
-                information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name 
-            JOIN 
-                information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name 
-            WHERE 
-                constraint_type = \'FOREIGN KEY\' 
-                AND tc.table_name=\''.$request->table.'\''
+            'SELECT
+                tc.constraint_name,
+                kcu.column_name,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name
+            FROM
+                information_schema.table_constraints AS tc
+            JOIN
+                information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
+            JOIN
+                information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name
+            WHERE
+                constraint_type = \'FOREIGN KEY\'
+                AND tc.table_name=\''.$request->table.'\'',
+
+			// indexes
+			'SELECT * FROM pg_indexes WHERE tablename = \''.$request->table.'\''
         ];
 
         $this->beforeQuery($request);

@@ -54,6 +54,48 @@ body {
   }
 }
 
+#primaryTabContainer {
+  padding-left: 5px;
+}
+
+.form-horizontal .form-group {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.content {
+	padding: 0 25px;
+}
+.content.top,
+.content.bottom {
+	padding: 10px 12px;
+}
+.content.top {
+	border-bottom: 1px solid $panel-default-border;
+}
+.content.bottom {
+	border-top: 1px solid $panel-default-border;
+}
+.content.top.flush-bottom {
+	border-bottom: 0;
+	padding: 10px 12px 0;
+}
+.content.top.flush-top {
+	border-top: 0;
+	padding: 0 12px 10px;
+}
+
+table.layout {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+}
+table.layout tbody {
+	flex: 1;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
 #tabFooter {
   border-top: 1px solid #efefef;
   height: 37px;

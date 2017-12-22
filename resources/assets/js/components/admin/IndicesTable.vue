@@ -10,7 +10,7 @@
                     v-for="(value, name) in tableForeignKeys[0]"
                     :key="name"
                     :prop="name"
-                    :label="$parent.titleCase(name)"
+                    :label="util.titleCase(name)"
             />
         </el-table>
     </div>
@@ -18,6 +18,14 @@
 
 <script>
     export default {
-        props: [ 'table', 'tableForeignKeys', 'processing' ]
+        props: [ 'table', 'tableForeignKeys', 'processing' ],
+        data() {
+            return {
+                bus: window.bus,
+                store: window.store,
+                state: window.store.state,
+                util: window.util
+			}
+		}
     }
 </script>

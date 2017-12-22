@@ -16,9 +16,10 @@ class FrontController extends Controller
      */
     protected $tables = [];
 
-    public function index(Request $request, $database = null)
+	/**
+	 */
+	public function index(Request $request, $database = null)
     {
-//        Setting::set('connection', null);
         $connectionName = $this->getConnection($database);
         $data = [
             'connections' => collect(Setting::get('connections')),
@@ -39,6 +40,15 @@ class FrontController extends Controller
         return view('app', $data);
     }
 
+	/**
+	 */
+	public function token()
+	{
+		return response()->json(csrf_token());
+	}
+
+	/**
+	 */
     protected function getConnection($connectionName = null)
     {
         if (is_null($connectionName)) {

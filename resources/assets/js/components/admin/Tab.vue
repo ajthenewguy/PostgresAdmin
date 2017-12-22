@@ -1,20 +1,15 @@
 <template>
     <div class="tab-pane" :class="{ active: getTabIndex('id', id) === currentTab }" :id="'tab-' + id">
         <template v-if="type === 'structure'">
-            <div v-if="table && table.schema" class="tab-pane-content">
-                <structure-table
-                        :table="table.name"
-                        :schema="table.schema"
-                        :primary-key="table.primaryKey"
-                        :foreign-keys="table.foreignKeys"
-                        @refresh="$emit('refresh', $event)"
-                />
-                <indices-table
-                        :table="table.name"
-                        :table-foreign-keys="table.foreignKeys"
-                        @refresh="$emit('refresh', $event)"
-                />
-            </div>
+            <structure-table
+			 	v-if="table && table.schema"
+                :table="table.name"
+                :schema="table.schema"
+				:indexes="table.indexes"
+                :primary-key="table.primaryKey"
+                :foreign-keys="table.foreignKeys"
+                @refresh="$emit('refresh', $event)"
+            />
             <div v-else>
                 <div v-if="!state.processing" class="empty">
                     No table selected
@@ -31,7 +26,7 @@
                 @afterQuery="afterCustomQuery"
                 @error="queryError"
         />
-        <table v-if="type === 'query' || type === 'content'" class="results-table-container">
+        <table v-if="(type === 'query' && records && records.length > 0 || type === 'content')" class="results-table-container">
             <content-filter
                     v-if="type === 'content' && (records && records.length > 0) || where"
                     id="contentFilter"
@@ -41,6 +36,7 @@
                     :class="{ 'tab-pane-content': type !== 'query' }"
                     v-show="type === 'query' || type === 'content'"
                     :tab="type"
+                    :id="'results-table-' + id"
                     :table="(table ? table.name : null)"
                     :table-config="(table ? table : null)"
                     :order="order"
@@ -68,7 +64,6 @@
                     @changePerPage="handleSizeChange"
             />
         </table>
-
     </div>
 </template>
 <script>
@@ -101,9 +96,7 @@
             'query': require('./Query'),
             'results-table': require('./ResultsTable'),
             'results-footer': require('./ResultsFooter.vue'),
-            'structure-table': require('./StructureTable'),
-            'indices-table': require('./IndicesTable'),
-
+            'structure-table': require('./StructureTable')
         },
         methods: {
             beforeQuery(query) {
@@ -163,26 +156,22 @@
             },
             updateRow(payload) {
                 let where = {}
-//                this.loadTable(this.table).then(config => {
-                    where[this.table.primaryKey] = payload.primaryKey
-                    return this.updateQuery(this.makeUpdate(this.table.name, payload.data, where), payload.data).then(() => {
-                        this.setEditingRow(null)
-                        this.getRecords()
-                    })
-//                })
+                where[this.table.primaryKey] = payload.primaryKey
+                return this.updateQuery(this.makeUpdate(this.table.name, payload.data, where), payload.data).then(() => {
+                    this.setEditingRow(null)
+                    this.getRecords()
+                })
             },
             deleteRow(primaryKey) {
                 if (confirm('Delete this row?')) {
                     let where = {}
-//                    this.loadTable(this.table).then(config => {
-                        where[this.table.primaryKey] = primaryKey
-                        this.deleteQuery(this.makeDelete(this.table.name, where), where).then(() => {
-                            this.getRecords(this.currentPage()).then(() => {
-                                this.editingRow = null
-                                this.state.setProcessing(false)
-                            })
+                    where[this.table.primaryKey] = primaryKey
+                    this.deleteQuery(this.makeDelete(this.table.name, where), where).then(() => {
+                        this.getRecords(this.currentPage()).then(() => {
+                            this.editingRow = null
+                            this.state.setProcessing(false)
                         })
-//                    })
+                    })
                 }
             },
             pushHistory(query) {

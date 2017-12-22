@@ -15,12 +15,41 @@
                 <span class="title"><p>{{ value }}</p></span>
             </li>
         </ul>
-        <a @click.prevent="addTable" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
+        <a @click.prevent="showModal = true" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
             <span :class="util.icon('add')" aria-hidden="true"></span>
         </a>
         <a @click.prevent="$emit('refreshTables')" class="btn btn-default btn-xs" href="" title="Refresh tables" role="button">
             <span :class="util.icon('refresh')" aria-hidden="true"></span>
         </a>
+		<modal v-if="showModal" @close="showModal = false">
+			<h3 slot="header">Add New Table</h3>
+			<template slot="body">
+				<el-alert
+					v-show="newTableError"
+					:title="newTableError"
+					type="error"
+					show-icon
+					@close="newTableError = ''"
+				>
+				</el-alert>
+				<app-form :hide-submit="true">
+					<field
+						:label="'Table Name'"
+						:name="'table_name'"
+						:control="'el-input'"
+						:id="'newTableName'"
+						:placeholder="'required'"
+						:autofocus="true"
+						:value="newTableName"
+						@input="e => { newTableName = e.target.value }"
+					></field>
+				</app-form>
+			</template>
+			<template slot="footer">
+				<v-button @click.prevent="onSubmitNewTable" type="primary" text="Submit"></v-button>
+				<v-button @click.prevent="showModal = false" text="Cancel"></v-button>
+			</template>
+		</modal>
     </div>
 </template>
 
@@ -30,7 +59,10 @@
         data() {
             return {
                 util: window.util,
-                list: []
+                list: [],
+				newTableError: '',
+				newTableName: '',
+				showModal: false
             }
         },
         mounted() {
@@ -50,9 +82,6 @@
             deep: true
         },
         methods: {
-            addTable() {
-                alert("This feature will be available soon.")
-            },
             openTable(table) {
                 this.$emit('openTable', table)
             },
@@ -115,6 +144,19 @@
                     )
                 }, delay)
             },
+			onSubmitNewTable() {
+				if (_.findIndex(this.tables, this.newTableName) > -1) {
+					this.newTableError = 'That column exists'
+					return false
+				}
+				this.executeQuery(renameTable).then(() => {
+					this.$emit('addTab', {
+						type: 'structure',
+						table: this.newTableName,
+						isNew: true
+					})
+				})
+			},
             onWindowResize() {
                 $(".sidebar .list-group").height($(".sidebar").height() - 60)
             }
@@ -124,14 +166,17 @@
 
 <style lang="scss">
     .list-group {
-        border-top: 1px solid #e6e5e5;
-        border-bottom: 1px solid #e6e5e5;
+        /*border-top: 1px solid #e6e6e6;*/
+        /*border-bottom: 1px solid #e6e6e6;*/
         margin-bottom: 5px;
         overflow: auto;
         white-space: nowrap;
-    }
-    .list-group li:first-child {
-        border-top: none;
+        li:hover {
+            background-color: #e6e6e6;
+        }
+        li:first-child {
+            border-top: none;
+        }
     }
     .list-group > * {
         height: 30px;
@@ -140,6 +185,8 @@
         text-overflow: ellipsis;
     }
     .sidebar .list-group-item {
+        background-color: transparent;
+        border: none;
         padding: 3px 10px;
         .btn-group {
             visibility: hidden;
@@ -160,7 +207,7 @@
     }
     .sidebar .title p:hover
     {
-        background: #fff;
+        background: #e6e6e6;
         position: relative;
         z-index: 1;
         display: inline-block;
