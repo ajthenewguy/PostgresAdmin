@@ -80,43 +80,6 @@ return [
             'sslmode' => 'prefer',
         ]
 
-//        'team20' => [
-//            'driver'   => 'pgsql',
-//            'host'     => env('TEAM20_DB_HOST', '127.0.0.1'),
-//            'port'     => env('TEAM20_DB_PORT', '5432'),
-//            'database' => env('TEAM20_DB_DATABASE', 'forge'),
-//            'username' => env('TEAM20_DB_USERNAME', 'forge'),
-//            'password' => env('TEAM20_DB_PASSWORD', ''),
-//            'charset'  => 'utf8',
-//            'prefix'   => '',
-//            'schema'   => 'public',
-//            'sslmode'  => 'prefer',
-//        ],
-//
-//        'stars10' => [
-//            'driver'   => 'pgsql',
-//            'host'     => env('STARS10_DB_HOST', '127.0.0.1'),
-//            'port'     => env('STARS10_DB_PORT', '5432'),
-//            'database' => env('STARS10_DB_DATABASE', 'forge'),
-//            'username' => env('STARS10_DB_USERNAME', 'forge'),
-//            'password' => env('STARS10_DB_PASSWORD', ''),
-//            'charset'  => 'utf8',
-//            'prefix'   => '',
-//            'schema'   => 'public',
-//            'sslmode'  => 'prefer',
-//        ],
-
-//        'sqlsrv' => [
-//            'driver' => 'sqlsrv',
-//            'host' => env('DB_HOST', 'localhost'),
-//            'port' => env('DB_PORT', '1433'),
-//            'database' => env('DB_DATABASE', 'forge'),
-//            'username' => env('DB_USERNAME', 'forge'),
-//            'password' => env('DB_PASSWORD', ''),
-//            'charset' => 'utf8',
-//            'prefix' => '',
-//        ],
-
     ],
 
     /*
