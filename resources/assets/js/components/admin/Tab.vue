@@ -17,6 +17,7 @@
             </div>
         </template>
         <query
+                ref="customQuery"
                 v-if="type === 'query'"
                 :sql="customQuery"
                 :history="history"
@@ -26,7 +27,7 @@
                 @afterQuery="afterCustomQuery"
                 @error="queryError"
         />
-        <table v-if="(type === 'query' && records && records.length > 0 || type === 'content')" class="results-table-container">
+        <table v-if="(type === 'query' || type === 'content')" class="results-table-container">
             <content-filter
                     v-if="type === 'content' && (records && records.length > 0) || where"
                     id="contentFilter"
@@ -54,8 +55,9 @@
             <results-footer
                     v-if="type === 'query' || type === 'content'"
                     id="tabFooter"
-                    :pagination="(type === 'content' ? pagination : false)"
+                    :executed="executed"
                     :records="records"
+                    :pagination="(type === 'content' ? pagination : false)"
                     :request-time="requestTime"
                     :tab="type"
                     :table="(type === 'content' ? table.name : false)"
@@ -75,12 +77,13 @@
                 store: window.store,
                 state: window.store.state,
                 editingRow: null,
+                executed: false,
                 filter: null,
                 history: [],
                 insertingRow: false,
                 order: null,
                 records: [],
-                where: null,
+                where: null
             }
         },
         mounted() {
@@ -104,6 +107,7 @@
                 this.pushHistory(query)
             },
             beforeCustomQuery(query) {
+                this.executed = true
                 this.$emit('beforeCustomQuery', query)
                 if (query) {
                     this.customQuery = query
@@ -133,7 +137,8 @@
             },
             getRecords(page) {
                 let sql = this.makeSelect(this.table.name, this.where, null, this.order)
-                console.log(sql)
+                this.executed = true
+                console.log('Getting records:', sql)
                 if (typeof page === "undefined") {
                     page = this.currentPage()
                 }
@@ -146,7 +151,11 @@
                 return this.records ? this.records.length : 0
             },
             refresh() {
-                this.getRecords()
+                if (this.type === "query") {
+                    this.$refs.customQuery.run()
+                } else {
+                    this.getRecords()
+                }
             },
             insertRow(data) {
                 return this.insertQuery(this.makeInsert(this.table.name, data), data).then(() => {
