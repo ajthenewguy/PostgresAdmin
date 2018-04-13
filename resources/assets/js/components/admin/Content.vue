@@ -289,7 +289,6 @@
         color: #bcbcbc;
         font-size: 1.5em;
         padding: 15px;
-        text-align: center;
     }
     #searchinput {
         width: 200px;
