@@ -1,22 +1,24 @@
 <template>
     <tr :class="{ warning: (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
         <td v-if="tab !== 'query'" class="rowButtons">
-            <span v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
-                <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-                <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                </button>
-                <button key="delete" @click="$emit('deleteRow', row[tableConfig.primaryKey])" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-            </span>
-            <span v-else>
-                <button key="edit" @click="editRow" type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                </button>
-            </span>
+            <div>
+                <div class="btn-group" role="toolbar" aria-label="..." v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
+                    <button key="cancel" @click="$emit('cancelEditingRow', null)" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </button>
+                    <button key="delete" @click="$emit('deleteRow', row[tableConfig.primaryKey])" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="btn-group" role="toolbar" aria-label="..." v-else>
+                    <button key="edit" @click="editRow" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
         </td>
         <td v-for="(value, name) in data">
             <span v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">

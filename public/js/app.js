@@ -116766,7 +116766,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table {\n  font-size: 13px;\n  margin-bottom: 0;\n}\n.results .table td input {\n    border: 0;\n    height: 20px;\n    padding: 3px;\n}\n.results .table td span {\n    white-space: nowrap;\n}\n.results .table td.rowButtons {\n    width: 34px;\n    max-width: 84px;\n}\n.results .table .rowButtons > span {\n    visibility: hidden;\n}\n.results .table tr:hover .rowButtons > span, .results .table tr.warning .rowButtons > span {\n    visibility: visible;\n}\n.results .table .el-input__prefix {\n    left: 1px;\n}\n.results .table .el-input__icon {\n    width: 22px;\n    line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n  .results .table .el-input--suffix .el-input__inner {\n    padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n  padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table {\n  font-size: 13px;\n  margin-bottom: 0;\n}\n.results .table td input {\n    border: 0;\n    height: 20px;\n    padding: 3px;\n}\n.results .table td span {\n    white-space: nowrap;\n}\n.results .table td.rowButtons {\n    width: 34px;\n    max-width: 75px;\n}\n.results .table .rowButtons > * {\n    visibility: hidden;\n}\n.results .table .rowButtons div.btn-group {\n    position: fixed;\n    z-index: 1000;\n}\n.results .table tr:hover .rowButtons > *, .results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    visibility: visible;\n}\n.results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    width: 75px;\n}\n.results .table .el-input__prefix {\n    left: 1px;\n}\n.results .table .el-input__icon {\n    width: 22px;\n    line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n  .results .table .el-input--suffix .el-input__inner {\n    padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n  padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n", ""]);
 
 // exports
 
@@ -116861,12 +116861,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     computed: {
         colspan: function colspan() {
-            return this.tableConfig ? Object.keys(this.tableConfig.schema).length + (this.tab === 'content' ? 1 : 0) : 2;
+            var span = 2;
+            if (this.tableConfig !== null) {
+                span = Object.keys(this.tableConfig.schema).length;
+                if (this.tab === 'content') span++;
+            }
+            return span;
         },
         tableWrapperStyleLoading: function tableWrapperStyleLoading() {
             return this.state.processing ? 'overflow: hidden;' : '';
         }
     },
+    mounted: function mounted() {
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    },
+
     methods: {
         getDataTypeDisplay: function getDataTypeDisplay(input) {
             var output = input || '_';
@@ -116886,11 +116897,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         keyIcon: function keyIcon(column) {
             var icon = '';
-            if (this.tableConfig.schema) {
-                if (column === this.tableConfig.primaryKey) {
-                    icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>';
-                } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
-                    icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>';
+            if (this.tableConfig) {
+                if (this.tableConfig.schema) {
+                    if (column === this.tableConfig.primaryKey) {
+                        icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>';
+                    } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
+                        icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>';
+                    }
                 }
             }
             return icon;
@@ -116907,7 +116920,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return icon;
         },
         schema: function schema() {
-            return this.tableConfig.schema;
+            var schema = {};
+            if (this.tableConfig !== null) {
+                schema = this.tableConfig.schema;
+            }
+            return schema;
         }
     }
 });
@@ -116967,6 +116984,10 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+//
+//
+//
+//
 //
 //
 //
@@ -117051,41 +117072,52 @@ var render = function() {
     [
       _vm.tab !== "query"
         ? _c("td", { staticClass: "rowButtons" }, [
-            _c(
-              "button",
-              {
-                key: "cancel",
-                staticClass: "btn btn-default btn-xs",
-                attrs: { type: "button" },
-                on: {
-                  click: function($event) {
-                    _vm.$emit("cancelInsertingRow")
-                  }
-                }
-              },
-              [
-                _c("span", {
-                  staticClass: "glyphicon glyphicon-remove",
-                  attrs: { "aria-hidden": "true" }
-                })
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                key: "save",
-                staticClass: "btn btn-default btn-xs",
-                attrs: { type: "button" },
-                on: { click: _vm.saveRow }
-              },
-              [
-                _c("span", {
-                  staticClass: "glyphicon glyphicon-ok",
-                  attrs: { "aria-hidden": "true" }
-                })
-              ]
-            )
+            _c("div", [
+              _c(
+                "div",
+                {
+                  staticClass: "btn-group",
+                  attrs: { role: "toolbar", "aria-label": "..." }
+                },
+                [
+                  _c(
+                    "button",
+                    {
+                      key: "cancel",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.$emit("cancelInsertingRow")
+                        }
+                      }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-remove",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      key: "save",
+                      staticClass: "btn btn-default btn-xs",
+                      attrs: { type: "button" },
+                      on: { click: _vm.saveRow }
+                    },
+                    [
+                      _c("span", {
+                        staticClass: "glyphicon glyphicon-ok",
+                        attrs: { "aria-hidden": "true" }
+                      })
+                    ]
+                  )
+                ]
+              )
+            ])
           ])
         : _vm._e(),
       _vm._v(" "),
@@ -117180,6 +117212,8 @@ module.exports = Component.exports
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+//
+//
 //
 //
 //
@@ -117336,86 +117370,102 @@ var render = function() {
     [
       _vm.tab !== "query"
         ? _c("td", { staticClass: "rowButtons" }, [
-            _vm.tableConfig &&
-            _vm.tableConfig.primaryKey &&
-            _vm.editingRow === _vm.row[_vm.tableConfig.primaryKey]
-              ? _c("span", [
-                  _c(
-                    "button",
+            _c("div", [
+              _vm.tableConfig &&
+              _vm.tableConfig.primaryKey &&
+              _vm.editingRow === _vm.row[_vm.tableConfig.primaryKey]
+                ? _c(
+                    "div",
                     {
-                      key: "cancel",
-                      staticClass: "btn btn-default btn-xs",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          _vm.$emit("cancelEditingRow", null)
-                        }
-                      }
+                      staticClass: "btn-group",
+                      attrs: { role: "toolbar", "aria-label": "..." }
                     },
                     [
-                      _c("span", {
-                        staticClass: "glyphicon glyphicon-remove",
-                        attrs: { "aria-hidden": "true" }
-                      })
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      key: "save",
-                      staticClass: "btn btn-default btn-xs",
-                      attrs: { type: "button" },
-                      on: { click: _vm.saveRow }
-                    },
-                    [
-                      _c("span", {
-                        staticClass: "glyphicon glyphicon-ok",
-                        attrs: { "aria-hidden": "true" }
-                      })
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      key: "delete",
-                      staticClass: "btn btn-default btn-xs",
-                      attrs: { type: "button" },
-                      on: {
-                        click: function($event) {
-                          _vm.$emit(
-                            "deleteRow",
-                            _vm.row[_vm.tableConfig.primaryKey]
-                          )
-                        }
-                      }
-                    },
-                    [
-                      _c("span", {
-                        staticClass: "glyphicon glyphicon-trash",
-                        attrs: { "aria-hidden": "true" }
-                      })
-                    ]
-                  )
-                ])
-              : _c("span", [
-                  _c(
-                    "button",
-                    {
-                      key: "edit",
-                      staticClass: "btn btn-default btn-xs",
-                      attrs: { type: "button" },
-                      on: { click: _vm.editRow }
-                    },
-                    [
-                      _c("span", {
-                        staticClass: "glyphicon glyphicon-pencil",
-                        attrs: { "aria-hidden": "true" }
-                      })
+                      _c(
+                        "button",
+                        {
+                          key: "cancel",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.$emit("cancelEditingRow", null)
+                            }
+                          }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-remove",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          key: "save",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: { click: _vm.saveRow }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-ok",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          key: "delete",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              _vm.$emit(
+                                "deleteRow",
+                                _vm.row[_vm.tableConfig.primaryKey]
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-trash",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      )
                     ]
                   )
-                ])
+                : _c(
+                    "div",
+                    {
+                      staticClass: "btn-group",
+                      attrs: { role: "toolbar", "aria-label": "..." }
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          key: "edit",
+                          staticClass: "btn btn-default btn-xs",
+                          attrs: { type: "button" },
+                          on: { click: _vm.editRow }
+                        },
+                        [
+                          _c("span", {
+                            staticClass: "glyphicon glyphicon-pencil",
+                            attrs: { "aria-hidden": "true" }
+                          })
+                        ]
+                      )
+                    ]
+                  )
+            ])
           ])
         : _vm._e(),
       _vm._v(" "),
@@ -117518,7 +117568,7 @@ var render = function() {
                           ])
                         })
                       )
-                    : _vm.tableConfig
+                    : _vm.tableConfig !== null
                       ? _c(
                           "tr",
                           [
@@ -117623,7 +117673,9 @@ var render = function() {
                                 attrs: {
                                   tab: _vm.tab,
                                   table: _vm.table,
-                                  schema: _vm.tableConfig.schema
+                                  schema:
+                                    _vm.tableConfig !== null &&
+                                    _vm.tableConfig.schema
                                 },
                                 on: {
                                   cancelInsertingRow: function($event) {
@@ -117680,19 +117732,11 @@ var render = function() {
                     ])
                   : _c("tbody", [
                       _c("tr", [
-                        _c(
-                          "td",
-                          {
-                            attrs: {
-                              colspan: _vm.tableConfig.schema.length + 1
-                            }
-                          },
-                          [
-                            _c("div", { staticClass: "empty" }, [
-                              _vm._v("No records")
-                            ])
-                          ]
-                        )
+                        _c("td", { attrs: { colspan: _vm.colspan } }, [
+                          _c("div", { staticClass: "empty" }, [
+                            _vm._v("No records")
+                          ])
+                        ])
                       ])
                     ])
               ],
