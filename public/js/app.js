@@ -117277,6 +117277,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         editRow: function editRow() {
             this.refreshRow();
             this.$emit('editingRow', this.row[this.tableConfig.primaryKey]);
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
         },
         saveRow: function saveRow() {
             this.$emit('updateRow', {
@@ -117386,7 +117389,12 @@ var render = function() {
                         {
                           key: "cancel",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
+                          attrs: {
+                            type: "button",
+                            "data-toggle": "tooltip",
+                            "data-placement": "top",
+                            title: "Cancel"
+                          },
                           on: {
                             click: function($event) {
                               _vm.$emit("cancelEditingRow", null)
@@ -117406,7 +117414,12 @@ var render = function() {
                         {
                           key: "save",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
+                          attrs: {
+                            type: "button",
+                            "data-toggle": "tooltip",
+                            "data-placement": "top",
+                            title: "Save"
+                          },
                           on: { click: _vm.saveRow }
                         },
                         [
@@ -117422,7 +117435,12 @@ var render = function() {
                         {
                           key: "delete",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
+                          attrs: {
+                            type: "button",
+                            "data-toggle": "tooltip",
+                            "data-placement": "top",
+                            title: "Delete"
+                          },
                           on: {
                             click: function($event) {
                               _vm.$emit(
