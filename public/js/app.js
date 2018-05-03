@@ -116766,7 +116766,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table {\n  font-size: 13px;\n  margin-bottom: 0;\n}\n.results .table td input {\n    border: 0;\n    height: 20px;\n    padding: 3px;\n}\n.results .table td span {\n    white-space: nowrap;\n}\n.results .table td.rowButtons {\n    width: 34px;\n    max-width: 75px;\n}\n.results .table .rowButtons > * {\n    visibility: hidden;\n}\n.results .table .rowButtons div.btn-group {\n    position: fixed;\n    z-index: 1000;\n}\n.results .table tr:hover .rowButtons > *, .results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    visibility: visible;\n}\n.results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    width: 75px;\n}\n.results .table .el-input__prefix {\n    left: 1px;\n}\n.results .table .el-input__icon {\n    width: 22px;\n    line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n  .results .table .el-input--suffix .el-input__inner {\n    padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n  padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table {\n  font-size: 13px;\n  margin-bottom: 0;\n}\n.results .table td input {\n    border: 0;\n    height: 20px;\n    padding: 3px;\n}\n.results .table td span {\n    white-space: nowrap;\n}\n.results .table td.rowButtons {\n    width: 34px;\n    max-width: 75px;\n}\n.results .table .rowButtons > * {\n    visibility: hidden;\n}\n.results .table .rowButtons div.btn-group {\n    position: fixed;\n    z-index: 1000;\n}\n.results .table tr:hover .rowButtons > *, .results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    visibility: visible;\n}\n.results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    width: 75px;\n}\n.results .table .el-input__prefix {\n    left: 1px;\n}\n.results .table .el-input__icon {\n    width: 22px;\n    line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n  .results .table .el-input--suffix .el-input__inner {\n    padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n  padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n[tooltip]:before {\n  position: absolute;\n  content: attr(tooltip);\n  opacity: 0;\n  bottom: 20px;\n  left: 0;\n  background: #000;\n  color: #fff;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  padding: 4px 8px;\n  z-index: 999;\n  /* hovering the tooltip itself dismisses it */\n  pointer-events: none;\n}\n[tooltip]:hover:before {\n  opacity: 1;\n}\n", ""]);
 
 // exports
 
@@ -117274,18 +117274,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
-        editRow: function editRow() {
-            this.refreshRow();
-            this.$emit('editingRow', this.row[this.tableConfig.primaryKey]);
+        bindTooltips: function bindTooltips() {
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
             });
+        },
+        editRow: function editRow() {
+            this.refreshRow();
+            this.$emit('editingRow', this.row[this.tableConfig.primaryKey]);
+            // this.bindTooltips()
+        },
+        cancelEditingRow: function cancelEditingRow() {
+            this.$emit('cancelEditingRow', null);
+            // this.bindTooltips()
         },
         saveRow: function saveRow() {
             this.$emit('updateRow', {
                 primaryKey: this.row[this.tableConfig.primaryKey],
                 data: this.updatedValues()
             });
+            // this.bindTooltips()
         },
         refreshRow: function refreshRow() {
             this.data = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
@@ -117389,17 +117397,8 @@ var render = function() {
                         {
                           key: "cancel",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: {
-                            type: "button",
-                            "data-toggle": "tooltip",
-                            "data-placement": "top",
-                            title: "Cancel"
-                          },
-                          on: {
-                            click: function($event) {
-                              _vm.$emit("cancelEditingRow", null)
-                            }
-                          }
+                          attrs: { type: "button", tooltip: "Cancel" },
+                          on: { click: _vm.cancelEditingRow }
                         },
                         [
                           _c("span", {
@@ -117414,12 +117413,7 @@ var render = function() {
                         {
                           key: "save",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: {
-                            type: "button",
-                            "data-toggle": "tooltip",
-                            "data-placement": "top",
-                            title: "Save"
-                          },
+                          attrs: { type: "button", tooltip: "Save" },
                           on: { click: _vm.saveRow }
                         },
                         [
@@ -117435,12 +117429,7 @@ var render = function() {
                         {
                           key: "delete",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: {
-                            type: "button",
-                            "data-toggle": "tooltip",
-                            "data-placement": "top",
-                            title: "Delete"
-                          },
+                          attrs: { type: "button", tooltip: "Delete" },
                           on: {
                             click: function($event) {
                               _vm.$emit(
@@ -117471,7 +117460,10 @@ var render = function() {
                         {
                           key: "edit",
                           staticClass: "btn btn-default btn-xs",
-                          attrs: { type: "button" },
+                          attrs: {
+                            type: "button",
+                            tooltip: "Edit / Delete..."
+                          },
                           on: { click: _vm.editRow }
                         },
                         [

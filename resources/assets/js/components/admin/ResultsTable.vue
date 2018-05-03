@@ -220,4 +220,22 @@
     .fade-enter, .fade-leave-to {
         opacity: 0
     }
+    [tooltip]:before {
+        position: absolute;
+        content: attr(tooltip);
+        opacity: 0;
+        bottom: 20px;
+        left: 0;
+        background: #000;
+        color: #fff;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 8px;
+        z-index: 999;
+        /* hovering the tooltip itself dismisses it */
+        pointer-events: none;
+    }
+    [tooltip]:hover:before {
+        opacity: 1;
+    }
 </style>
