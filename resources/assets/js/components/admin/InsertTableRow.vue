@@ -1,12 +1,16 @@
 <template>
     <tr class="success">
         <td v-if="tab !== 'query'" class="rowButtons">
-            <button key="cancel" @click="$emit('cancelInsertingRow')" type="button" class="btn btn-default btn-xs">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            </button>
-            <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-            </button>
+            <div>
+                <div class="btn-group" role="toolbar" aria-label="...">
+                    <button key="cancel" @click="$emit('cancelInsertingRow')" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                    <button key="save" @click="saveRow" type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
         </td>
         <td v-for="column in schema">
             <component

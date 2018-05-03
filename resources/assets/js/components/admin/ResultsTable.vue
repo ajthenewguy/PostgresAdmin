@@ -9,7 +9,7 @@
                         {{ name }}
                     </th>
                 </tr>
-                <tr v-else-if="tableConfig">
+                <tr v-else-if="tableConfig !== null">
                     <th>
                         <button @click="$emit('insertingRow', true)" type="button" class="btn btn-default btn-xs" aria-label="Insert Row">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -29,7 +29,7 @@
                                 v-if="table && insertingRow"
                                 :tab="tab"
                                 :table="table"
-                                :schema="tableConfig.schema"
+                                :schema="tableConfig !== null && tableConfig.schema"
                                 @cancelInsertingRow="$emit('insertingRow', false)"
                                 @insertRow="insertRow"
                         />
@@ -51,7 +51,7 @@
                 </transition>
                 <tbody v-else>
                     <tr>
-                        <td :colspan="tableConfig.schema.length + 1">
+                        <td :colspan="colspan">
                             <div class="empty">No records</div>
                         </td>
                     </tr>
@@ -90,11 +90,21 @@
         },
         computed: {
             colspan: function () {
-                return this.tableConfig ? (Object.keys(this.tableConfig.schema).length + (this.tab === 'content' ? 1 : 0)) : 2
+                let span = 2
+                if (this.tableConfig !== null) {
+                    span = Object.keys(this.tableConfig.schema).length
+                    if (this.tab === 'content') span++
+                }
+                return span
             },
             tableWrapperStyleLoading: function () {
                 return (this.state.processing ? 'overflow: hidden;' : '')
             }
+        },
+        mounted() {
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
         },
         methods: {
             getDataTypeDisplay(input) {
@@ -115,11 +125,13 @@
             },
             keyIcon(column) {
                 let icon = ''
-                if (this.tableConfig.schema) {
-                    if (column === this.tableConfig.primaryKey) {
-                        icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
-                    } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
-                        icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
+                if (this.tableConfig) {
+                    if (this.tableConfig.schema) {
+                        if (column === this.tableConfig.primaryKey) {
+                            icon = '<span class="glyphicon glyphicon-star" aria-hidden="true"></span>'
+                        } else if (_.find(this.tableConfig.foreignKeys, ['column_name', column])) {
+                            icon = '<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>'
+                        }
                     }
                 }
                 return icon
@@ -136,7 +148,11 @@
                 return icon
             },
             schema() {
-                return this.tableConfig.schema
+                let schema = {}
+                if (this.tableConfig !== null) {
+                    schema = this.tableConfig.schema
+                }
+                return schema
             }
         }
     }
@@ -163,14 +179,23 @@
             }
             td.rowButtons {
                 width: 34px;
-                max-width: 84px;
+                max-width: 75px;
             }
-            .rowButtons > span {
+            .rowButtons > * {
                 visibility: hidden;
             }
-            tr:hover, tr.warning {
-                .rowButtons > span {
+            .rowButtons div.btn-group {
+                position: fixed;
+                z-index: 1000;
+            }
+            tr:hover, tr.warning, tr.success {
+                .rowButtons > * {
                     visibility: visible;
+                }
+            }
+            tr.warning, tr.success {
+                .rowButtons > * {
+                    width: 75px;
                 }
             }
             .el-input__prefix {
@@ -192,7 +217,7 @@
     .fade-enter-active, .fade-leave-active {
         transition: opacity .5s
     }
-    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    .fade-enter, .fade-leave-to {
         opacity: 0
     }
 </style>
