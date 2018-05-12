@@ -1,7 +1,7 @@
 <template>
     <li :class="{ dropdown: ui.connections.dropdown  }">
         <a href="#" @click.prevent="showConnectionsModal = true" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-            {{ connection }} <span v-if="ui.connections.dropdown" class="caret"></span>
+            {{ (connection ? connection : 'Connect') }} <span v-if="ui.connections.dropdown" class="caret"></span>
         </a>
         <ul v-if="ui.connections.dropdown" class="dropdown-menu" role="menu">
             <li>
@@ -116,6 +116,8 @@
 						this.promptConnection()
 					}
                 }
+            }).catch(error => {
+                console.error('error:', error)
             })
 			this.bus.$on('App.databaseTablesLoaded', this.handleDatabaseConnect)
 			this.bus.$on('databaseConnectError', this.handleDatabaseConnectError)

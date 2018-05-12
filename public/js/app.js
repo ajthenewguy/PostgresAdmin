@@ -117274,26 +117274,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
-        bindTooltips: function bindTooltips() {
-            $(function () {
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-        },
         editRow: function editRow() {
             this.refreshRow();
             this.$emit('editingRow', this.row[this.tableConfig.primaryKey]);
-            // this.bindTooltips()
         },
         cancelEditingRow: function cancelEditingRow() {
             this.$emit('cancelEditingRow', null);
-            // this.bindTooltips()
         },
         saveRow: function saveRow() {
             this.$emit('updateRow', {
                 primaryKey: this.row[this.tableConfig.primaryKey],
                 data: this.updatedValues()
             });
-            // this.bindTooltips()
         },
         refreshRow: function refreshRow() {
             this.data = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.clone(this.row);
@@ -122598,6 +122590,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     _this.promptConnection();
                 }
             }
+        }).catch(function (error) {
+            console.error('error:', error);
         });
         this.bus.$on('App.databaseTablesLoaded', this.handleDatabaseConnect);
         this.bus.$on('databaseConnectError', this.handleDatabaseConnectError);
@@ -123238,7 +123232,11 @@ var render = function() {
           }
         },
         [
-          _vm._v("\n        " + _vm._s(_vm.connection) + " "),
+          _vm._v(
+            "\n        " +
+              _vm._s(_vm.connection ? _vm.connection : "Connect") +
+              " "
+          ),
           _vm.ui.connections.dropdown
             ? _c("span", { staticClass: "caret" })
             : _vm._e()
