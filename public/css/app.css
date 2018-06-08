@@ -8472,3 +8472,7 @@ table.layout tbody {
   box-sizing: border-box;
 }
 
+.col-md-12.main #tabFooter {
+  padding-left: 25px;
+}
+

@@ -1,23 +1,29 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
-                <div class="input-group">
-                    <input v-model="tableQuery" class="form-control input-sm" placeholder="Search Tables">
-                    <div class="input-group-addon">
-                        <span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
-                    </div>
-                </div>
-                <list
-                        :tables="tables"
-                        :table="table"
-                        :query="tableQuery"
-                        @openTable="openTable"
-                        @addStructureTab="addStructureTab"
-                        @refreshTables="refreshTables"
-                />
-            </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<transition name="slide">
+				<div :class="sidebarClass">
+					<div class="input-group">
+						<input v-model="tableQuery" class="form-control input-sm" placeholder="Search Tables">
+						<div class="input-group-addon">
+							<span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
+						</div>
+					</div>
+					<list
+						:tables="tables"
+						:table="table"
+						:query="tableQuery"
+						@openTable="openTable"
+						@toggleDisplay="toggleListDisplay"
+						@addStructureTab="addStructureTab"
+						@refreshTables="refreshTables"
+					/>
+				</div>
+			</transition>
+            <div :class="mainViewClass">
+				<a @click.prevent="toggleListDisplay" class="btn btn-default btn-xs attach" :class="toggleDisplayWrapperClass" href="" title="Toggle Display" role="button">
+					<span :class="toggleDisplayClass" aria-hidden="true"></span>
+				</a>
                 <tabs ref="tabs"
                       @loaded="onTabChange"
                       @tabChanged="onTabChange"
@@ -26,39 +32,38 @@
             </div>
         </div>
 
-
 		<div class="content-mask" v-show="state.masked">
-				<div class="form-horizontal" id="sessionRestoreLogin">
-					<h2>Login</h2>
-					<div v-show="loginError">
-						{{ loginError }}
-					</div>
-					<div class="form-group">
-						<label for="email" class="col-md-4 control-label">E-Mail Address</label>
+			<div class="form-horizontal" id="sessionRestoreLogin">
+				<h2>Login</h2>
+				<div v-show="loginError">
+					{{ loginError }}
+				</div>
+				<div class="form-group">
+					<label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
-						<div class="col-md-6">
-							<input id="email" type="email" class="form-control" name="email" v-model="login.email" required autofocus>
-						</div>
+					<div class="col-md-6">
+						<input id="email" type="email" class="form-control" name="email" v-model="login.email" required autofocus>
 					</div>
-					<div class="form-group">
-						<label for="password" class="col-md-4 control-label">Password</label>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-md-4 control-label">Password</label>
 
-						<div class="col-md-6">
-							<input id="password" type="password" class="form-control" name="password" v-model="login.password" required>
-						</div>
+					<div class="col-md-6">
+						<input id="password" type="password" class="form-control" name="password" v-model="login.password" required>
 					</div>
-					<div class="form-group" v-show="login._token">
-						<div class="col-md-8 col-md-offset-4">
-							<button @click="postLogin" class="btn btn-primary">
-								Login
-							</button>
-							<a class="btn btn-link" :href="server + '/password/reset'">
-								Forgot Your Password?
-							</a>
-						</div>
+				</div>
+				<div class="form-group" v-show="login._token">
+					<div class="col-md-8 col-md-offset-4">
+						<button @click="postLogin" class="btn btn-primary">
+							Login
+						</button>
+						<a class="btn btn-link" :href="server + '/password/reset'">
+							Forgot Your Password?
+						</a>
 					</div>
 				</div>
 			</div>
+		</div>
     </div>
 </template>
 
@@ -73,6 +78,7 @@
                 util: window.util,
                 table: null,
                 tables: this.loadedTables,
+                displayTableList: true,
                 editingRow: null,
                 filter: null,
                 insertingRow: false,
@@ -113,12 +119,42 @@
 				this.state.masked = true
 				this.refreshToken()
 			})
-//            $(window).on('load', function () {
-//                window.addEventListener('resize', $this.onWindowResize)
-//                if ($this.state.connection) {
-//                    $this.addDefaultTab()
-//                }
-//            })
+        },
+        computed: {
+            sidebarClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = 'col-sm-3 col-md-2 sidebar'
+                } else {
+                    className = 'col-sm-3 col-md-2 collapsed sidebar'
+                }
+                return className
+            },
+            mainViewClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = 'col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'
+                } else {
+                    className = 'col-md-12 main'
+                }
+                return className
+            },
+            toggleDisplayClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = this.util.icon('menu-left')
+                } else {
+                    className = this.util.icon('menu-right')
+                }
+                return className
+            },
+            toggleDisplayWrapperClass: function() {
+                let className = ''
+                if (! this.displayTableList) {
+                    className = 'pull-out'
+                }
+                return className
+            }
         },
         watch: {
             state: {
@@ -244,6 +280,13 @@
 	                    }
 	                }
                 })
+			},
+            toggleListDisplay(display) {
+                // if (typeof display === "undefined") {
+                 //    display = this.displayTableList
+				// }
+				// this.displayTableList = !! display
+                this.displayTableList = ! this.displayTableList
 			}
         }
     }
@@ -362,6 +405,9 @@
             /*border-right: 1px solid #eee;*/
         }
     }
+	.collapsed.sidebar {
+		left: -16.66666667%;
+	}
 
     /* Sidebar navigation */
     .nav-sidebar {
@@ -392,6 +438,19 @@
     .main .page-header {
         margin-top: 0;
     }
+	.main .btn {
+		height: auto;
+	}
+
+	.btn.attach {
+		bottom: 5px;
+		left: -30px;
+		position: absolute;
+		z-index: 9999;
+	}
+	.btn.attach.pull-out {
+		left: 5px;
+	}
 
 	.content-mask {
 		position: fixed;

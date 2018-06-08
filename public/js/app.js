@@ -50264,6 +50264,14 @@ window.util = {
                 {
                     return "glyphicon glyphicon-link";
                 }
+            case "menu-left":
+                {
+                    return "glyphicon glyphicon-menu-left";
+                }
+            case "menu-right":
+                {
+                    return "glyphicon glyphicon-menu-right";
+                }
             case "query":
                 {
                     return "glyphicon glyphicon-search";
@@ -114640,7 +114648,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 30px;\n}\n\n/*\n     * Global add-ons\n     */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n     * Top navigation\n     * Hide default border to remove 1px line.\n     */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n     * Sidebar\n     */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f9f9f9;\n    /*border-right: 1px solid #eee;*/\n}\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n     * Main content\n     */\n.main {\n  height: 100%;\n  padding: 20px 0 0 0;\n}\n.main .page-header {\n  margin-top: 0;\n}\n.content-mask {\n  position: fixed;\n  z-index: 9999;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  /*background-color: #000;*/\n  background: linear-gradient(135deg, #000, #3c3c3c);\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n.content-mask > * {\n  z-index: 10000;\n}\n#sessionRestoreLogin {\n  width: 50%;\n  left: 25%;\n  top: 25%;\n  position: fixed;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 30px;\n}\n\n/*\n     * Global add-ons\n     */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n     * Top navigation\n     * Hide default border to remove 1px line.\n     */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n     * Sidebar\n     */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f9f9f9;\n    /*border-right: 1px solid #eee;*/\n}\n}\n.collapsed.sidebar {\n  left: -16.66666667%;\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n     * Main content\n     */\n.main {\n  height: 100%;\n  padding: 20px 0 0 0;\n}\n.main .page-header {\n  margin-top: 0;\n}\n.main .btn {\n  height: auto;\n}\n.btn.attach {\n  bottom: 5px;\n  left: -30px;\n  position: absolute;\n  z-index: 9999;\n}\n.btn.attach.pull-out {\n  left: 5px;\n}\n.content-mask {\n  position: fixed;\n  z-index: 9999;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  /*background-color: #000;*/\n  background: linear-gradient(135deg, #000, #3c3c3c);\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n.content-mask > * {\n  z-index: 10000;\n}\n#sessionRestoreLogin {\n  width: 50%;\n  left: 25%;\n  top: 25%;\n  position: fixed;\n}\n", ""]);
 
 // exports
 
@@ -114717,6 +114725,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['csrfToken', 'selectedDatabase', 'loadedTables'],
@@ -114728,6 +114741,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             util: window.util,
             table: null,
             tables: this.loadedTables,
+            displayTableList: true,
             editingRow: null,
             filter: null,
             insertingRow: false,
@@ -114769,14 +114783,44 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             _this.state.masked = true;
             _this.refreshToken();
         });
-        //            $(window).on('load', function () {
-        //                window.addEventListener('resize', $this.onWindowResize)
-        //                if ($this.state.connection) {
-        //                    $this.addDefaultTab()
-        //                }
-        //            })
     },
 
+    computed: {
+        sidebarClass: function sidebarClass() {
+            var className = '';
+            if (this.displayTableList) {
+                className = 'col-sm-3 col-md-2 sidebar';
+            } else {
+                className = 'col-sm-3 col-md-2 collapsed sidebar';
+            }
+            return className;
+        },
+        mainViewClass: function mainViewClass() {
+            var className = '';
+            if (this.displayTableList) {
+                className = 'col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main';
+            } else {
+                className = 'col-md-12 main';
+            }
+            return className;
+        },
+        toggleDisplayClass: function toggleDisplayClass() {
+            var className = '';
+            if (this.displayTableList) {
+                className = this.util.icon('menu-left');
+            } else {
+                className = this.util.icon('menu-right');
+            }
+            return className;
+        },
+        toggleDisplayWrapperClass: function toggleDisplayWrapperClass() {
+            var className = '';
+            if (!this.displayTableList) {
+                className = 'pull-out';
+            }
+            return className;
+        }
+    },
     watch: {
         state: {
             handler: function handler() {
@@ -114914,6 +114958,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     }
                 }
             });
+        },
+        toggleListDisplay: function toggleListDisplay(display) {
+            // if (typeof display === "undefined") {
+            //    display = this.displayTableList
+            // }
+            // this.displayTableList = !! display
+            this.displayTableList = !this.displayTableList;
         }
     }
 });
@@ -115934,7 +115985,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.list-group {\n  /*border-top: 1px solid #e6e6e6;*/\n  /*border-bottom: 1px solid #e6e6e6;*/\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:hover {\n    background-color: #e6e6e6;\n}\n.list-group li:first-child {\n    border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.sidebar .list-group-item {\n  background-color: transparent;\n  border: none;\n  padding: 3px 10px;\n}\n.sidebar .list-group-item .btn-group {\n    visibility: hidden;\n}\n.sidebar .list-group-item:hover .btn-group {\n  visibility: visible;\n}\n.sidebar .title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.sidebar .title p:hover {\n  background: #e6e6e6;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.sidebar .button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n", ""]);
+exports.push([module.i, "\n.list-group {\n  /*border-top: 1px solid #e6e6e6;*/\n  /*border-bottom: 1px solid #e6e6e6;*/\n  margin-bottom: 5px;\n  overflow: auto;\n  white-space: nowrap;\n}\n.list-group li:hover {\n    background-color: #e6e6e6;\n}\n.list-group li:first-child {\n    border-top: none;\n}\n.list-group > * {\n  height: 30px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.sidebar .list-group-item {\n  background-color: transparent;\n  border: none;\n  padding: 3px 10px;\n}\n.sidebar .list-group-item .btn-group {\n    visibility: hidden;\n}\n.sidebar .list-group-item:hover .btn-group {\n  visibility: visible;\n}\n.sidebar .title p {\n  margin: 0;\n  padding: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  display: block;\n  min-height: 16px;\n}\n.sidebar .title p:hover {\n  background: #e6e6e6;\n  position: relative;\n  z-index: 1;\n  display: inline-block;\n}\n.sidebar .button-title {\n  display: none;\n}\n.list-group-item {\n  padding: 3px 3px 3px 8px;\n}\n.list-group-item button:hover .button-title {\n    display: inline;\n}\n.slide-leave-active,\n.slide-enter-active {\n  -webkit-transition: 1s;\n  transition: 1s;\n}\n.slide-enter {\n  -webkit-transform: translate(100%, 0);\n          transform: translate(100%, 0);\n}\n.slide-leave-to {\n  -webkit-transform: translate(-100%, 0);\n          transform: translate(-100%, 0);\n}\n", ""]);
 
 // exports
 
@@ -116009,7 +116060,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             list: [],
             newTableError: '',
             newTableName: '',
-            showModal: false
+            showModal: false,
+            displayList: true
         };
     },
     mounted: function mounted() {
@@ -116020,6 +116072,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     computed: {
         computedList: function computedList() {
             return this.computeList();
+        },
+        toggleDisplayClass: function toggleDisplayClass() {
+            var className = '';
+            if (this.displayList) {
+                className = this.util.icon('menu-left');
+            } else {
+                className = this.util.icon('menu-right');
+            }
+            return className;
         }
     },
     watch: {
@@ -116090,6 +116151,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             setTimeout(function () {
                 Velocity(el, { opacity: 0, height: 0 }, { complete: done });
             }, delay);
+        },
+        onDisplayToggle: function onDisplayToggle() {
+            this.displayList = !this.displayList;
+            this.$emit('toggleDisplay', this.displayList);
         },
         onSubmitNewTable: function onSubmitNewTable() {
             var _this = this;
@@ -122162,81 +122227,108 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid" }, [
-    _c("div", { staticClass: "row" }, [
-      _c(
-        "div",
-        { staticClass: "col-sm-3 col-md-2 sidebar" },
-        [
-          _c("div", { staticClass: "input-group" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.tableQuery,
-                  expression: "tableQuery"
-                }
-              ],
-              staticClass: "form-control input-sm",
-              attrs: { placeholder: "Search Tables" },
-              domProps: { value: _vm.tableQuery },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
+    _c(
+      "div",
+      { staticClass: "row" },
+      [
+        _c("transition", { attrs: { name: "slide" } }, [
+          _c(
+            "div",
+            { class: _vm.sidebarClass },
+            [
+              _c("div", { staticClass: "input-group" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.tableQuery,
+                      expression: "tableQuery"
+                    }
+                  ],
+                  staticClass: "form-control input-sm",
+                  attrs: { placeholder: "Search Tables" },
+                  domProps: { value: _vm.tableQuery },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.tableQuery = $event.target.value
+                    }
                   }
-                  _vm.tableQuery = $event.target.value
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group-addon" }, [
-              _c("span", {
-                staticClass: "glyphicon glyphicon-remove-circle",
-                attrs: { id: "searchclear" },
+                }),
+                _vm._v(" "),
+                _c("div", { staticClass: "input-group-addon" }, [
+                  _c("span", {
+                    staticClass: "glyphicon glyphicon-remove-circle",
+                    attrs: { id: "searchclear" },
+                    on: {
+                      click: function($event) {
+                        _vm.tableQuery = ""
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("list", {
+                attrs: {
+                  tables: _vm.tables,
+                  table: _vm.table,
+                  query: _vm.tableQuery
+                },
                 on: {
-                  click: function($event) {
-                    _vm.tableQuery = ""
-                  }
+                  openTable: _vm.openTable,
+                  toggleDisplay: _vm.toggleListDisplay,
+                  addStructureTab: _vm.addStructureTab,
+                  refreshTables: _vm.refreshTables
                 }
               })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("list", {
-            attrs: {
-              tables: _vm.tables,
-              table: _vm.table,
-              query: _vm.tableQuery
-            },
-            on: {
-              openTable: _vm.openTable,
-              addStructureTab: _vm.addStructureTab,
-              refreshTables: _vm.refreshTables
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"
-        },
-        [
-          _c("tabs", {
-            ref: "tabs",
-            on: {
-              loaded: _vm.onTabChange,
-              tabChanged: _vm.onTabChange,
-              refresh: _vm.refreshTab
-            }
-          })
-        ],
-        1
-      )
-    ]),
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { class: _vm.mainViewClass },
+          [
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-default btn-xs attach",
+                class: _vm.toggleDisplayWrapperClass,
+                attrs: { href: "", title: "Toggle Display", role: "button" },
+                on: {
+                  click: function($event) {
+                    $event.preventDefault()
+                    return _vm.toggleListDisplay($event)
+                  }
+                }
+              },
+              [
+                _c("span", {
+                  class: _vm.toggleDisplayClass,
+                  attrs: { "aria-hidden": "true" }
+                })
+              ]
+            ),
+            _vm._v(" "),
+            _c("tabs", {
+              ref: "tabs",
+              on: {
+                loaded: _vm.onTabChange,
+                tabChanged: _vm.onTabChange,
+                refresh: _vm.refreshTab
+              }
+            })
+          ],
+          1
+        )
+      ],
+      1
+    ),
     _vm._v(" "),
     _c(
       "div",
@@ -122273,11 +122365,7 @@ var render = function() {
                   }
                 ]
               },
-              [
-                _vm._v(
-                  "\n\t\t\t\t\t\t" + _vm._s(_vm.loginError) + "\n\t\t\t\t\t"
-                )
-              ]
+              [_vm._v("\n\t\t\t\t\t" + _vm._s(_vm.loginError) + "\n\t\t\t\t")]
             ),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
@@ -122382,7 +122470,7 @@ var render = function() {
                       staticClass: "btn btn-primary",
                       on: { click: _vm.postLogin }
                     },
-                    [_vm._v("\n\t\t\t\t\t\t\t\tLogin\n\t\t\t\t\t\t\t")]
+                    [_vm._v("\n\t\t\t\t\t\t\tLogin\n\t\t\t\t\t\t")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -122393,7 +122481,7 @@ var render = function() {
                     },
                     [
                       _vm._v(
-                        "\n\t\t\t\t\t\t\t\tForgot Your Password?\n\t\t\t\t\t\t\t"
+                        "\n\t\t\t\t\t\t\tForgot Your Password?\n\t\t\t\t\t\t"
                       )
                     ]
                   )

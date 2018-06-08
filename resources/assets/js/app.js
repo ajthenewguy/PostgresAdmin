@@ -71,6 +71,12 @@ window.util = {
             case "link": {
                 return "glyphicon glyphicon-link"
             }
+            case "menu-left": {
+                return "glyphicon glyphicon-menu-left"
+            }
+            case "menu-right": {
+                return "glyphicon glyphicon-menu-right"
+            }
             case "query": {
                 return "glyphicon glyphicon-search"
             }

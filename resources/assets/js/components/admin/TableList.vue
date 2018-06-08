@@ -62,7 +62,8 @@
                 list: [],
 				newTableError: '',
 				newTableName: '',
-				showModal: false
+				showModal: false,
+				displayList: true
             }
         },
         mounted() {
@@ -72,7 +73,16 @@
         computed: {
             computedList: function () {
                 return this.computeList()
-            }
+            },
+			toggleDisplayClass: function() {
+                let className = ''
+				if (this.displayList) {
+                    className = this.util.icon('menu-left')
+				} else {
+                    className = this.util.icon('menu-right')
+				}
+				return className
+			}
         },
         watch: {
             tables: function (newTables) {
@@ -144,6 +154,10 @@
                     )
                 }, delay)
             },
+			onDisplayToggle() {
+                this.displayList = ! this.displayList
+                this.$emit('toggleDisplay', this.displayList)
+			},
 			onSubmitNewTable() {
 				if (_.findIndex(this.tables, this.newTableName) > -1) {
 					this.newTableError = 'That column exists'
@@ -223,4 +237,15 @@
             }
         }
     }
+
+	.slide-leave-active,
+	.slide-enter-active {
+		transition: 1s;
+	}
+	.slide-enter {
+		transform: translate(100%, 0);
+	}
+	.slide-leave-to {
+		transform: translate(-100%, 0);
+	}
 </style>
