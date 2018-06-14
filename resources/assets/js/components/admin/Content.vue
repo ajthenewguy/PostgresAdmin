@@ -25,6 +25,7 @@
 					<span :class="toggleDisplayClass" aria-hidden="true"></span>
 				</a>
                 <tabs ref="tabs"
+					  :loaded-tables="loadedTables"
                       @loaded="onTabChange"
                       @tabChanged="onTabChange"
                       @refresh="refreshTab"
@@ -109,12 +110,10 @@
             'indices-table': require('./IndicesTable')
         },
         created() {
-            let $this = this
             this.bus.$on('Connections.databaseSelected', this.refreshTables)
-            this.bus.$on('App.databaseTablesLoaded', this.addDefaultTab)
+            this.bus.$on('App.databaseTablesLoaded', this.loadTabs)
         },
         mounted() {
-            let $this = this
 			this.bus.$on('expiredSession', () => {
 				this.state.masked = true
 				this.refreshToken()
@@ -165,9 +164,23 @@
             }
         },
         methods: {
+            loadTabs() {
+                // load selected tab
+                this.$refs.tabs.loadTabs().then(data => {
+					window.session.get('selectedTab').then(selectedTabId => {
+					    if (this.$refs.tabs.tabExists(selectedTabId)) {
+                            this.changeTab(selectedTabId)
+						} else {
+                            this.changeTab(this.$refs.tabs.tabs[0].id)
+						}
+					}).catch(() => {
+					    this.changeTab(this.addDefaultTab())
+					})
+                })
+			},
             addDefaultTab() {
                 if (this.$refs.tabs.countTabs() < 1) {
-                    this.newTab("query")
+                    return this.newTab("query")
                 }
             },
             addTableTab(table, type) {
@@ -204,6 +217,7 @@
             newTab(type, title, table) {
                 let tabId = this.$refs.tabs.newTab(...arguments)
                 this.changeTab(tabId)
+				return tabId
             },
             onTabChange(index) {
                 //
@@ -227,10 +241,15 @@
             refreshTables(connection) {
                 return axios.post(this.server + '/tables').then(response => {
                     this.tables = response.data
-					this.state.tables = response.data
+					let tableCount = response.data.length
+					for (let i = 0; i < tableCount; i++) {
+                        let table = response.data[i]
+                        this.state.tables[table] = this.initTableObject(table)
+					}
+
 					this.bus.$emit('App.databaseTablesLoaded')
                 }).catch(error => {
-					console.log('databaseConnectError')
+					console.log('databaseConnectError', error)
                     this.bus.$emit('databaseConnectError')
 					this.$notify.error({
 						title: 'Connection Error',
@@ -281,11 +300,7 @@
 	                }
                 })
 			},
-            toggleListDisplay(display) {
-                // if (typeof display === "undefined") {
-                 //    display = this.displayTableList
-				// }
-				// this.displayTableList = !! display
+            toggleListDisplay() {
                 this.displayTableList = ! this.displayTableList
 			}
         }

@@ -8455,6 +8455,10 @@ table.layout tbody {
   overflow-y: auto;
 }
 
+tbody.loading {
+  opacity: 0.75;
+}
+
 #tabFooter {
   border-top: 1px solid #efefef;
   height: 37px;

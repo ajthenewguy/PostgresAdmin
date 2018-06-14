@@ -65,6 +65,9 @@
 <script>
     export default {
         props: ['defaultConnection'],
+        mixins: [
+            // require('../mixins/Session.vue')
+        ],
         components: {
             'connection-list': require('./ConnectionList'),
             'connection-form': require('./forms/Connection')
@@ -105,7 +108,6 @@
             }
         },
         mounted() {
-            let connection = null
             this.loadConnections().then(value => {
 				if (this.connections !== null && this.connections.length < 1) {
                     this.route = 'add'
@@ -130,7 +132,10 @@
 						this.connectionCache = _.clone(this.connection)
 					}
                     this.setConnection(connection.name).then(() => {
+                        // eslint-disable-next-line
+                        console.log('Connected to ', connection.name)
 						this.connection = connection.name
+                        window.session.setNamespace(connection.name)
 						this.bus.$emit('Connections.databaseSelected', connection.name)
 	                    this.route = 'index'
 						if (this.modalOpen()) {
@@ -174,6 +179,7 @@
 			},
 			handleDatabaseConnectError() {
 				this.connection = ''
+                window.session.setNamespace('')
 				if (this.connectionCache) {
 					this.attemptConnect(this.connectionCache)
 				} else {

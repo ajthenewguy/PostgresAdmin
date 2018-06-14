@@ -29,6 +29,9 @@ Vue.prototype.$http = axios
 Vue.mixin(require( './mixins/Settings.vue'))
 
 window.bus = new Vue()
+window.session = new Vue({
+    mixins: [require( './mixins/Session.vue')]
+})
 window.store = {
     debug: true,
     driver: 'postgres',
@@ -39,7 +42,7 @@ window.store = {
         errors: [],
         loadingTable: false,
         processing: false,
-        tables: [],
+        tables: {},
 		masked: false
     },
     uuid() {

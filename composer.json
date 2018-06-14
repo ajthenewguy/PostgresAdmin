@@ -6,10 +6,12 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "barryvdh/laravel-ide-helper": "v2.4.3",
         "fideloper/proxy": "~3.3",
+        "larapacks/setting": "1.0.*",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "larapacks/setting": "1.0.*"
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

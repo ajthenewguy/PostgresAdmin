@@ -20,9 +20,12 @@
         "vue": "^2.5.16"
     },
     "dependencies": {
+        "ajv": "^6.5.0",
         "element-ui": "^2.3.2",
         "moment": "^2.22.0",
+        "textarea-caret": "^3.1.0",
         "vee-validate": "^2.0.6",
+        "vue-at": "^2.5.0-beta",
         "vuedraggable": "^2.16.0"
     }
 }

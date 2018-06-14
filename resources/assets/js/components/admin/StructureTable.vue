@@ -722,7 +722,7 @@
                     label: 'Foreign table',
                     rules: 'required',
                     control: 'select',
-                    options: this.state.tables,
+                    options: Objeect.keys(this.state.tables),
                     value: (config ? config.foreign_table : undefined),
                     groupSize: 'form-group-sm'
                 })

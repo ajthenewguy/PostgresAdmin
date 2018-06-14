@@ -24,7 +24,8 @@
                 </tr>
                 </thead>
                 <transition v-if="records && records.length > 0" name="fade">
-                    <tbody v-show="!state.processing">
+                    <!--<tbody v-show="!state.processing">-->
+                    <tbody :class="{ 'loading': state.processing }">
                         <insert-table-row
                                 v-if="table && insertingRow"
                                 :tab="tab"
@@ -91,8 +92,12 @@
         computed: {
             colspan: function () {
                 let span = 2
-                if (this.tableConfig !== null) {
-                    span = Object.keys(this.tableConfig.schema).length
+                // if (this.tableConfig !== null) {
+                //     span = Object.keys(this.tableConfig.schema).length
+                //     if (this.tab === 'content') span++
+                // }
+                if (this.getTableSchema(this.table) !== null) {
+                    span = Object.keys(this.getTableSchema(this.table)).length
                     if (this.tab === 'content') span++
                 }
                 return span
