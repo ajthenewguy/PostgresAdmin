@@ -18,7 +18,7 @@
 </template>
 <script>
     export default {
-        props: [ 'sql', 'history' ],
+        props: [ 'sql', 'history', 'loadedTables' ],
         data() {
             return {
                 query: null
@@ -43,7 +43,9 @@
                     let parsedQuery = this.$parent.parseSql(this.query)
                     // eslint-disable-next-line
                     console.log('@todo: use 3rd party lib', parsedQuery)
-                    this.executeParsedQuery(parsedQuery)
+                    return this.executeParsedQuery(parsedQuery)
+                } else {
+                    return Promise.resolve(null)
                 }
             },
             executeParsedQuery(parsedQuery) {
@@ -83,6 +85,7 @@
     #query-wrapper {
         margin-bottom: 10px;
         padding: 10px;
+        position: relative;
     }
     #query_input {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;

@@ -24,7 +24,8 @@
                 </tr>
                 </thead>
                 <transition v-if="records && records.length > 0" name="fade">
-                    <tbody v-show="!state.processing">
+                    <!--<tbody v-show="!state.processing">-->
+                    <tbody :class="{ 'loading': state.processing }">
                         <insert-table-row
                                 v-if="table && insertingRow"
                                 :tab="tab"
@@ -91,8 +92,12 @@
         computed: {
             colspan: function () {
                 let span = 2
-                if (this.tableConfig !== null) {
-                    span = Object.keys(this.tableConfig.schema).length
+                // if (this.tableConfig !== null) {
+                //     span = Object.keys(this.tableConfig.schema).length
+                //     if (this.tab === 'content') span++
+                // }
+                if (this.getTableSchema(this.table) !== null) {
+                    span = Object.keys(this.getTableSchema(this.table)).length
                     if (this.tab === 'content') span++
                 }
                 return span
@@ -219,5 +224,23 @@
     }
     .fade-enter, .fade-leave-to {
         opacity: 0
+    }
+    [tooltip]:before {
+        position: absolute;
+        content: attr(tooltip);
+        opacity: 0;
+        bottom: 20px;
+        left: 0;
+        background: #000;
+        color: #fff;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 8px;
+        z-index: 999;
+        /* hovering the tooltip itself dismisses it */
+        pointer-events: none;
+    }
+    [tooltip]:hover:before {
+        opacity: 1;
     }
 </style>

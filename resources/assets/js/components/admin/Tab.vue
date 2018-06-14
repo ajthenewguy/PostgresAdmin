@@ -2,12 +2,12 @@
     <div class="tab-pane" :class="{ active: getTabIndex('id', id) === currentTab }" :id="'tab-' + id">
         <template v-if="type === 'structure'">
             <structure-table
-			 	v-if="table && table.schema"
-                :table="table.name"
-                :schema="table.schema"
-				:indexes="table.indexes"
-                :primary-key="table.primaryKey"
-                :foreign-keys="table.foreignKeys"
+			 	v-if="table && schema()"
+                :table="table"
+                :schema="schema()"
+				:indexes="indexes()"
+                :primary-key="primaryKey()"
+                :foreign-keys="foreignKeys()"
                 @refresh="$emit('refresh', $event)"
             />
             <div v-else>
@@ -21,6 +21,7 @@
                 v-if="type === 'query'"
                 :sql="customQuery"
                 :history="history"
+                :loaded-tables="loadedTables"
                 @beforeQuery="beforeQuery"
                 @customQuery="beforeCustomQuery"
                 @success="success"
@@ -38,8 +39,8 @@
                     v-show="type === 'query' || type === 'content'"
                     :tab="type"
                     :id="'results-table-' + id"
-                    :table="(table ? table.name : null)"
-                    :table-config="(table ? table : null)"
+                    :table="(table ? table : null)"
+                    :table-config="(table ? tableConfig() : null)"
                     :order="order"
                     :records="records"
                     :editing-row="editingRow"
@@ -60,7 +61,7 @@
                     :pagination="(type === 'content' ? pagination : false)"
                     :request-time="requestTime"
                     :tab="type"
-                    :table="(type === 'content' ? table.name : false)"
+                    :table="(type === 'content' ? table : false)"
                     @refresh="refresh"
                     @changePage="getRecords"
                     @changePerPage="handleSizeChange"
@@ -70,7 +71,7 @@
 </template>
 <script>
     export default {
-        props: [ 'id', 'currentTab', 'type', 'table' ],
+        props: [ 'id', 'currentTab', 'type', 'table', 'loadedTables' ],
         mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
@@ -93,6 +94,7 @@
                     this.getRecords()
                 }
             }
+            // set data from props (should be able to load a tab state through props)
         },
         components: {
             'content-filter': require('./Filter'),
@@ -100,6 +102,11 @@
             'results-table': require('./ResultsTable'),
             'results-footer': require('./ResultsFooter.vue'),
             'structure-table': require('./StructureTable')
+        },
+        computed: {
+            loaded: function() {
+                return this.type === 'query' || this.state.tables[this.table] && this.state.tables[this.table].schema !== null
+            }
         },
         methods: {
             beforeQuery(query) {
@@ -136,7 +143,7 @@
                 return this.$parent.getTabIndex(key, value)
             },
             getRecords(page) {
-                let sql = this.makeSelect(this.table.name, this.where, null, this.order)
+                let sql = this.makeSelect(this.table, this.where, null, this.order)
                 this.executed = true
                 console.log('Getting records:', sql)
                 if (typeof page === "undefined") {
@@ -158,15 +165,16 @@
                 }
             },
             insertRow(data) {
-                return this.insertQuery(this.makeInsert(this.table.name, data), data).then(() => {
+                return this.insertQuery(this.makeInsert(this.table, data), data).then(() => {
                     this.setInsertingRow(false)
                     this.getRecords()
                 })
             },
             updateRow(payload) {
                 let where = {}
-                where[this.table.primaryKey] = payload.primaryKey
-                return this.updateQuery(this.makeUpdate(this.table.name, payload.data, where), payload.data).then(() => {
+                let primaryKey = this.state.tables[this.table].primaryKey
+                where[primaryKey] = payload.primaryKey
+                return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
                     this.setEditingRow(null)
                     this.getRecords()
                 })
@@ -174,8 +182,8 @@
             deleteRow(primaryKey) {
                 if (confirm('Delete this row?')) {
                     let where = {}
-                    where[this.table.primaryKey] = primaryKey
-                    this.deleteQuery(this.makeDelete(this.table.name, where), where).then(() => {
+                    where[this.primaryKey()] = primaryKey
+                    this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
                         this.getRecords(this.currentPage()).then(() => {
                             this.editingRow = null
                             this.state.setProcessing(false)
@@ -190,6 +198,21 @@
                         this.history = this.history.slice(0, 16)
                     }
                 }
+            },
+            tableConfig() {
+                return this.state.tables[this.table]
+            },
+            indexes() {
+                return this.state.tables[this.table].indexes
+            },
+            schema() {
+                return this.state.tables[this.table].schema
+            },
+            primaryKey() {
+                return this.state.tables[this.table].primaryKey
+            },
+            foreignKeys() {
+                return this.state.tables[this.table].foreignKeys
             },
             setInsertingRow(row) {
                 this.editingRow = false

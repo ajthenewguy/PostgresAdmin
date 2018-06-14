@@ -1,7 +1,7 @@
 <template>
     <li :class="{ dropdown: ui.connections.dropdown  }">
         <a href="#" @click.prevent="showConnectionsModal = true" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-            {{ connection }} <span v-if="ui.connections.dropdown" class="caret"></span>
+            {{ (connection ? connection : 'Connect') }} <span v-if="ui.connections.dropdown" class="caret"></span>
         </a>
         <ul v-if="ui.connections.dropdown" class="dropdown-menu" role="menu">
             <li>
@@ -65,6 +65,9 @@
 <script>
     export default {
         props: ['defaultConnection'],
+        mixins: [
+            // require('../mixins/Session.vue')
+        ],
         components: {
             'connection-list': require('./ConnectionList'),
             'connection-form': require('./forms/Connection')
@@ -105,7 +108,6 @@
             }
         },
         mounted() {
-            let connection = null
             this.loadConnections().then(value => {
 				if (this.connections !== null && this.connections.length < 1) {
                     this.route = 'add'
@@ -116,6 +118,8 @@
 						this.promptConnection()
 					}
                 }
+            }).catch(error => {
+                console.error('error:', error)
             })
 			this.bus.$on('App.databaseTablesLoaded', this.handleDatabaseConnect)
 			this.bus.$on('databaseConnectError', this.handleDatabaseConnectError)
@@ -128,7 +132,10 @@
 						this.connectionCache = _.clone(this.connection)
 					}
                     this.setConnection(connection.name).then(() => {
+                        // eslint-disable-next-line
+                        console.log('Connected to ', connection.name)
 						this.connection = connection.name
+                        window.session.setNamespace(connection.name)
 						this.bus.$emit('Connections.databaseSelected', connection.name)
 	                    this.route = 'index'
 						if (this.modalOpen()) {
@@ -172,6 +179,7 @@
 			},
 			handleDatabaseConnectError() {
 				this.connection = ''
+                window.session.setNamespace('')
 				if (this.connectionCache) {
 					this.attemptConnect(this.connectionCache)
 				} else {

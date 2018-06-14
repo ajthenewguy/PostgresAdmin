@@ -1,24 +1,31 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
-                <div class="input-group">
-                    <input v-model="tableQuery" class="form-control input-sm" placeholder="Search Tables">
-                    <div class="input-group-addon">
-                        <span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
-                    </div>
-                </div>
-                <list
-                        :tables="tables"
-                        :table="table"
-                        :query="tableQuery"
-                        @openTable="openTable"
-                        @addStructureTab="addStructureTab"
-                        @refreshTables="refreshTables"
-                />
-            </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+			<transition name="slide">
+				<div :class="sidebarClass">
+					<div class="input-group">
+						<input v-model="tableQuery" class="form-control input-sm" placeholder="Search Tables">
+						<div class="input-group-addon">
+							<span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
+						</div>
+					</div>
+					<list
+						:tables="tables"
+						:table="table"
+						:query="tableQuery"
+						@openTable="openTable"
+						@toggleDisplay="toggleListDisplay"
+						@addStructureTab="addStructureTab"
+						@refreshTables="refreshTables"
+					/>
+				</div>
+			</transition>
+            <div :class="mainViewClass">
+				<a @click.prevent="toggleListDisplay" class="btn btn-default btn-xs attach" :class="toggleDisplayWrapperClass" href="" title="Toggle Display" role="button">
+					<span :class="toggleDisplayClass" aria-hidden="true"></span>
+				</a>
                 <tabs ref="tabs"
+					  :loaded-tables="loadedTables"
                       @loaded="onTabChange"
                       @tabChanged="onTabChange"
                       @refresh="refreshTab"
@@ -26,39 +33,38 @@
             </div>
         </div>
 
-
 		<div class="content-mask" v-show="state.masked">
-				<div class="form-horizontal" id="sessionRestoreLogin">
-					<h2>Login</h2>
-					<div v-show="loginError">
-						{{ loginError }}
-					</div>
-					<div class="form-group">
-						<label for="email" class="col-md-4 control-label">E-Mail Address</label>
+			<div class="form-horizontal" id="sessionRestoreLogin">
+				<h2>Login</h2>
+				<div v-show="loginError">
+					{{ loginError }}
+				</div>
+				<div class="form-group">
+					<label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
-						<div class="col-md-6">
-							<input id="email" type="email" class="form-control" name="email" v-model="login.email" required autofocus>
-						</div>
+					<div class="col-md-6">
+						<input id="email" type="email" class="form-control" name="email" v-model="login.email" required autofocus>
 					</div>
-					<div class="form-group">
-						<label for="password" class="col-md-4 control-label">Password</label>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-md-4 control-label">Password</label>
 
-						<div class="col-md-6">
-							<input id="password" type="password" class="form-control" name="password" v-model="login.password" required>
-						</div>
+					<div class="col-md-6">
+						<input id="password" type="password" class="form-control" name="password" v-model="login.password" required>
 					</div>
-					<div class="form-group" v-show="login._token">
-						<div class="col-md-8 col-md-offset-4">
-							<button @click="postLogin" class="btn btn-primary">
-								Login
-							</button>
-							<a class="btn btn-link" :href="server + '/password/reset'">
-								Forgot Your Password?
-							</a>
-						</div>
+				</div>
+				<div class="form-group" v-show="login._token">
+					<div class="col-md-8 col-md-offset-4">
+						<button @click="postLogin" class="btn btn-primary">
+							Login
+						</button>
+						<a class="btn btn-link" :href="server + '/password/reset'">
+							Forgot Your Password?
+						</a>
 					</div>
 				</div>
 			</div>
+		</div>
     </div>
 </template>
 
@@ -73,6 +79,7 @@
                 util: window.util,
                 table: null,
                 tables: this.loadedTables,
+                displayTableList: true,
                 editingRow: null,
                 filter: null,
                 insertingRow: false,
@@ -103,22 +110,50 @@
             'indices-table': require('./IndicesTable')
         },
         created() {
-            let $this = this
             this.bus.$on('Connections.databaseSelected', this.refreshTables)
-            this.bus.$on('App.databaseTablesLoaded', this.addDefaultTab)
+            this.bus.$on('App.databaseTablesLoaded', this.loadTabs)
         },
         mounted() {
-            let $this = this
 			this.bus.$on('expiredSession', () => {
 				this.state.masked = true
 				this.refreshToken()
 			})
-//            $(window).on('load', function () {
-//                window.addEventListener('resize', $this.onWindowResize)
-//                if ($this.state.connection) {
-//                    $this.addDefaultTab()
-//                }
-//            })
+        },
+        computed: {
+            sidebarClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = 'col-sm-3 col-md-2 sidebar'
+                } else {
+                    className = 'col-sm-3 col-md-2 collapsed sidebar'
+                }
+                return className
+            },
+            mainViewClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = 'col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'
+                } else {
+                    className = 'col-md-12 main'
+                }
+                return className
+            },
+            toggleDisplayClass: function() {
+                let className = ''
+                if (this.displayTableList) {
+                    className = this.util.icon('menu-left')
+                } else {
+                    className = this.util.icon('menu-right')
+                }
+                return className
+            },
+            toggleDisplayWrapperClass: function() {
+                let className = ''
+                if (! this.displayTableList) {
+                    className = 'pull-out'
+                }
+                return className
+            }
         },
         watch: {
             state: {
@@ -129,9 +164,23 @@
             }
         },
         methods: {
+            loadTabs() {
+                // load selected tab
+                this.$refs.tabs.loadTabs().then(data => {
+					window.session.get('selectedTab').then(selectedTabId => {
+					    if (this.$refs.tabs.tabExists(selectedTabId)) {
+                            this.changeTab(selectedTabId)
+						} else {
+                            this.changeTab(this.$refs.tabs.tabs[0].id)
+						}
+					}).catch(() => {
+					    this.changeTab(this.addDefaultTab())
+					})
+                })
+			},
             addDefaultTab() {
                 if (this.$refs.tabs.countTabs() < 1) {
-                    this.newTab("query")
+                    return this.newTab("query")
                 }
             },
             addTableTab(table, type) {
@@ -168,6 +217,7 @@
             newTab(type, title, table) {
                 let tabId = this.$refs.tabs.newTab(...arguments)
                 this.changeTab(tabId)
+				return tabId
             },
             onTabChange(index) {
                 //
@@ -191,10 +241,15 @@
             refreshTables(connection) {
                 return axios.post(this.server + '/tables').then(response => {
                     this.tables = response.data
-					this.state.tables = response.data
+					let tableCount = response.data.length
+					for (let i = 0; i < tableCount; i++) {
+                        let table = response.data[i]
+                        this.state.tables[table] = this.initTableObject(table)
+					}
+
 					this.bus.$emit('App.databaseTablesLoaded')
                 }).catch(error => {
-					console.log('databaseConnectError')
+					console.log('databaseConnectError', error)
                     this.bus.$emit('databaseConnectError')
 					this.$notify.error({
 						title: 'Connection Error',
@@ -244,6 +299,9 @@
 	                    }
 	                }
                 })
+			},
+            toggleListDisplay() {
+                this.displayTableList = ! this.displayTableList
 			}
         }
     }
@@ -362,6 +420,9 @@
             /*border-right: 1px solid #eee;*/
         }
     }
+	.collapsed.sidebar {
+		left: -16.66666667%;
+	}
 
     /* Sidebar navigation */
     .nav-sidebar {
@@ -392,6 +453,19 @@
     .main .page-header {
         margin-top: 0;
     }
+	.main .btn {
+		height: auto;
+	}
+
+	.btn.attach {
+		bottom: 5px;
+		left: -30px;
+		position: absolute;
+		z-index: 9999;
+	}
+	.btn.attach.pull-out {
+		left: 5px;
+	}
 
 	.content-mask {
 		position: fixed;

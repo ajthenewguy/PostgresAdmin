@@ -27,6 +27,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/schema', 'QueryController@schema');
     Route::get('/settings', 'SettingsController@get');
     Route::post('/settings', 'SettingsController@set');
+    Route::get('/session', 'SessionController@get');
+    Route::post('/session', 'SessionController@set');
 });
 
 

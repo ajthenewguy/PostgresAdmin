@@ -484,44 +484,28 @@
                     this.afterQuery()
                 })
             },
+            initTableObject(name) {
+                return {
+                    name: name,
+                    schema: null,
+                    primaryKey: null,
+                    primaryKeyFormat: null,
+                    foreignKeys: null
+                }
+            },
             loadTable(table, bustcache) {
                 if (typeof table === "object" && table.hasOwnProperty('name')) {
                     table = table.name
                 }
-                if (bustcache || ! this.state.tables.hasOwnProperty(table)) {
-                    // eslint-disable-next-line
+                if (bustcache || ! this.state.tables.hasOwnProperty(table) || this.state.tables[table].schema === null) {
+
                     console.log('loadTable FRESH:', table)
 
-                    return this.loadTableSchema(table).then(() => {
-						if (this.result !== null) {
-							this.state.tables[table] = {
-		                        name: table,
-		                        schema: null,
-		                        primaryKey: null,
-		                        primaryKeyFormat: null,
-		                        foreignKeys: null
-		                    }
-							if (this.result[0].length) {
-	                            this.state.tables[table].schema = _.clone(this.result[0])
-	                        }
-	                        if (this.result[1].length && Object.keys(this.result[1][0]).length) {
-	                            this.state.tables[table].primaryKey = this.result[1][0].attname || 'id'
-	                            this.state.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
-	                        }
-	                        if (this.result[2].length) {
-	                            this.state.tables[table].foreignKeys = _.clone(this.result[2])
-	                        }
-							if (this.result[3].length) {
-								this.state.tables[table].indexes = _.clone(this.result[3])
-							}
-	                        this.state.loadingTable = false
-	                        return this.state.tables[table]
-						}
-						return false
-                    })
+                    return this.loadTableSchema(table)
                 } else {
-                    // eslint-disable-next-line
+
                     console.log('loadTable CACHED:', table)
+
                     return Promise.resolve(this.state.tables[table])
                 }
             },
@@ -548,6 +532,9 @@
                     })
             },
             loadSchema(table) {
+
+                console.log('PostgresMixin.loadSchema() - deprecate?')
+
                 let sql = "SELECT " +
                     "column_name, data_type AS type, " +
                     "character_maximum_length AS length, " +
@@ -587,24 +574,54 @@
                 }).then(response => {
                     this.afterRequestInternal(false)
                     this.querySuccess(response)
+
+                    if (this.result !== null) {
+                        this.state.tables[table] = this.initTableObject(table)
+                        if (this.result[0].length) {
+                            this.state.tables[table].schema = _.clone(this.result[0])
+                        }
+                        if (this.result[1].length && Object.keys(this.result[1][0]).length) {
+                            this.state.tables[table].primaryKey = this.result[1][0].attname || 'id'
+                            this.state.tables[table].primaryKeyFormat = this.result[1][0].format_type || ''
+                        }
+                        if (this.result[2].length) {
+                            this.state.tables[table].foreignKeys = _.clone(this.result[2])
+                        }
+                        if (this.result[3].length) {
+                            this.state.tables[table].indexes = _.clone(this.result[3])
+                        }
+                    }
+                    return this.state.tables[table]
                 }).catch(error => {
                     this.queryError(error)
                 })
             },
             getTableSchema(table) {
-                return this.state.tables[table].schema
+                let schema = null
+                if (this.state.tables[table] && this.state.tables[table].schema) {
+                    schema = this.state.tables[table].schema
+                }
+                return schema
             },
             getTablePrimaryKey(table) {
-                return this.state.tables[table].primaryKey
+                if (this.state.tables[table] && this.state.tables[table].hasOwnProperty('primaryKey')) {
+                    return this.state.tables[table].primaryKey
+                }
             },
             getTablePrimaryKeyFormat(table) {
-                return this.state.tables[table].primaryKeyFormat
+                if (this.state.tables[table].hasOwnProperty('primaryKeyFormat')) {
+                    return this.state.tables[table].primaryKeyFormat
+                }
             },
             getTableForeignKeys(table) {
-                return this.state.tables[table].foreignKeys
+                if (this.state.tables[table].hasOwnProperty('foreignKeys')) {
+                    return this.state.tables[table].foreignKeys
+                }
             },
             getTableIndexes(table) {
-                return this.state.tables[table].indexes
+                if (this.state.tables[table].hasOwnProperty('indexes')) {
+                    return this.state.tables[table].indexes
+                }
             },
             getColumn(table, column) {
                 let info = {}

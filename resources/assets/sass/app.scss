@@ -96,6 +96,10 @@ table.layout tbody {
 	overflow-y: auto;
 }
 
+tbody.loading {
+  opacity: 0.75;
+}
+
 #tabFooter {
   border-top: 1px solid #efefef;
   height: 37px;
@@ -110,4 +114,7 @@ table.layout tbody {
   vertical-align: top;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+.col-md-12.main #tabFooter {
+  padding-left: 25px;
 }
