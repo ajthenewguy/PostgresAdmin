@@ -4,7 +4,7 @@
 			<transition name="slide">
 				<div :class="sidebarClass">
 					<div class="input-group">
-						<input v-model="tableQuery" class="form-control input-sm" placeholder="Search Tables">
+						<input v-model="tableQuery" class="form-control input-sm focus" placeholder="Search Tables">
 						<div class="input-group-addon">
 							<span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
 						</div>
@@ -21,9 +21,9 @@
 				</div>
 			</transition>
             <div :class="mainViewClass">
-				<a @click.prevent="toggleListDisplay" class="btn btn-default btn-xs attach" :class="toggleDisplayWrapperClass" href="" title="Toggle Display" role="button">
+				<button @click.blur="toggleListDisplay" class="btn btn-default btn-xs attach" :class="toggleDisplayWrapperClass" href="" title="Toggle Display" role="button">
 					<span :class="toggleDisplayClass" aria-hidden="true"></span>
-				</a>
+				</button>
                 <tabs ref="tabs"
 					  :loaded-tables="loadedTables"
                       @loaded="onTabChange"
@@ -74,8 +74,6 @@
         data() {
             return {
                 bus: window.bus,
-                store: window.store,
-                state: window.store.state,
                 util: window.util,
                 table: null,
                 tables: this.loadedTables,
@@ -103,7 +101,7 @@
         ],
         components: {
             'list': require('./TableList'),
-            'content-filter': require('./Filter'),
+            // 'content-filter': require('./Filter'),
             'query': require('./Query'),
             'results-table': require('./ResultsTable'),
             'structure-table': require('./StructureTable'),
@@ -228,15 +226,11 @@
             openTable(table) {
                 this.addTableTab(table, "content")
             },
-            refreshTab() {
-                let tab = this.activeTab()
-                let table = tab.table
-                if (typeof table === "object" && table.hasOwnProperty('name')) {
-                    table = table.name
+            refreshTab(index) {
+                if (typeof index === "undefined") {
+                    index = this.$refs.tabs.activeTabIndex()
                 }
-                this.loadTable(tab.table, true).then(config => {
-                    this.bus.$emit('tabRefreshed', config)
-                })
+                this.$refs.tabs.$refs['tab'][index].refresh()
             },
             refreshTables(connection) {
                 return axios.post(this.server + '/tables').then(response => {

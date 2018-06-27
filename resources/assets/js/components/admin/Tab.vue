@@ -33,14 +33,15 @@
                     v-if="type === 'content' && (records && records.length > 0) || where"
                     id="contentFilter"
                     @filterWhere="filterWhere"
+                    :columns="columns"
             />
             <results-table
                     :class="{ 'tab-pane-content': type !== 'query' }"
                     v-show="type === 'query' || type === 'content'"
                     :tab="type"
                     :id="'results-table-' + id"
-                    :table="(table ? table : null)"
-                    :table-config="(table ? tableConfig() : null)"
+                    :table="table"
+                    :table-config="state.tables[table]"
                     :order="order"
                     :records="records"
                     :editing-row="editingRow"
@@ -75,8 +76,9 @@
         mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
-                store: window.store,
-                state: window.store.state,
+                bus: window.bus,
+                // store: window.store,
+                // state: window.store.state,
                 editingRow: null,
                 executed: false,
                 filter: null,
@@ -104,6 +106,13 @@
             'structure-table': require('./StructureTable')
         },
         computed: {
+            columns: function() {
+                let columns = []
+                if (this.type !== 'query' && this.table) {
+                    columns = _.map(this.state.tables[this.table].schema, 'column_name')
+                }
+                return columns
+            },
             loaded: function() {
                 return this.type === 'query' || this.state.tables[this.table] && this.state.tables[this.table].schema !== null
             }
@@ -157,11 +166,18 @@
             recordCount() {
                 return this.records ? this.records.length : 0
             },
-            refresh() {
+            refresh(e) {
                 if (this.type === "query") {
                     this.$refs.customQuery.run()
                 } else {
-                    this.getRecords()
+                    this.loadTable(this.table, true).then(config => {
+                        this.state.tables[this.table] = config
+                        // this.$set($this.state.tables, this.table, config)
+                        this.bus.$emit('tabRefreshed', config)
+                        this.getRecords()
+                    })
+                    // this.getRecords()
+                    // this.$emit('refresh', e)
                 }
             },
             insertRow(data) {

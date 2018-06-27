@@ -24,7 +24,6 @@
                 </tr>
                 </thead>
                 <transition v-if="records && records.length > 0" name="fade">
-                    <!--<tbody v-show="!state.processing">-->
                     <tbody :class="{ 'loading': state.processing }">
                         <insert-table-row
                                 v-if="table && insertingRow"
@@ -53,7 +52,7 @@
                 <tbody v-else>
                     <tr>
                         <td :colspan="colspan">
-                            <div class="empty">No records</div>
+                            <div class="empty"><span v-if="state.processing">Processing...</span><span v-else>No records</span></div>
                         </td>
                     </tr>
                 </tbody>
@@ -80,9 +79,9 @@
         mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
-                store: window.store,
-                state: window.store.state,
-                util: window.util
+                // store: window.store,
+                // state: window.store.state,
+                // util: window.util
             }
         },
         components: {
@@ -92,10 +91,6 @@
         computed: {
             colspan: function () {
                 let span = 2
-                // if (this.tableConfig !== null) {
-                //     span = Object.keys(this.tableConfig.schema).length
-                //     if (this.tab === 'content') span++
-                // }
                 if (this.getTableSchema(this.table) !== null) {
                     span = Object.keys(this.getTableSchema(this.table)).length
                     if (this.tab === 'content') span++
