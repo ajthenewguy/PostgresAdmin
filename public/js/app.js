@@ -115340,7 +115340,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 var keysValues = this.getKeysValues(data);
                 sql += ' (' + keysValues[0].join(', ') + ') ';
                 sql += '=';
-                sql += ' (:' + keysValues[0].join(', :') + ') ';
+                sql += ' ROW(:' + keysValues[0].join(', :') + ') ';
                 //                    sql += ' (' + '?, '.repeat(keysValues[1].length).slice(0, -2) + ') '
                 if (sql.endsWith(', :')) {
                     sql = sql.substr(0, sql.lastIndexOf(', :'));
