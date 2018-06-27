@@ -26,7 +26,7 @@ Vue.component('tabs', require('./components/Tabs.vue'))
 Vue.component('tab', require('./components/admin/Tab.vue'))
 
 Vue.prototype.$http = axios
-Vue.mixin(require( './mixins/Settings.vue'))
+Vue.mixin(require( './mixins/Settings'))
 
 window.bus = new Vue()
 window.session = new Vue({
@@ -43,7 +43,8 @@ window.store = {
         loadingTable: false,
         processing: false,
         tables: {},
-		masked: false
+		masked: false,
+        keyMap: {}
     },
     uuid() {
         return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
@@ -119,5 +120,31 @@ window.App = new Vue({
         this.$http.defaults.baseURL = this.baseUrl
         this.$http.defaults.headers.post['Content-Type'] = 'application/json'
         this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken
+        window.addEventListener('keyup', this.registerKeyListener)
+        window.addEventListener('keydown', this.registerKeyListener)
+    },
+    mounted() {
+        let focusOnloadElement = document.querySelector('.focus')
+        if (focusOnloadElement) {
+            focusOnloadElement.focus()
+        }
+    },
+    data() {
+        return {
+            bus: window.bus,
+            store: window.store,
+            state: window.store.state,
+            util: window.util
+        }
+    },
+    methods: {
+        registerKeyListener(e) {
+            window.store.state.keyMap[e.keyCode] = e.type === 'keydown'
+
+            // (Cmd || Ctrl) + F
+            if ((window.store.state.keyMap[91] || window.store.state.keyMap[17]) && window.store.state.keyMap[70]) {
+                $('#content-filter').find('input').focus()
+            }
+        }
     }
 });

@@ -21,7 +21,16 @@
         props: [ 'sql', 'history', 'loadedTables' ],
         data() {
             return {
-                query: null
+                query: null,
+                autocomplete: {
+                    options: this.loadedTables.concat(['SELECT', 'FROM', 'WHERE', 'AND']),
+                    selector: '#query_input',
+                    acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
+                    cycleOnTab: false,
+                    endingSymbols: ' ', // "space" is default
+                    minChunkSize: 1,
+                    delimeters: '\n ' // array of chars
+                }
             }
         },
         mounted() {
@@ -78,7 +87,8 @@
                 this.$emit('afterQuery')
                 this.$emit('success', this.response)
             }
-        }
+        },
+        mixins: [require('../../mixins/AutoComplete')]
     }
 </script>
 <style>

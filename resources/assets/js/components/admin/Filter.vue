@@ -18,11 +18,28 @@
 </template>
 <script>
     export default {
+        props: ['columns'],
+        created: function () {
+
+        },
         data() {
             return {
-                where: null
+                where: null,
+                autocomplete: {
+                    options: this.columns || Object.keys(window.store.state.tables),
+                    selector: '.el-input__inner',
+                    acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
+                    cycleOnTab: false,
+                    endingSymbols: ' ', // "space" is default
+                    minChunkSize: 1,
+                    delimeters: '\n ' // array of chars
+                },
+                store: window.store,
+                state: window.store.state,
+                util: window.util
             }
-        }
+        },
+        mixins: [require('../../mixins/AutoComplete')]
     }
 </script>
 <style lang="scss">

@@ -16763,9 +16763,9 @@ if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(367)
+var __vue_script__ = __webpack_require__(366)
 /* template */
-var __vue_template__ = __webpack_require__(370)
+var __vue_template__ = __webpack_require__(369)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -49888,58 +49888,7 @@ var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(348)
 /* template */
-var __vue_template__ = __webpack_require__(349)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = injectStyle
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/components/admin/Filter.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-f0322022", Component.options)
-  } else {
-    hotAPI.reload("data-v-f0322022", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 205 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-function injectStyle (ssrContext) {
-  if (disposed) return
-  __webpack_require__(350)
-}
-var normalizeComponent = __webpack_require__(1)
-/* script */
-var __vue_script__ = __webpack_require__(352)
-/* template */
-var __vue_template__ = __webpack_require__(353)
+var __vue_template__ = __webpack_require__(352)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -49978,19 +49927,66 @@ module.exports = Component.exports
 
 
 /***/ }),
+/* 205 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(349)
+/* template */
+var __vue_template__ = null
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/mixins/AutoComplete.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0038bb43", Component.options)
+  } else {
+    hotAPI.reload("data-v-0038bb43", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
 /* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(354)
+  __webpack_require__(353)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(356)
+var __vue_script__ = __webpack_require__(355)
 /* template */
-var __vue_template__ = __webpack_require__(363)
+var __vue_template__ = __webpack_require__(362)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50035,13 +50031,13 @@ module.exports = Component.exports
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(364)
+  __webpack_require__(363)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(366)
+var __vue_script__ = __webpack_require__(365)
 /* template */
-var __vue_template__ = __webpack_require__(396)
+var __vue_template__ = __webpack_require__(395)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50086,9 +50082,9 @@ module.exports = Component.exports
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(368)
+var __vue_script__ = __webpack_require__(367)
 /* template */
-var __vue_template__ = __webpack_require__(369)
+var __vue_template__ = __webpack_require__(368)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50133,9 +50129,9 @@ module.exports = Component.exports
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(371)
+var __vue_script__ = __webpack_require__(370)
 /* template */
-var __vue_template__ = __webpack_require__(372)
+var __vue_template__ = __webpack_require__(371)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -50178,7 +50174,7 @@ module.exports = Component.exports
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(211);
-module.exports = __webpack_require__(436);
+module.exports = __webpack_require__(440);
 
 
 /***/ }),
@@ -50205,19 +50201,19 @@ window.Vue = __webpack_require__(7);
 Vue.component('v-button', __webpack_require__(327));
 Vue.component('modal', __webpack_require__(330));
 Vue.component('admin-content', __webpack_require__(336));
-Vue.component('database-connections', __webpack_require__(398));
-Vue.component('app-form', __webpack_require__(407));
-Vue.component('multi-input-text', __webpack_require__(413));
-Vue.component('primary-content', __webpack_require__(416));
-Vue.component('tabs', __webpack_require__(419));
-Vue.component('tab', __webpack_require__(426));
+Vue.component('database-connections', __webpack_require__(397));
+Vue.component('app-form', __webpack_require__(406));
+Vue.component('multi-input-text', __webpack_require__(412));
+Vue.component('primary-content', __webpack_require__(415));
+Vue.component('tabs', __webpack_require__(418));
+Vue.component('tab', __webpack_require__(425));
 
 Vue.prototype.$http = axios;
-Vue.mixin(__webpack_require__(432));
+Vue.mixin(__webpack_require__(436));
 
 window.bus = new Vue();
 window.session = new Vue({
-    mixins: [__webpack_require__(434)]
+    mixins: [__webpack_require__(438)]
 });
 window.store = {
     debug: true,
@@ -50230,7 +50226,8 @@ window.store = {
         loadingTable: false,
         processing: false,
         tables: {},
-        masked: false
+        masked: false,
+        keyMap: {}
     },
     uuid: function uuid() {
         return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
@@ -50324,6 +50321,33 @@ window.App = new Vue({
         this.$http.defaults.baseURL = this.baseUrl;
         this.$http.defaults.headers.post['Content-Type'] = 'application/json';
         this.$http.defaults.headers.common['Authorization'] = 'Bearer ' + this.accessToken;
+        window.addEventListener('keyup', this.registerKeyListener);
+        window.addEventListener('keydown', this.registerKeyListener);
+    },
+    mounted: function mounted() {
+        var focusOnloadElement = document.querySelector('.focus');
+        if (focusOnloadElement) {
+            focusOnloadElement.focus();
+        }
+    },
+    data: function data() {
+        return {
+            bus: window.bus,
+            store: window.store,
+            state: window.store.state,
+            util: window.util
+        };
+    },
+
+    methods: {
+        registerKeyListener: function registerKeyListener(e) {
+            window.store.state.keyMap[e.keyCode] = e.type === 'keydown';
+
+            // (Cmd || Ctrl) + F
+            if ((window.store.state.keyMap[91] || window.store.state.keyMap[17]) && window.store.state.keyMap[70]) {
+                $('#content-filter').find('input').focus();
+            }
+        }
     }
 });
 
@@ -114578,7 +114602,7 @@ var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(339)
 /* template */
-var __vue_template__ = __webpack_require__(397)
+var __vue_template__ = __webpack_require__(396)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -114662,8 +114686,6 @@ exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-t
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 //
 //
 //
@@ -114740,8 +114762,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     data: function data() {
         return {
             bus: window.bus,
-            store: window.store,
-            state: window.store.state,
             util: window.util,
             table: null,
             tables: this.loadedTables,
@@ -114768,8 +114788,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     mixins: [__webpack_require__(5)],
     components: {
         'list': __webpack_require__(341),
-        'content-filter': __webpack_require__(204),
-        'query': __webpack_require__(205),
+        // 'content-filter': require('./Filter'),
+        'query': __webpack_require__(204),
         'results-table': __webpack_require__(206),
         'structure-table': __webpack_require__(207),
         'indices-table': __webpack_require__(209)
@@ -114903,45 +114923,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         openTable: function openTable(table) {
             this.addTableTab(table, "content");
         },
-        refreshTab: function refreshTab() {
-            var _this4 = this;
-
-            var tab = this.activeTab();
-            var table = tab.table;
-            if ((typeof table === 'undefined' ? 'undefined' : _typeof(table)) === "object" && table.hasOwnProperty('name')) {
-                table = table.name;
+        refreshTab: function refreshTab(index) {
+            if (typeof index === "undefined") {
+                index = this.$refs.tabs.activeTabIndex();
             }
-            this.loadTable(tab.table, true).then(function (config) {
-                _this4.bus.$emit('tabRefreshed', config);
-            });
+            this.$refs.tabs.$refs['tab'][index].refresh();
         },
         refreshTables: function refreshTables(connection) {
-            var _this5 = this;
+            var _this4 = this;
 
             return axios.post(this.server + '/tables').then(function (response) {
-                _this5.tables = response.data;
+                _this4.tables = response.data;
                 var tableCount = response.data.length;
                 for (var i = 0; i < tableCount; i++) {
                     var table = response.data[i];
-                    _this5.state.tables[table] = _this5.initTableObject(table);
+                    _this4.state.tables[table] = _this4.initTableObject(table);
                 }
 
-                _this5.bus.$emit('App.databaseTablesLoaded');
+                _this4.bus.$emit('App.databaseTablesLoaded');
             }).catch(function (error) {
                 console.log('databaseConnectError', error);
-                _this5.bus.$emit('databaseConnectError');
-                _this5.$notify.error({
+                _this4.bus.$emit('databaseConnectError');
+                _this4.$notify.error({
                     title: 'Connection Error',
-                    message: _this5.parseError(error),
+                    message: _this4.parseError(error),
                     type: 'success'
                 });
             });
         },
         refreshToken: function refreshToken() {
-            var _this6 = this;
+            var _this5 = this;
 
             axios.get(this.server + '/token').then(function (response) {
-                _this6.login._token = response.data;
+                _this5.login._token = response.data;
                 window.Laravel.csrfToken = response.data;
                 window.axios.defaults.headers.common = {
                     'X-CSRF-TOKEN': response.data,
@@ -114949,22 +114963,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 };
             }).catch(function (error) {
                 console.log('tokenFetchError');
-                _this6.bus.$emit('tokenFetchError');
-                _this6.$notify.error({
+                _this5.bus.$emit('tokenFetchError');
+                _this5.$notify.error({
                     title: 'Token Fetch Error',
-                    message: _this6.parseError(error),
+                    message: _this5.parseError(error),
                     type: 'success'
                 });
             });
         },
         postLogin: function postLogin() {
-            var _this7 = this;
+            var _this6 = this;
 
             return axios.post(this.server + '/login', this.login).then(function (response) {
-                _this7.state.masked = false;
+                _this6.state.masked = false;
             }).catch(function (error) {
                 console.log('loginError', error);
-                _this7.bus.$emit('loginError');
+                _this6.bus.$emit('loginError');
                 if (error) {
                     errorText = error;
                     if (error.response) {
@@ -114976,8 +114990,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                             }
                         }
                         if (error.response.status === 422) {
-                            _this7.bus.$emit('invalidLogin');
-                            _this7.loginError = errorText;
+                            _this6.bus.$emit('invalidLogin');
+                            _this6.loginError = errorText;
                         }
                     }
                 }
@@ -116467,13 +116481,13 @@ var content = __webpack_require__(347);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(8)("d031a596", content, false, {});
+var update = __webpack_require__(8)("5961d21a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
  if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f0322022\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f0322022\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue");
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b844fcbe\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Query.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b844fcbe\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Query.vue");
      if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
      update(newContent);
    });
@@ -116491,7 +116505,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n#content-filter {\n  margin-top: 5px;\n  padding: 0 20px;\n}\n#content-filter input {\n    height: 30px;\n}\n.el-icon-cstm-filter {\n  font-family: 'Glyphicons Halflings' !important;\n  font-size: inherit;\n  font-style: normal;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n.el-icon-cstm-filter:before {\n  content: \"\\E138\";\n}\n", ""]);
+exports.push([module.i, "\n#query-wrapper {\n    margin-bottom: 10px;\n    padding: 10px;\n    position: relative;\n}\n#query_input {\n    font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n    width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -116522,148 +116536,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            where: null
-        };
-    }
-});
-
-/***/ }),
-/* 349 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("thead", [
-    _c(
-      "div",
-      { attrs: { id: "content-filter" } },
-      [
-        _c(
-          "el-input",
-          {
-            staticClass: "input-with-select",
-            attrs: { placeholder: "WHERE clause" },
-            nativeOn: {
-              keyup: function($event) {
-                if (
-                  !("button" in $event) &&
-                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                ) {
-                  return null
-                }
-                _vm.$emit("filterWhere", _vm.where)
-              }
-            },
-            model: {
-              value: _vm.where,
-              callback: function($$v) {
-                _vm.where = $$v
-              },
-              expression: "where"
-            }
-          },
-          [
-            _c("el-button", {
-              attrs: { slot: "append", icon: "el-icon-search" },
-              on: {
-                click: function($event) {
-                  _vm.$emit("filterWhere", _vm.where)
-                }
-              },
-              slot: "append"
-            })
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-f0322022", module.exports)
-  }
-}
-
-/***/ }),
-/* 350 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(351);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(8)("5961d21a", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b844fcbe\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Query.vue", function() {
-     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b844fcbe\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Query.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 351 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n#query-wrapper {\n    margin-bottom: 10px;\n    padding: 10px;\n    position: relative;\n}\n#query_input {\n    font-family: Menlo, Monaco, Consolas, \"Courier New\", monospace;\n    width: 100%;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 352 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
     props: ['sql', 'history', 'loadedTables'],
     data: function data() {
         return {
-            query: null
+            query: null,
+            autocomplete: {
+                options: this.loadedTables.concat(['SELECT', 'FROM', 'WHERE', 'AND']),
+                selector: '#query_input',
+                acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
+                cycleOnTab: false,
+                endingSymbols: ' ', // "space" is default
+                minChunkSize: 1,
+                delimeters: '\n ' // array of chars
+            }
         };
     },
     mounted: function mounted() {
@@ -116726,11 +116611,886 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$emit('afterQuery');
             this.$emit('success', this.response);
         }
+    },
+    mixins: [__webpack_require__(205)]
+});
+
+/***/ }),
+/* 349 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+__webpack_require__(350);
+__webpack_require__(351);
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        this.init();
+    },
+    data: function data() {
+        return {
+            autocomplete: {
+                options: ['SELECT', 'FROM', 'WHERE', 'AND'],
+                selector: '.el-input__inner',
+                acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
+                cycleOnTab: false,
+                endingSymbols: ' ', // "space" is default
+                minChunkSize: 1,
+                delimeters: '\n ' // array of chars
+            }
+        };
+    },
+
+    methods: {
+        init: function init() {
+            if (this.autocomplete.selector && this.autocomplete.options.length > 0) {
+                $(this.autocomplete.selector).asuggest(this.autocomplete.options, {
+                    'endingSymbols': this.autocomplete.endingSymbols,
+                    'stopSuggestionKeys': this.autocomplete.acceptKeys,
+                    'minChunkSize': this.autocomplete.minChunkSize,
+                    'delimiters': this.autocomplete.delimeters,
+                    'cycleOnTab': this.autocomplete.cycleOnTab
+                });
+            }
+        }
     }
 });
 
 /***/ }),
-/* 353 */
+/* 350 */
+/***/ (function(module, exports) {
+
+/*!
+ * a-tools 1.4.1
+ *
+ * Copyright (c) 2009 Andrey Kramarev(andrey.kramarev[at]ampparit.com), Ampparit Inc. (www.ampparit.com)
+ * Licensed under the MIT license.
+ * http://www.ampparit.fi/a-tools/license.txt
+ *
+ * Basic usage:
+
+    <textarea></textarea>
+    <input type="text" />
+
+    // Get current selection
+    var sel = $("textarea").getSelection()
+
+    // Replace current selection
+    $("input").replaceSelection("foo");
+
+    // Count characters
+    alert($("textarea").countCharacters());
+
+    // Set max length without callback function
+    $("textarea").setMaxLength(7);
+
+    // Set max length with callback function which will be called when limit is exceeded
+    $("textarea").setMaxLength(10, function() {
+        alert("hello")
+    });
+
+    // Removing limit:
+    $("textarea").setMaxLength(-1);
+
+    // Insert text at current caret position
+    $("#textarea").insertAtCaretPos("hello");
+
+    // Set caret position (1 = beginning, -1 = end)
+    $("#textArea").setCaretPos(10);
+
+    // Set Selection
+    $("#textArea").setSelection(10,15);
+
+ */
+var caretPositionAmp;
+
+jQuery.fn.extend({
+    getSelection: function getSelection() {
+        // function for getting selection, and position of the selected text
+        var input = this.jquery ? this[0] : this;
+        var start;
+        var end;
+        var part;
+        var number = 0;
+        input.onmousedown = function () {
+            // for IE because it loses caret position when focus changed
+            if (document.selection && typeof input.selectionStart != "number") {
+                document.selection.empty();
+            } else {
+                window.getSelection().removeAllRanges();
+            }
+        };
+        if (document.selection) {
+            // part for IE and Opera
+            var s = document.selection.createRange();
+            var minus = 0;
+            var position = 0;
+            var minusEnd = 0;
+            var re;
+            var rc;
+            if (input.value.match(/\n/g) != null) {
+                number = input.value.match(/\n/g).length; // number of EOL simbols
+            }
+            if (s.text) {
+                part = s.text;
+                // OPERA support
+                if (typeof input.selectionStart == "number") {
+                    start = input.selectionStart;
+                    end = input.selectionEnd;
+                    // return null if the selected text not from the needed area
+                    if (start == end) {
+                        return { start: start, end: end, text: s.text, length: end - start };
+                    }
+                } else {
+                    // IE support
+                    var firstRe;
+                    var secondRe;
+                    re = input.createTextRange();
+                    rc = re.duplicate();
+                    firstRe = re.text;
+                    re.moveToBookmark(s.getBookmark());
+                    secondRe = re.text;
+                    rc.setEndPoint("EndToStart", re);
+                    // return null if the selectyed text not from the needed area
+                    if (firstRe == secondRe && firstRe != s.text) {
+                        return this;
+                    }
+                    start = rc.text.length;
+                    end = rc.text.length + s.text.length;
+                }
+                // remove all EOL to have the same start and end positons as in MOZILLA
+                if (number > 0) {
+                    for (var i = 0; i <= number; i++) {
+                        var w = input.value.indexOf("\n", position);
+                        if (w != -1 && w < start) {
+                            position = w + 1;
+                            minus++;
+                            minusEnd = minus;
+                        } else if (w != -1 && w >= start && w <= end) {
+                            if (w == start + 1) {
+                                minus--;
+                                minusEnd--;
+                                position = w + 1;
+                                continue;
+                            }
+                            position = w + 1;
+                            minusEnd++;
+                        } else {
+                            i = number;
+                        }
+                    }
+                }
+                if (s.text.indexOf("\n", 0) == 1) {
+                    minusEnd = minusEnd + 2;
+                }
+                start = start - minus;
+                end = end - minusEnd;
+
+                return { start: start, end: end, text: s.text, length: end - start };
+            }
+            input.focus();
+            if (typeof input.selectionStart == "number") {
+                start = input.selectionStart;
+            } else {
+                s = document.selection.createRange();
+                re = input.createTextRange();
+                rc = re.duplicate();
+                re.moveToBookmark(s.getBookmark());
+                rc.setEndPoint("EndToStart", re);
+                start = rc.text.length;
+            }
+            if (number > 0) {
+                for (var i = 0; i <= number; i++) {
+                    var w = input.value.indexOf("\n", position);
+                    if (w != -1 && w < start) {
+                        position = w + 1;
+                        minus++;
+                    } else {
+                        i = number;
+                    }
+                }
+            }
+            start = start - minus;
+            return { start: start, end: start, text: s.text, length: 0 };
+        } else if (typeof input.selectionStart == "number") {
+            start = input.selectionStart;
+            end = input.selectionEnd;
+            part = input.value.substring(input.selectionStart, input.selectionEnd);
+            return { start: start, end: end, text: part, length: end - start };
+        } else {
+            return { start: undefined, end: undefined, text: undefined, length: undefined };
+        }
+    },
+
+    // function for the replacement of the selected text
+    replaceSelection: function replaceSelection(inputStr) {
+        var input = this.jquery ? this[0] : this;
+        //part for IE and Opera
+        var start;
+        var end;
+        var position = 0;
+        var rc;
+        var re;
+        var number = 0;
+        var minus = 0;
+        var mozScrollFix = input.scrollTop == undefined ? 0 : input.scrollTop;
+        if (document.selection && typeof input.selectionStart != "number") {
+            var s = document.selection.createRange();
+
+            // IE support
+            if (typeof input.selectionStart != "number") {
+                // return null if the selected text not from the needed area
+                var firstRe;
+                var secondRe;
+                re = input.createTextRange();
+                rc = re.duplicate();
+                firstRe = re.text;
+                re.moveToBookmark(s.getBookmark());
+                secondRe = re.text;
+                rc.setEndPoint("EndToStart", re);
+                if (firstRe == secondRe && firstRe != s.text) {
+                    return this;
+                }
+            }
+            if (s.text) {
+                part = s.text;
+                if (input.value.match(/\n/g) != null) {
+                    number = input.value.match(/\n/g).length; // number of EOL simbols
+                }
+                // IE support
+                start = rc.text.length;
+                // remove all EOL to have the same start and end positons as in MOZILLA
+                if (number > 0) {
+                    for (var i = 0; i <= number; i++) {
+                        var w = input.value.indexOf("\n", position);
+                        if (w != -1 && w < start) {
+                            position = w + 1;
+                            minus++;
+                        } else {
+                            i = number;
+                        }
+                    }
+                }
+                s.text = inputStr;
+                caretPositionAmp = rc.text.length + inputStr.length;
+                re.move("character", caretPositionAmp);
+                document.selection.empty();
+                input.blur();
+            }
+            return this;
+        } else if (typeof input.selectionStart == "number" && // MOZILLA support
+        input.selectionStart != input.selectionEnd) {
+
+            start = input.selectionStart;
+            end = input.selectionEnd;
+            input.value = input.value.substr(0, start) + inputStr + input.value.substr(end);
+            position = start + inputStr.length;
+            input.setSelectionRange(position, position);
+            input.scrollTop = mozScrollFix;
+            return this;
+        }
+        return this;
+    },
+
+    //Set Selection in text
+    setSelection: function setSelection(startPosition, endPosition) {
+        startPosition = parseInt(startPosition);
+        endPosition = parseInt(endPosition);
+
+        var input = this.jquery ? this[0] : this;
+        input.focus();
+        if (typeof input.selectionStart != "number") {
+            re = input.createTextRange();
+            if (re.text.length < endPosition) {
+                endPosition = re.text.length + 1;
+            }
+        }
+        if (endPosition < startPosition) {
+            return this;
+        }
+        if (document.selection) {
+            var number = 0;
+            var plus = 0;
+            var position = 0;
+            var plusEnd = 0;
+            if (typeof input.selectionStart != "number") {
+                // IE
+                re.collapse(true);
+                re.moveEnd('character', endPosition);
+                re.moveStart('character', startPosition);
+                re.select();
+                return this;
+            } else if (typeof input.selectionStart == "number") {
+                // Opera
+                if (input.value.match(/\n/g) != null) {
+                    number = input.value.match(/\n/g).length; // number of EOL simbols
+                }
+                if (number > 0) {
+                    for (var i = 0; i <= number; i++) {
+                        var w = input.value.indexOf("\n", position);
+                        if (w != -1 && w < startPosition) {
+                            position = w + 1;
+                            plus++;
+                            plusEnd = plus;
+                        } else if (w != -1 && w >= startPosition && w <= endPosition) {
+                            if (w == startPosition + 1) {
+                                plus--;
+                                plusEnd--;
+                                position = w + 1;
+                                continue;
+                            }
+                            position = w + 1;
+                            plusEnd++;
+                        } else {
+                            i = number;
+                        }
+                    }
+                }
+                startPosition = startPosition + plus;
+                endPosition = endPosition + plusEnd;
+                input.selectionStart = startPosition;
+                input.selectionEnd = endPosition;
+                return this;
+            } else {
+                return this;
+            }
+        } else if (input.selectionStart) {
+            // MOZILLA support
+            input.focus();
+            input.selectionStart = startPosition;
+            input.selectionEnd = endPosition;
+            return this;
+        }
+    },
+
+    // insert text at current caret position
+    insertAtCaretPos: function insertAtCaretPos(inputStr) {
+        var input = this.jquery ? this[0] : this;
+        var start;
+        var end;
+        var position;
+        var s;
+        var re;
+        var rc;
+        var point;
+        var minus = 0;
+        var number = 0;
+        var mozScrollFix = input.scrollTop == undefined ? 0 : input.scrollTop;
+        input.focus();
+        if (document.selection && typeof input.selectionStart != "number") {
+            if (input.value.match(/\n/g) != null) {
+                number = input.value.match(/\n/g).length; // number of EOL simbols
+            }
+            point = parseInt(caretPositionAmp);
+            if (number > 0) {
+                for (var i = 0; i <= number; i++) {
+                    var w = input.value.indexOf("\n", position);
+                    if (w != -1 && w <= point) {
+                        position = w + 1;
+                        point = point - 1;
+                        minus++;
+                    }
+                }
+            }
+        }
+        caretPositionAmp = parseInt(caretPositionAmp);
+        // IE
+        input.onmouseup = function () {
+            // for IE because it loses caret position when focus changed
+            if (document.selection && typeof input.selectionStart != "number") {
+                input.focus();
+                s = document.selection.createRange();
+                re = input.createTextRange();
+                rc = re.duplicate();
+                re.moveToBookmark(s.getBookmark());
+                rc.setEndPoint("EndToStart", re);
+                caretPositionAmp = rc.text.length;
+            }
+        };
+
+        if (document.selection && typeof input.selectionStart != "number") {
+            s = document.selection.createRange();
+            if (s.text.length != 0) {
+                return this;
+            }
+            re = input.createTextRange();
+            textLength = re.text.length;
+            rc = re.duplicate();
+            re.moveToBookmark(s.getBookmark());
+            rc.setEndPoint("EndToStart", re);
+            start = rc.text.length;
+            if (caretPositionAmp > 0 && start == 0) {
+                minus = caretPositionAmp - minus;
+                re.move("character", minus);
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp += inputStr.length;
+            } else if (!(caretPositionAmp >= 0) && textLength == 0) {
+                s = document.selection.createRange();
+                caretPositionAmp = inputStr.length + textLength;
+            } else if (!(caretPositionAmp >= 0) && start == 0) {
+                re.move("character", textLength);
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp = inputStr.length + textLength;
+            } else if (!(caretPositionAmp >= 0) && start > 0) {
+                re.move("character", 0);
+                document.selection.empty();
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp = start + inputStr.length;
+            } else if (caretPositionAmp >= 0 && caretPositionAmp == textLength) {
+                if (textLength != 0) {
+                    re.move("character", textLength);
+                    re.select();
+                } else {
+                    re.move("character", 0);
+                }
+                s = document.selection.createRange();
+                caretPositionAmp = inputStr.length + textLength;
+            } else if (caretPositionAmp >= 0 && start != 0 && caretPositionAmp >= start) {
+                minus = caretPositionAmp - start;
+                re.move("character", minus);
+                document.selection.empty();
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp = caretPositionAmp + inputStr.length;
+            } else if (caretPositionAmp >= 0 && start != 0 && caretPositionAmp < start) {
+                re.move("character", 0);
+                document.selection.empty();
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp = caretPositionAmp + inputStr.length;
+            } else {
+                document.selection.empty();
+                re.select();
+                s = document.selection.createRange();
+                caretPositionAmp = caretPositionAmp + inputStr.length;
+            }
+            s.text = inputStr;
+            input.focus();
+
+            return this;
+        } else if (typeof input.selectionStart == "number" && // MOZILLA support
+        input.selectionStart == input.selectionEnd) {
+            position = input.selectionStart + inputStr.length;
+            start = input.selectionStart;
+            end = input.selectionEnd;
+            input.value = input.value.substr(0, start) + inputStr + input.value.substr(end);
+            input.setSelectionRange(position, position);
+            input.scrollTop = mozScrollFix;
+            return this;
+        }
+        return this;
+    },
+
+    // Set caret position
+    setCaretPos: function setCaretPos(inputStr) {
+
+        var input = this.jquery ? this[0] : this;
+        var s;
+        var re;
+        var position;
+        var number = 0;
+        var minus = 0;
+        var w;
+        input.focus();
+        if (parseInt(inputStr) == 0) {
+            return this;
+        }
+        //if (document.selection && typeof(input.selectionStart) == "number") {
+        if (parseInt(inputStr) > 0) {
+            inputStr = parseInt(inputStr) - 1;
+            if (document.selection && typeof input.selectionStart == "number" && input.selectionStart == input.selectionEnd) {
+                if (input.value.match(/\n/g) != null) {
+                    number = input.value.match(/\n/g).length; // number of EOL simbols
+                }
+                if (number > 0) {
+                    for (var i = 0; i <= number; i++) {
+                        w = input.value.indexOf("\n", position);
+                        if (w != -1 && w <= inputStr) {
+                            position = w + 1;
+                            inputStr = parseInt(inputStr) + 1;
+                        }
+                    }
+                }
+            }
+        } else if (parseInt(inputStr) < 0) {
+            inputStr = parseInt(inputStr) + 1;
+            if (document.selection && typeof input.selectionStart != "number") {
+                inputStr = input.value.length + parseInt(inputStr);
+                if (input.value.match(/\n/g) != null) {
+                    number = input.value.match(/\n/g).length; // number of EOL simbols
+                }
+                if (number > 0) {
+                    for (var i = 0; i <= number; i++) {
+                        w = input.value.indexOf("\n", position);
+                        if (w != -1 && w <= inputStr) {
+                            position = w + 1;
+                            inputStr = parseInt(inputStr) - 1;
+                            minus += 1;
+                        }
+                    }
+                    inputStr = inputStr + minus - number;
+                }
+            } else if (document.selection && typeof input.selectionStart == "number") {
+                inputStr = input.value.length + parseInt(inputStr);
+                if (input.value.match(/\n/g) != null) {
+                    number = input.value.match(/\n/g).length; // number of EOL simbols
+                }
+                if (number > 0) {
+                    inputStr = parseInt(inputStr) - number;
+                    for (var i = 0; i <= number; i++) {
+                        w = input.value.indexOf("\n", position);
+                        if (w != -1 && w <= inputStr) {
+                            position = w + 1;
+                            inputStr = parseInt(inputStr) + 1;
+                            minus += 1;
+                        }
+                    }
+                }
+            } else {
+                inputStr = input.value.length + parseInt(inputStr);
+            }
+        } else {
+            return this;
+        }
+        // IE
+        if (document.selection && typeof input.selectionStart != "number") {
+            s = document.selection.createRange();
+            if (s.text != 0) {
+                return this;
+            }
+            re = input.createTextRange();
+            re.collapse(true);
+            re.moveEnd('character', inputStr);
+            re.moveStart('character', inputStr);
+            re.select();
+            caretPositionAmp = inputStr;
+
+            return this;
+        } else if (typeof input.selectionStart == "number" && // MOZILLA support
+        input.selectionStart == input.selectionEnd) {
+            input.setSelectionRange(inputStr, inputStr);
+            return this;
+        }
+        return this;
+    },
+
+    countCharacters: function countCharacters(str) {
+        var input = this.jquery ? this[0] : this;
+        if (input.value.match(/\r/g) != null) {
+            return input.value.length - input.value.match(/\r/g).length;
+        }
+        return input.value.length;
+    },
+
+    setMaxLength: function setMaxLength(max, f) {
+        this.each(function () {
+            var input = this.jquery ? this[0] : this;
+            var type = input.type;
+            var isSelected;
+            var maxCharacters;
+            // remove limit if input is a negative number
+            if (parseInt(max) < 0) {
+                max = 100000000;
+            }
+            if (type == "text") {
+                input.maxLength = max;
+            }
+            if (type == "textarea" || type == "text") {
+                input.onkeypress = function (e) {
+                    var spacesR = input.value.match(/\r/g);
+                    maxCharacters = max;
+                    if (spacesR != null) {
+                        maxCharacters = parseInt(maxCharacters) + spacesR.length;
+                    }
+                    // get event
+                    var key = e || event;
+                    var keyCode = key.keyCode;
+                    // check if any part of text is selected
+                    if (document.selection) {
+                        isSelected = document.selection.createRange().text.length > 0;
+                    } else {
+                        isSelected = input.selectionStart != input.selectionEnd;
+                    }
+                    if (input.value.length >= maxCharacters && (keyCode > 47 || keyCode == 32 || keyCode == 0 || keyCode == 13) && !key.ctrlKey && !key.altKey && !isSelected) {
+                        input.value = input.value.substring(0, maxCharacters);
+                        if (typeof f == "function") {
+                            f();
+                        } //callback function
+                        return false;
+                    }
+                };
+                input.onkeyup = function () {
+                    var spacesR = input.value.match(/\r/g);
+                    var plus = 0;
+                    var position = 0;
+                    maxCharacters = max;
+                    if (spacesR != null) {
+                        for (var i = 0; i <= spacesR.length; i++) {
+                            if (input.value.indexOf("\n", position) <= parseInt(max)) {
+                                plus++;
+                                position = input.value.indexOf("\n", position) + 1;
+                            }
+                        }
+                        maxCharacters = parseInt(max) + plus;
+                    }
+                    if (input.value.length > maxCharacters) {
+                        input.value = input.value.substring(0, maxCharacters);
+                        if (typeof f == "function") {
+                            f();
+                        }
+                        return this;
+                    }
+                };
+            } else {
+                return this;
+            }
+        });
+        return this;
+    }
+});
+
+/***/ }),
+/* 351 */
+/***/ (function(module, exports) {
+
+/*
+ * jQuery textarea suggest plugin
+ *
+ * Copyright (c) 2009-2010 Roman Imankulov
+ *
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ *
+ * Requires:
+ *   - jQuery (tested with 1.3.x and 1.4.x)
+ *   - jquery.a-tools >= 1.4.1 (http://plugins.jquery.com/project/a-tools)
+ */
+
+/*globals jQuery,document */
+
+(function ($) {
+    // workaround for Opera browser
+    if (navigator.userAgent.match(/opera/i)) {
+        $(document).keypress(function (e) {
+            if ($.asuggestFocused) {
+                $.asuggestFocused.focus();
+                $.asuggestFocused = null;
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    }
+
+    $.asuggestKeys = {
+        UNKNOWN: 0,
+        SHIFT: 16,
+        CTRL: 17,
+        ALT: 18,
+        LEFT: 37,
+        UP: 38,
+        RIGHT: 39,
+        DOWN: 40,
+        DEL: 46,
+        TAB: 9,
+        RETURN: 13,
+        ESC: 27,
+        COMMA: 188,
+        PAGEUP: 33,
+        PAGEDOWN: 34,
+        BACKSPACE: 8,
+        SPACE: 32
+    };
+    $.asuggestFocused = null;
+
+    $.fn.asuggest = function (suggests, options) {
+        return this.each(function () {
+            $.makeSuggest(this, suggests, options);
+        });
+    };
+
+    $.fn.asuggest.defaults = {
+        'delimiters': '\n ',
+        'minChunkSize': 1,
+        'cycleOnTab': true,
+        'autoComplete': true,
+        'endingSymbols': ' ',
+        'stopSuggestionKeys': [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE],
+        'ignoreCase': false
+    };
+
+    /* Make suggest:
+     *
+     * create and return jQuery object on the top of DOM object
+     * and store suggests as part of this object
+     *
+     * @param area: HTML DOM element to add suggests to
+     * @param suggests: The array of suggest strings
+     * @param options: The options object
+     */
+    $.makeSuggest = function (area, suggests, options) {
+        options = $.extend({}, $.fn.asuggest.defaults, options);
+
+        var KEY = $.asuggestKeys,
+            $area = $(area);
+        $area.suggests = suggests;
+        $area.options = options;
+
+        /* Internal method: get the chunk of text before the cursor */
+        $area.getChunk = function () {
+            var delimiters = this.options.delimiters.split(''),
+                // array of chars
+            textBeforeCursor = this.val().substr(0, this.getSelection().start),
+                indexOfDelimiter = -1,
+                i,
+                d,
+                idx;
+            for (i = 0; i < delimiters.length; i++) {
+                d = delimiters[i];
+                idx = textBeforeCursor.lastIndexOf(d);
+                if (idx > indexOfDelimiter) {
+                    indexOfDelimiter = idx;
+                }
+            }
+            if (indexOfDelimiter < 0) {
+                return textBeforeCursor;
+            } else {
+                return textBeforeCursor.substr(indexOfDelimiter + 1);
+            }
+        };
+
+        /* Internal method: get completion.
+         * If performCycle is true then analyze getChunk() and and getSelection()
+         */
+        $area.getCompletion = function (performCycle) {
+            var text = this.getChunk(),
+                selectionText = this.getSelection().text,
+                suggests = this.suggests,
+                foundAlreadySelectedValue = false,
+                firstMatchedValue = null,
+                i,
+                suggest;
+            // search the variant
+            for (i = 0; i < suggests.length; i++) {
+                suggest = suggests[i];
+                if ($area.options.ignoreCase) {
+                    suggest = suggest.toLowerCase();
+                    text = text.toLowerCase();
+                }
+                // some variant is found
+                if (suggest.indexOf(text) === 0) {
+                    if (performCycle) {
+                        if (text + selectionText === suggest) {
+                            foundAlreadySelectedValue = true;
+                        } else if (foundAlreadySelectedValue) {
+                            return suggest.substr(text.length);
+                        } else if (firstMatchedValue === null) {
+                            firstMatchedValue = suggest;
+                        }
+                    } else {
+                        return suggest.substr(text.length);
+                    }
+                }
+            }
+            if (performCycle && firstMatchedValue) {
+                return firstMatchedValue.substr(text.length);
+            } else {
+                return null;
+            }
+        };
+
+        $area.updateSelection = function (completion) {
+            if (completion) {
+                var _selectionStart = $area.getSelection().start,
+                    _selectionEnd = _selectionStart + completion.length;
+                if ($area.getSelection().text === "") {
+                    if ($area.val().length === _selectionStart) {
+                        // Weird IE workaround, I really have no idea why it works
+                        $area.setCaretPos(_selectionStart + 10000);
+                    }
+                    $area.insertAtCaretPos(completion);
+                } else {
+                    $area.replaceSelection(completion);
+                }
+                $area.setSelection(_selectionStart, _selectionEnd);
+            }
+        };
+
+        $area.unbind('keydown.asuggest').bind('keydown.asuggest', function (e) {
+            if (e.keyCode === KEY.TAB) {
+                if ($area.options.cycleOnTab) {
+                    var chunk = $area.getChunk();
+                    if (chunk.length >= $area.options.minChunkSize) {
+                        $area.updateSelection($area.getCompletion(true));
+                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $area.focus();
+                    $.asuggestFocused = this;
+                    return false;
+                }
+            }
+            // Check for conditions to stop suggestion
+            if ($area.getSelection().length && $.inArray(e.keyCode, $area.options.stopSuggestionKeys) !== -1) {
+                // apply suggestion. Clean up selection and insert a space
+                var _selectionEnd = $area.getSelection().end + $area.options.endingSymbols.length;
+                var _text = $area.getSelection().text + $area.options.endingSymbols;
+                $area.replaceSelection(_text);
+                $area.setSelection(_selectionEnd, _selectionEnd);
+                e.preventDefault();
+                e.stopPropagation();
+                this.focus();
+                $.asuggestFocused = this;
+                return false;
+            }
+        });
+
+        $area.unbind('keyup.asuggest').bind('keyup.asuggest', function (e) {
+            var hasSpecialKeys = e.altKey || e.metaKey || e.ctrlKey,
+                hasSpecialKeysOrShift = hasSpecialKeys || e.shiftKey;
+            switch (e.keyCode) {
+                case KEY.UNKNOWN: // Special key released
+                case KEY.SHIFT:
+                case KEY.CTRL:
+                case KEY.ALT:
+                case KEY.RETURN:
+                    // we don't want to suggest when RETURN key has pressed (another IE workaround)
+                    break;
+                case KEY.TAB:
+                    if (!hasSpecialKeysOrShift && $area.options.cycleOnTab) {
+                        break;
+                    }
+                case KEY.ESC:
+                case KEY.BACKSPACE:
+                case KEY.DEL:
+                case KEY.UP:
+                case KEY.DOWN:
+                case KEY.LEFT:
+                case KEY.RIGHT:
+                    if (!hasSpecialKeysOrShift && $area.options.autoComplete) {
+                        $area.replaceSelection("");
+                    }
+                    break;
+                default:
+                    if (!hasSpecialKeys && $area.options.autoComplete) {
+                        var chunk = $area.getChunk();
+                        if (chunk.length >= $area.options.minChunkSize) {
+                            $area.updateSelection($area.getCompletion(false));
+                        }
+                    }
+                    break;
+            }
+        });
+        return $area;
+    };
+})(jQuery);
+
+/***/ }),
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -116833,13 +117593,13 @@ if (false) {
 }
 
 /***/ }),
-/* 354 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(355);
+var content = __webpack_require__(354);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -116859,7 +117619,7 @@ if(false) {
 }
 
 /***/ }),
-/* 355 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -116873,12 +117633,11 @@ exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowr
 
 
 /***/ }),
-/* 356 */
+/* 355 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
 //
 //
 //
@@ -116951,23 +117710,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mixins: [__webpack_require__(5)],
     data: function data() {
         return {
-            store: window.store,
-            state: window.store.state,
-            util: window.util
+            // store: window.store,
+            // state: window.store.state,
+            // util: window.util
         };
     },
 
     components: {
-        'insert-table-row': __webpack_require__(357),
-        'result-table-row': __webpack_require__(360)
+        'insert-table-row': __webpack_require__(356),
+        'result-table-row': __webpack_require__(359)
     },
     computed: {
         colspan: function colspan() {
             var span = 2;
-            // if (this.tableConfig !== null) {
-            //     span = Object.keys(this.tableConfig.schema).length
-            //     if (this.tab === 'content') span++
-            // }
             if (this.getTableSchema(this.table) !== null) {
                 span = Object.keys(this.getTableSchema(this.table)).length;
                 if (this.tab === 'content') span++;
@@ -117036,15 +117791,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 357 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(358)
+var __vue_script__ = __webpack_require__(357)
 /* template */
-var __vue_template__ = __webpack_require__(359)
+var __vue_template__ = __webpack_require__(358)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -117083,7 +117838,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 358 */
+/* 357 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -117165,7 +117920,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 359 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -117264,15 +118019,15 @@ if (false) {
 }
 
 /***/ }),
-/* 360 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(361)
+var __vue_script__ = __webpack_require__(360)
 /* template */
-var __vue_template__ = __webpack_require__(362)
+var __vue_template__ = __webpack_require__(361)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -117311,7 +118066,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 361 */
+/* 360 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -117459,7 +118214,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 362 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -117639,7 +118394,7 @@ if (false) {
 }
 
 /***/ }),
-/* 363 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -117833,7 +118588,9 @@ var render = function() {
                       _c("tr", [
                         _c("td", { attrs: { colspan: _vm.colspan } }, [
                           _c("div", { staticClass: "empty" }, [
-                            _vm._v("No records")
+                            _vm.state.processing
+                              ? _c("span", [_vm._v("Processing...")])
+                              : _c("span", [_vm._v("No records")])
                           ])
                         ])
                       ])
@@ -117859,13 +118616,13 @@ if (false) {
 }
 
 /***/ }),
-/* 364 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(365);
+var content = __webpack_require__(364);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -117885,7 +118642,7 @@ if(false) {
 }
 
 /***/ }),
-/* 365 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -117899,7 +118656,7 @@ exports.push([module.i, "\nlegend {\n\t\tborder: 0;\n}\n.btn:focus {\n        ou
 
 
 /***/ }),
-/* 366 */
+/* 365 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -118117,10 +118874,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
     components: {
         'field': __webpack_require__(11),
         'indices-table': __webpack_require__(209),
-        'database-column-field': __webpack_require__(373),
-        'database-table-key-field': __webpack_require__(381),
-        'database-table-index-field': __webpack_require__(386),
-        'database-table-foreign-key-field': __webpack_require__(391)
+        'database-column-field': __webpack_require__(372),
+        'database-table-key-field': __webpack_require__(380),
+        'database-table-index-field': __webpack_require__(385),
+        'database-table-foreign-key-field': __webpack_require__(390)
     },
     data: function data() {
         return {
@@ -119180,7 +119937,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 });
 
 /***/ }),
-/* 367 */
+/* 366 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119362,7 +120119,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 368 */
+/* 367 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119517,7 +120274,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 369 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -119911,7 +120668,7 @@ if (false) {
 }
 
 /***/ }),
-/* 370 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120048,7 +120805,7 @@ if (false) {
 }
 
 /***/ }),
-/* 371 */
+/* 370 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -120085,7 +120842,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 372 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120127,19 +120884,19 @@ if (false) {
 }
 
 /***/ }),
-/* 373 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(374)
+  __webpack_require__(373)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(376)
+var __vue_script__ = __webpack_require__(375)
 /* template */
-var __vue_template__ = __webpack_require__(380)
+var __vue_template__ = __webpack_require__(379)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -120178,13 +120935,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 374 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(375);
+var content = __webpack_require__(374);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -120204,7 +120961,7 @@ if(false) {
 }
 
 /***/ }),
-/* 375 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -120218,7 +120975,7 @@ exports.push([module.i, "\n.row.field {\n    border-bottom: 1px solid #f5f5f5;\n
 
 
 /***/ }),
-/* 376 */
+/* 375 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -120259,7 +121016,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mixins: [__webpack_require__(5)],
     components: {
         'field': __webpack_require__(11),
-        'database-column-field': __webpack_require__(377)
+        'database-column-field': __webpack_require__(376)
     },
     data: function data() {
         return {
@@ -120357,15 +121114,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 377 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(378)
+var __vue_script__ = __webpack_require__(377)
 /* template */
-var __vue_template__ = __webpack_require__(379)
+var __vue_template__ = __webpack_require__(378)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -120404,7 +121161,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 378 */
+/* 377 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -120674,7 +121431,7 @@ var with_timezone_string = 'with time zone';
 });
 
 /***/ }),
-/* 379 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120762,7 +121519,7 @@ if (false) {
 }
 
 /***/ }),
-/* 380 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -120872,19 +121629,19 @@ if (false) {
 }
 
 /***/ }),
-/* 381 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(382)
+  __webpack_require__(381)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(384)
+var __vue_script__ = __webpack_require__(383)
 /* template */
-var __vue_template__ = __webpack_require__(385)
+var __vue_template__ = __webpack_require__(384)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -120923,13 +121680,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 382 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(383);
+var content = __webpack_require__(382);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -120949,7 +121706,7 @@ if(false) {
 }
 
 /***/ }),
-/* 383 */
+/* 382 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -120963,7 +121720,7 @@ exports.push([module.i, "\n.row.field {\n    border-bottom: 1px solid #f5f5f5;\n
 
 
 /***/ }),
-/* 384 */
+/* 383 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -121057,7 +121814,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 385 */
+/* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -121164,19 +121921,19 @@ if (false) {
 }
 
 /***/ }),
-/* 386 */
+/* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(387)
+  __webpack_require__(386)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(389)
+var __vue_script__ = __webpack_require__(388)
 /* template */
-var __vue_template__ = __webpack_require__(390)
+var __vue_template__ = __webpack_require__(389)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -121215,13 +121972,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 387 */
+/* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(388);
+var content = __webpack_require__(387);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -121241,7 +121998,7 @@ if(false) {
 }
 
 /***/ }),
-/* 388 */
+/* 387 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -121255,7 +122012,7 @@ exports.push([module.i, "\n.row.field {\n    border-bottom: 1px solid #f5f5f5;\n
 
 
 /***/ }),
-/* 389 */
+/* 388 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -121349,7 +122106,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 390 */
+/* 389 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -121456,19 +122213,19 @@ if (false) {
 }
 
 /***/ }),
-/* 391 */
+/* 390 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(392)
+  __webpack_require__(391)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(394)
+var __vue_script__ = __webpack_require__(393)
 /* template */
-var __vue_template__ = __webpack_require__(395)
+var __vue_template__ = __webpack_require__(394)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -121507,13 +122264,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 392 */
+/* 391 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(393);
+var content = __webpack_require__(392);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -121533,7 +122290,7 @@ if(false) {
 }
 
 /***/ }),
-/* 393 */
+/* 392 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -121547,7 +122304,7 @@ exports.push([module.i, "\n.row.field {\n    border-bottom: 1px solid #f5f5f5;\n
 
 
 /***/ }),
-/* 394 */
+/* 393 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -121648,7 +122405,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 395 */
+/* 394 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -121757,7 +122514,7 @@ if (false) {
 }
 
 /***/ }),
-/* 396 */
+/* 395 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -122251,7 +123008,7 @@ if (false) {
 }
 
 /***/ }),
-/* 397 */
+/* 396 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -122278,7 +123035,7 @@ var render = function() {
                       expression: "tableQuery"
                     }
                   ],
-                  staticClass: "form-control input-sm",
+                  staticClass: "form-control input-sm focus",
                   attrs: { placeholder: "Search Tables" },
                   domProps: { value: _vm.tableQuery },
                   on: {
@@ -122327,14 +123084,25 @@ var render = function() {
           { class: _vm.mainViewClass },
           [
             _c(
-              "a",
+              "button",
               {
                 staticClass: "btn btn-default btn-xs attach",
                 class: _vm.toggleDisplayWrapperClass,
                 attrs: { href: "", title: "Toggle Display", role: "button" },
                 on: {
                   click: function($event) {
-                    $event.preventDefault()
+                    if (
+                      !("button" in $event) &&
+                      _vm._k(
+                        $event.keyCode,
+                        "blur",
+                        undefined,
+                        $event.key,
+                        undefined
+                      )
+                    ) {
+                      return null
+                    }
                     return _vm.toggleListDisplay($event)
                   }
                 }
@@ -122538,15 +123306,15 @@ if (false) {
 }
 
 /***/ }),
-/* 398 */
+/* 397 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(399)
+var __vue_script__ = __webpack_require__(398)
 /* template */
-var __vue_template__ = __webpack_require__(406)
+var __vue_template__ = __webpack_require__(405)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -122585,7 +123353,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 399 */
+/* 398 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -122661,8 +123429,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         // require('../mixins/Session.vue')
     ],
     components: {
-        'connection-list': __webpack_require__(400),
-        'connection-form': __webpack_require__(403)
+        'connection-list': __webpack_require__(399),
+        'connection-form': __webpack_require__(402)
     },
     data: function data() {
         return {
@@ -122860,15 +123628,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 400 */
+/* 399 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(401)
+var __vue_script__ = __webpack_require__(400)
 /* template */
-var __vue_template__ = __webpack_require__(402)
+var __vue_template__ = __webpack_require__(401)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -122907,7 +123675,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 401 */
+/* 400 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -122966,7 +123734,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 402 */
+/* 401 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -123116,15 +123884,15 @@ if (false) {
 }
 
 /***/ }),
-/* 403 */
+/* 402 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(404)
+var __vue_script__ = __webpack_require__(403)
 /* template */
-var __vue_template__ = __webpack_require__(405)
+var __vue_template__ = __webpack_require__(404)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -123163,7 +123931,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 404 */
+/* 403 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -123271,7 +124039,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 405 */
+/* 404 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -123330,7 +124098,7 @@ if (false) {
 }
 
 /***/ }),
-/* 406 */
+/* 405 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -123528,15 +124296,15 @@ if (false) {
 }
 
 /***/ }),
-/* 407 */
+/* 406 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(408)
+var __vue_script__ = __webpack_require__(407)
 /* template */
-var __vue_template__ = __webpack_require__(412)
+var __vue_template__ = __webpack_require__(411)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -123575,7 +124343,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 408 */
+/* 407 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -123615,7 +124383,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['fieldsets', 'formfields', 'layout', 'hideSubmit'],
     components: {
         'field': __webpack_require__(11),
-        'field-set': __webpack_require__(409)
+        'field-set': __webpack_require__(408)
     },
     data: function data() {
         return {
@@ -123671,15 +124439,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 409 */
+/* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(410)
+var __vue_script__ = __webpack_require__(409)
 /* template */
-var __vue_template__ = __webpack_require__(411)
+var __vue_template__ = __webpack_require__(410)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -123718,7 +124486,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 410 */
+/* 409 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -123757,7 +124525,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 411 */
+/* 410 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -123812,7 +124580,7 @@ if (false) {
 }
 
 /***/ }),
-/* 412 */
+/* 411 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -123895,15 +124663,15 @@ if (false) {
 }
 
 /***/ }),
-/* 413 */
+/* 412 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(414)
+var __vue_script__ = __webpack_require__(413)
 /* template */
-var __vue_template__ = __webpack_require__(415)
+var __vue_template__ = __webpack_require__(414)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -123942,7 +124710,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 414 */
+/* 413 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -124154,7 +124922,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 415 */
+/* 414 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -124232,15 +125000,15 @@ if (false) {
 }
 
 /***/ }),
-/* 416 */
+/* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(417)
+var __vue_script__ = __webpack_require__(416)
 /* template */
-var __vue_template__ = __webpack_require__(418)
+var __vue_template__ = __webpack_require__(417)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -124279,7 +125047,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 417 */
+/* 416 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -124308,7 +125076,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 418 */
+/* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -124345,19 +125113,19 @@ if (false) {
 }
 
 /***/ }),
-/* 419 */
+/* 418 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(420)
+  __webpack_require__(419)
 }
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(422)
+var __vue_script__ = __webpack_require__(421)
 /* template */
-var __vue_template__ = __webpack_require__(425)
+var __vue_template__ = __webpack_require__(424)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -124396,13 +125164,13 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 420 */
+/* 419 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(421);
+var content = __webpack_require__(420);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
@@ -124422,7 +125190,7 @@ if(false) {
 }
 
 /***/ }),
-/* 421 */
+/* 420 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -124436,17 +125204,18 @@ exports.push([module.i, "\n.tab-content, .tab-pane {\n        height: 100%;\n   
 
 
 /***/ }),
-/* 422 */
+/* 421 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuedraggable__ = __webpack_require__(423);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuedraggable__ = __webpack_require__(422);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuedraggable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_vuedraggable__);
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+//
 //
 //
 //
@@ -124507,17 +125276,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     data: function data() {
         return {
             bus: window.bus,
-            store: window.store,
-            state: window.store.state,
             tabs: []
         };
     },
     created: function created() {
         var $this = this;
-        this.bus.$on('tabRefreshed', function (config) {
-            var selectTabIndex = $this.activeTabIndex();
-            $this.tabs[selectTabIndex].table = config;
-        });
         this.bus.$on('databaseConnected', function (config) {
             $this.tabs = [];
             $this.addTab('query');
@@ -124729,7 +125492,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 423 */
+/* 422 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -125129,7 +125892,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   }
 
   if (true) {
-    var Sortable = __webpack_require__(424);
+    var Sortable = __webpack_require__(423);
     module.exports = buildDraggable(Sortable);
   } else if (typeof define == "function" && define.amd) {
     define(['sortablejs'], function (Sortable) {
@@ -125142,7 +125905,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 })();
 
 /***/ }),
-/* 424 */
+/* 423 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
@@ -126692,7 +127455,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
 
 
 /***/ }),
-/* 425 */
+/* 424 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -126811,6 +127574,8 @@ var render = function() {
             _vm._l(_vm.tabs, function(tab, key) {
               return _c("tab", {
                 key: tab.id,
+                ref: "tab",
+                refInFor: true,
                 attrs: {
                   id: tab.id,
                   "current-tab": _vm.activeTabIndex(),
@@ -126868,15 +127633,15 @@ if (false) {
 }
 
 /***/ }),
-/* 426 */
+/* 425 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(427)
+var __vue_script__ = __webpack_require__(426)
 /* template */
-var __vue_template__ = __webpack_require__(431)
+var __vue_template__ = __webpack_require__(435)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -126915,11 +127680,12 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 427 */
+/* 426 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
 //
 //
 //
@@ -126997,8 +127763,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mixins: [__webpack_require__(5)],
     data: function data() {
         return {
-            store: window.store,
-            state: window.store.state,
+            bus: window.bus,
+            // store: window.store,
+            // state: window.store.state,
             editingRow: null,
             executed: false,
             filter: null,
@@ -127020,13 +127787,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     components: {
-        'content-filter': __webpack_require__(204),
-        'query': __webpack_require__(205),
+        'content-filter': __webpack_require__(427),
+        'query': __webpack_require__(204),
         'results-table': __webpack_require__(206),
-        'results-footer': __webpack_require__(428),
+        'results-footer': __webpack_require__(432),
         'structure-table': __webpack_require__(207)
     },
     computed: {
+        columns: function columns() {
+            var columns = [];
+            if (this.type !== 'query' && this.table) {
+                columns = _.map(this.state.tables[this.table].schema, 'column_name');
+            }
+            return columns;
+        },
         loaded: function loaded() {
             return this.type === 'query' || this.state.tables[this.table] && this.state.tables[this.table].schema !== null;
         }
@@ -127082,42 +127856,51 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         recordCount: function recordCount() {
             return this.records ? this.records.length : 0;
         },
-        refresh: function refresh() {
+        refresh: function refresh(e) {
+            var _this2 = this;
+
             if (this.type === "query") {
                 this.$refs.customQuery.run();
             } else {
-                this.getRecords();
+                this.loadTable(this.table, true).then(function (config) {
+                    _this2.state.tables[_this2.table] = config;
+                    // this.$set($this.state.tables, this.table, config)
+                    _this2.bus.$emit('tabRefreshed', config);
+                    _this2.getRecords();
+                });
+                // this.getRecords()
+                // this.$emit('refresh', e)
             }
         },
         insertRow: function insertRow(data) {
-            var _this2 = this;
+            var _this3 = this;
 
             return this.insertQuery(this.makeInsert(this.table, data), data).then(function () {
-                _this2.setInsertingRow(false);
-                _this2.getRecords();
+                _this3.setInsertingRow(false);
+                _this3.getRecords();
             });
         },
         updateRow: function updateRow(payload) {
-            var _this3 = this;
+            var _this4 = this;
 
             var where = {};
             var primaryKey = this.state.tables[this.table].primaryKey;
             where[primaryKey] = payload.primaryKey;
             return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(function () {
-                _this3.setEditingRow(null);
-                _this3.getRecords();
+                _this4.setEditingRow(null);
+                _this4.getRecords();
             });
         },
         deleteRow: function deleteRow(primaryKey) {
-            var _this4 = this;
+            var _this5 = this;
 
             if (confirm('Delete this row?')) {
                 var where = {};
                 where[this.primaryKey()] = primaryKey;
                 this.deleteQuery(this.makeDelete(this.table, where), where).then(function () {
-                    _this4.getRecords(_this4.currentPage()).then(function () {
-                        _this4.editingRow = null;
-                        _this4.state.setProcessing(false);
+                    _this5.getRecords(_this5.currentPage()).then(function () {
+                        _this5.editingRow = null;
+                        _this5.state.setProcessing(false);
                     });
                 });
             }
@@ -127178,15 +127961,220 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
+/* 427 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(428)
+}
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(430)
+/* template */
+var __vue_template__ = __webpack_require__(431)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/admin/Filter.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-f0322022", Component.options)
+  } else {
+    hotAPI.reload("data-v-f0322022", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
 /* 428 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(429);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(8)("d031a596", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f0322022\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-f0322022\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Filter.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 429 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n#content-filter {\n  margin-top: 5px;\n  padding: 0 20px;\n}\n#content-filter input {\n    height: 30px;\n}\n.el-icon-cstm-filter {\n  font-family: 'Glyphicons Halflings' !important;\n  font-size: inherit;\n  font-style: normal;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n.el-icon-cstm-filter:before {\n  content: \"\\E138\";\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 430 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    props: ['columns'],
+    created: function created() {},
+    data: function data() {
+        return {
+            where: null,
+            autocomplete: {
+                options: this.columns || Object.keys(window.store.state.tables),
+                selector: '.el-input__inner',
+                acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
+                cycleOnTab: false,
+                endingSymbols: ' ', // "space" is default
+                minChunkSize: 1,
+                delimeters: '\n ' // array of chars
+            },
+            store: window.store,
+            state: window.store.state,
+            util: window.util
+        };
+    },
+
+    mixins: [__webpack_require__(205)]
+});
+
+/***/ }),
+/* 431 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("thead", [
+    _c(
+      "div",
+      { attrs: { id: "content-filter" } },
+      [
+        _c(
+          "el-input",
+          {
+            staticClass: "input-with-select",
+            attrs: { placeholder: "WHERE clause" },
+            nativeOn: {
+              keyup: function($event) {
+                if (
+                  !("button" in $event) &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                _vm.$emit("filterWhere", _vm.where)
+              }
+            },
+            model: {
+              value: _vm.where,
+              callback: function($$v) {
+                _vm.where = $$v
+              },
+              expression: "where"
+            }
+          },
+          [
+            _c("el-button", {
+              attrs: { slot: "append", icon: "el-icon-search" },
+              on: {
+                click: function($event) {
+                  _vm.$emit("filterWhere", _vm.where)
+                }
+              },
+              slot: "append"
+            })
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-f0322022", module.exports)
+  }
+}
+
+/***/ }),
+/* 432 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(429)
+var __vue_script__ = __webpack_require__(433)
 /* template */
-var __vue_template__ = __webpack_require__(430)
+var __vue_template__ = __webpack_require__(434)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -127225,7 +128213,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 429 */
+/* 433 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -127295,7 +128283,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 430 */
+/* 434 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -127387,7 +128375,7 @@ if (false) {
 }
 
 /***/ }),
-/* 431 */
+/* 435 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -127458,7 +128446,7 @@ var render = function() {
                 (_vm.records && _vm.records.length > 0)) ||
               _vm.where
                 ? _c("content-filter", {
-                    attrs: { id: "contentFilter" },
+                    attrs: { id: "contentFilter", columns: _vm.columns },
                     on: { filterWhere: _vm.filterWhere }
                   })
                 : _vm._e(),
@@ -127476,8 +128464,8 @@ var render = function() {
                 attrs: {
                   tab: _vm.type,
                   id: "results-table-" + _vm.id,
-                  table: _vm.table ? _vm.table : null,
-                  "table-config": _vm.table ? _vm.tableConfig() : null,
+                  table: _vm.table,
+                  "table-config": _vm.state.tables[_vm.table],
                   order: _vm.order,
                   records: _vm.records,
                   "editing-row": _vm.editingRow,
@@ -127534,13 +128522,13 @@ if (false) {
 }
 
 /***/ }),
-/* 432 */
+/* 436 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(433)
+var __vue_script__ = __webpack_require__(437)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -127581,7 +128569,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 433 */
+/* 437 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -127691,13 +128679,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 434 */
+/* 438 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(435)
+var __vue_script__ = __webpack_require__(439)
 /* template */
 var __vue_template__ = null
 /* template functional */
@@ -127738,7 +128726,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 435 */
+/* 439 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -127915,7 +128903,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 436 */
+/* 440 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

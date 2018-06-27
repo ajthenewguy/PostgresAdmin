@@ -71,19 +71,21 @@ class FrontController extends Controller
         } elseif (Setting::get('connection') !== $connectionName) {
             Setting::set('connection', $connectionName);
         }
-        foreach ($connections as $connection) {
-            if ($connection['name'] === $connectionName) {
-                if (DB::connection()->getDatabaseName() !== $connection['database']) {
-                    DB::purge('dynamic');
-                    Config::set('database.connections.dynamic.host', $connection['host']);
-                    Config::set('database.connections.dynamic.database', $connection['database']);
-                    Config::set('database.connections.dynamic.username', $connection['username']);
-                    Config::set('database.connections.dynamic.password', $connection['password']);
-                    Config::set('database.default', 'dynamic');
-                    DB::reconnect('dynamic');
-                    Schema::connection('dynamic')->getConnection()->reconnect();
+        if ($connections) {
+            foreach ($connections as $connection) {
+                if ($connection['name'] === $connectionName) {
+                    if (DB::connection()->getDatabaseName() !== $connection['database']) {
+                        DB::purge('dynamic');
+                        Config::set('database.connections.dynamic.host', $connection['host']);
+                        Config::set('database.connections.dynamic.database', $connection['database']);
+                        Config::set('database.connections.dynamic.username', $connection['username']);
+                        Config::set('database.connections.dynamic.password', $connection['password']);
+                        Config::set('database.default', 'dynamic');
+                        DB::reconnect('dynamic');
+                        Schema::connection('dynamic')->getConnection()->reconnect();
+                    }
+                    $tables = $this->getTables($connection['database']);
                 }
-                $tables = $this->getTables($connection['database']);
             }
         }
         return $tables;

@@ -32,6 +32,7 @@
             <div class="tab-content">
                 <tab
                         v-for="(tab, key) in tabs"
+                        ref="tab"
                         :key="tab.id"
                         :id="tab.id"
                         :current-tab="activeTabIndex()"
@@ -58,17 +59,11 @@
         data() {
             return {
                 bus: window.bus,
-                store: window.store,
-                state: window.store.state,
                 tabs: []
             }
         },
         created() {
             let $this = this
-            this.bus.$on('tabRefreshed', function (config) {
-                let selectTabIndex = $this.activeTabIndex()
-                $this.tabs[selectTabIndex].table = config
-            })
             this.bus.$on('databaseConnected', function (config) {
                 $this.tabs = []
                 $this.addTab('query')
