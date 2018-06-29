@@ -5,13 +5,13 @@
                 v-if="(control !== 'input' && control !== 'el-input') || type !== 'checkbox'"
                 :class="labelClass"
                 :for="input_id"
-                v-html="label"
+                v-html="label || '_o0o_'"
         />
         <div v-if="hasColumn" :class="columnClass">
             <field
                    :control="control"
                    :multiple="multiple"
-                   :id="id"
+                   :id="input_id"
                    :name="name"
                    :label="label"
                    :rules="rules"
@@ -30,7 +30,7 @@
             <field
                     :control="control"
                     :multiple="multiple"
-                    :id="id"
+                    :id="input_id"
                     :name="name"
                     :label="label"
                     :rules="rules"
@@ -112,6 +112,7 @@
         data() {
             return {
                 bus: window.bus,
+                util: window.util,
                 store: window.store,
                 state: window.store.state,
                 input_id: null,
@@ -156,6 +157,9 @@
                 return this.layout === 'inline'
             }
         },
+        mounted() {
+            this.init()
+        },
         watch: {
             errors: {
                 handler() {
@@ -165,6 +169,9 @@
             }
         },
         methods: {
+            init() {
+                this.input_id = this.id || this.util.uuid()
+            },
             uuid() {
                 return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
             }

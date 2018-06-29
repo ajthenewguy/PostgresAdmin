@@ -38,15 +38,19 @@
                         :current-tab="activeTabIndex()"
                         :type="tab.type"
                         :table="tab.table"
+                        :find="tab.where"
                         :loaded-tables="loadedTables"
                         @loaded="$emit('loaded')"
                         @refresh="$emit('refresh', $event)"
+                        @openTableRow="$emit('openTableRow', $event)"
                 />
             </div>
         </tbody>
     </table>
     <div class="notabs" v-else>
-        <el-button @click="newTab('query')" type="primary" icon="search"><span :class="tabIcon('query')" aria-hidden="true"></span> New Query</el-button>
+        <div v-if="!state.processing">
+            <el-button @click="newTab('query')" type="primary" icon="search"><span :class="tabIcon('query')" aria-hidden="true"></span> New Query</el-button>
+        </div>
     </div>
 </template>
 <script>
@@ -62,15 +66,11 @@
                 tabs: []
             }
         },
-        created() {
-            let $this = this
-            this.bus.$on('databaseConnected', function (config) {
-                $this.tabs = []
-                $this.addTab('query')
-
-
-                console.log('@databaseConnected')
-            });
+        mounted() {
+            this.bus.$on('loggedIn', () => {
+                this.storeTabs()
+                this.refreshTab()
+            })
         },
         methods: {
             activeTab() {
@@ -87,7 +87,7 @@
             addTab() {
                 this.changeTab(this.newTab(...arguments))
             },
-            changeTab(index) {
+            changeTab(index, where) {
                 let $this = this
                 let changeToTab = null
                 if (isNaN(index)) {
@@ -97,14 +97,21 @@
                     this.activeTabIndex(null)
                     this.storeSelectedTab(null)
                 } else {
-//                    setTimeout(function() {
-                        changeToTab = $this.getTab('index', index)
-                        if (changeToTab) {
-                            $('.nav-tabs a[data-id="' + changeToTab.id + '"]').tab('show')
-                            $this.activeTabIndex(index)
-                            this.storeSelectedTab(changeToTab.id)
+                    changeToTab = $this.getTab('index', index)
+                    if (changeToTab) {
+                        $('.nav-tabs a[data-id="' + changeToTab.id + '"]').tab('show')
+                        $this.activeTabIndex(index)
+                        this.storeSelectedTab(changeToTab.id)
+
+                        if (where) {
+                            this.$nextTick(() => {
+                                console.log('filterWhere', index, where)
+                                console.log(this.$refs.tab)
+                                this.$refs.tab[index].filterWhere(where)
+
+                            })
                         }
-//                    }, 5)
+                    }
                 }
             },
             tabExists(index) {
@@ -177,19 +184,23 @@
                         }
                     }
 
-                    return Promise.all(promises).then((tabs) => {
+                    return Promise.all(promises).then(() => {
+                        this.sortTabs()
                         return this.tabs
                     })
                 }).catch(() => {
                     return Promise.resolve([])
                 })
             },
-            makeTab(tabId, connection, type, title, table) {
+            makeTab(tabId, connection, type, title, table, where) {
                 let tab = {
                     id: tabId,
                     connection: connection,
                     type: type,
-                    title: title
+                    title: title,
+                    table: table,
+                    where: where,
+                    index: this.tabs.length
                 }
                 if (table) {
                     if (typeof table === "object" && table.hasOwnProperty('name')) {
@@ -199,12 +210,12 @@
                 }
                 return tab
             },
-            newTab(type, title, table) {
+            newTab(type, title, table, where) {
                 if (! title) {
                     title = this.titleCase(type)
                 }
                 let tabId = this.uuid()
-                let tab = this.makeTab(tabId, this.state.connection, type, title, table)
+                let tab = this.makeTab(tabId, this.state.connection, type, title, table, where)
                 this.tabs.push(tab)
                 if (null === this.activeTabIndex()) {
                     this.activeTabIndex(this.getTabIndex('id', tabId))
@@ -217,6 +228,7 @@
             onMoveTab(e) {
                 let from = e.oldIndex
                 let to = e.newIndex
+                let tabCount = this.tabs.length
                 if (from === this.activeTabIndex()) {
                     this.changeTab(to)
                 } else if (to <= this.activeTabIndex()) {
@@ -224,16 +236,27 @@
                 } else if (to > this.activeTabIndex() && from < this.activeTabIndex()) {
                     this.changeTab(Math.max(this.activeTabIndex() - 1, 0))
                 }
+                for (let i = 0; i < tabCount; i++) {
+                    this.tabs[i].index = i
+                }
+                this.storeTabs()
+            },
+            refreshTab(index) {
+                if (typeof index === "undefined") {
+                    index = this.activeTabIndex()
+                }
+                this.$refs['tab'][index].refresh()
+            },
+            sortTabs() {
+                this.tabs = _.orderBy(this.tabs, ['index'])
             },
             storeTabs: _.debounce(function() {
                 let tabs = _.filter(this.tabs, function(t) {
                     return t.type !== 'query'
                 })
-                // console.log('>>> storeTabs:',tabs)
                 window.session.set('tabs', tabs)
             }, 500),
             storeSelectedTab: _.debounce(function(id) {
-                // console.log('[[ storeSelectedTab', id)
                 window.session.set('selectedTab', id)
             }, 500),
             tabIcon(type) {

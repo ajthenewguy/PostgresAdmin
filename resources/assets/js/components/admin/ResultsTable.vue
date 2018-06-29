@@ -42,6 +42,7 @@
                                 :table-config="tableConfig"
                                 :row="row"
                                 :editing-row="editingRow"
+                                @openTableRow="$emit('openTableRow', $event)"
                                 @editingRow="$emit('editingRow', row[tableConfig.primaryKey])"
                                 @cancelEditingRow="$emit('editingRow', null)"
                                 @updateRow="updateRow"

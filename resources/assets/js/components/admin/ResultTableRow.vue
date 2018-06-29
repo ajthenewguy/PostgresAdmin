@@ -30,9 +30,9 @@
                         @keyup.enter.native="saveRow"
                 />
             </span>
-            <span v-else v-html="valueDisplay(name)">
-                <!--{{ valueDisplay(name) }}-->
-            </span>
+            <template v-else>
+                <span v-html="valueDisplay(name)"></span><span v-if="columnIsForeignKey(name) && data[name]">&nbsp;<a href="#" @click.prevent="openForeignRow(name)">...</a></span>
+            </template>
         </td>
     </tr>
 </template>
@@ -108,6 +108,10 @@
                     }
                 }
             },
+            columnIsForeignKey(column) {
+                let fk = _.find(this.tableConfig.foreignKeys, ['column_name', column])
+                return typeof fk !== "undefined"
+            },
             valueDisplay(column) {
                 let value = this.data[column]
                 let config = null
@@ -118,6 +122,13 @@
                     }
                 }
                 return value
+            },
+            openForeignRow(column) {
+                let foreignKey = _.find(this.tableConfig.foreignKeys, ['column_name', column])
+                this.$emit('openTableRow', {
+                    table: foreignKey.foreign_table_name,
+                    where: foreignKey.foreign_column_name + " = '" + this.row[column] + "'"
+                });
             },
             updatedValues() {
                 var original = this.row

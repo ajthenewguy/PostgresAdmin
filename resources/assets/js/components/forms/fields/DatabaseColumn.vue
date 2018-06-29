@@ -8,7 +8,7 @@
                     :control="field.control"
                     :multiple="field.multiple"
                     :name="field.name"
-                    :label="field.label"
+                    :label="field.label || ''"
                     :rules="field.rules"
                     :type="field.type"
                     :options="field.options"
