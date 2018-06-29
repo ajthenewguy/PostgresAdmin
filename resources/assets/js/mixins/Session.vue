@@ -1,11 +1,11 @@
 <script>
 export default {
     mounted() {
-        // this.session.init()
         this.init()
     },
     data() {
         return {
+            bus: window.bus,
             cacheData: {},
             queueData: {},
             debounceUpdate: true,
@@ -116,9 +116,11 @@ export default {
             },
             onError(error) {
                 let message = this.parseError(error)
-                console.error(message)
-                if (typeof message === "string") {
-                    alert(message)
+                if (message) {
+                    console.error(message)
+                    if (typeof message === "string") {
+                        alert(message)
+                    }
                 }
             },
             parseError(error) {
@@ -127,8 +129,9 @@ export default {
                     errorText = error
                     if (error.response) {
                         errorText = error.response.statusText
-                        if (error.response.status === 419) {
-                            window.location = '/'
+                        if (error.response.status === 419 || error.response.status === 401) {
+                            this.bus.$emit('expiredSession')
+                            return
                         }
                         if (error.response.data) {
                             errorText = error.response.data
@@ -154,7 +157,7 @@ export default {
                 } else {
                     return Promise.resolve(null)
                 }
-            }, 1000)
+            }, 1000, { 'leading': true })
         }
     }
 }

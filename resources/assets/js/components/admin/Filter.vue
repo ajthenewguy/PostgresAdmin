@@ -18,13 +18,13 @@
 </template>
 <script>
     export default {
-        props: ['columns'],
+        props: ['columns', 'find'],
         created: function () {
 
         },
         data() {
             return {
-                where: null,
+                where: this.find,
                 autocomplete: {
                     options: this.columns || Object.keys(window.store.state.tables),
                     selector: '.el-input__inner',
@@ -37,6 +37,15 @@
                 store: window.store,
                 state: window.store.state,
                 util: window.util
+            }
+        },
+        watch: {
+            find: function() {
+                if (this.find !== null) {
+                    this.where = this.find
+                    // eslint-disable-next-line
+                    console.log(this.find, this.where)
+                }
             }
         },
         mixins: [require('../../mixins/AutoComplete')]

@@ -29,6 +29,7 @@
                       @loaded="onTabChange"
                       @tabChanged="onTabChange"
                       @refresh="refreshTab"
+					  @openTableRow="openTableRow"
                 />
             </div>
         </div>
@@ -164,7 +165,7 @@
         methods: {
             loadTabs() {
                 // load selected tab
-                this.$refs.tabs.loadTabs().then(data => {
+                this.$refs.tabs.loadTabs().then(() => {
 					window.session.get('selectedTab').then(selectedTabId => {
 					    if (this.$refs.tabs.tabExists(selectedTabId)) {
                             this.changeTab(selectedTabId)
@@ -181,26 +182,27 @@
                     return this.newTab("query")
                 }
             },
-            addTableTab(table, type) {
-                let tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type })
+            addTableTab(type, table, where) {
+                let title = table || this.titleCase(type)
+                let tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type, "where": where })
                 this.clearTable()
                 this.table = table
                 if (tab) {
-                    this.changeTab(tab.id)
+                    this.changeTab(tab.id, where)
                 } else {
                     this.loadTable(table).then(config => {
-                        this.newTab(type, table, config)
+                        this.newTab(type, title, table, where)
                     })
                 }
             },
             addStructureTab(table) {
-                this.addTableTab(table, "structure")
+                this.addTableTab("structure", table)
             },
             activeTab() {
                 return this.$refs.tabs.activeTab()
             },
-            changeTab(id) {
-                this.$refs.tabs.changeTab(id)
+            changeTab(id, where) {
+                this.$refs.tabs.changeTab(id, where)
             },
             closeTab(id) {
                 return this.$refs.tabs.closeTab(id)
@@ -212,9 +214,12 @@
                 this.filter = null
                 this.records = []
             },
-            newTab(type, title, table) {
+            newTab(type, title, table, where) {
+
+                console.log('Content.newTab(', 'type:', type, ', title:', title, ', table:', table, ', where:', where, ')')
+
                 let tabId = this.$refs.tabs.newTab(...arguments)
-                this.changeTab(tabId)
+                this.changeTab(tabId, where)
 				return tabId
             },
             onTabChange(index) {
@@ -224,13 +229,19 @@
                 //
             },
             openTable(table) {
-                this.addTableTab(table, "content")
+                // eslint-disable-next-line
+                console.log('Content.openTable(', table, ')')
+                this.addTableTab("content", table)
+            },
+            openTableRow(event) {
+				console.log(event)
+                this.addTableTab("content", event.table, event.where)
             },
             refreshTab(index) {
                 if (typeof index === "undefined") {
                     index = this.$refs.tabs.activeTabIndex()
                 }
-                this.$refs.tabs.$refs['tab'][index].refresh()
+                this.$refs.tabs.refreshTab(index)
             },
             refreshTables(connection) {
                 return axios.post(this.server + '/tables').then(response => {
@@ -271,8 +282,9 @@
                 })
 			},
 			postLogin() {
-				return axios.post(this.server + '/login', this.login).then(response => {
+				return axios.post(this.server + '/login', this.login).then(() => {
 					this.state.masked = false
+                    this.bus.$emit('loggedIn')
                 }).catch(error => {
 					console.log('loginError', error)
                     this.bus.$emit('loginError')
@@ -294,6 +306,9 @@
 	                }
                 })
 			},
+            titleCase(string) {
+                return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
+            },
             toggleListDisplay() {
                 this.displayTableList = ! this.displayTableList
 			}

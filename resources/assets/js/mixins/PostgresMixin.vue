@@ -308,7 +308,7 @@
             makeSelect(table, where, conjunction, order) {
                 let sql = 'SELECT * FROM ' + table
                 if (where) {
-                    if (where.constructor === Array) {
+                    if (where.constructor === Object) {
                         sql += ' ' + this.makeBindingsWhere(where, conjunction)
                     } else {
                         if (! where.toUpperCase().includes('WHERE')) {
@@ -407,13 +407,12 @@
                     data.pluck = pluck
                 }
                 return axios.post(this.server + '/select', data).then(response => {
-                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.result = null
                     this.queryError(error)
                 }).then(() => {
-                    this.afterQuery()
+                    this.afterRequestInternal()
                 })
             },
             insertQuery(sql, bindings) {
@@ -426,12 +425,11 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/insert', data).then(response => {
-                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
                 }).then(() => {
-                    this.afterQuery()
+                    this.afterRequestInternal()
                 })
             },
             updateQuery(sql, bindings) {
@@ -462,12 +460,11 @@
                     data.bindings = bindings
                 }
                 return axios.post(this.server + '/delete', data).then(response => {
-                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
                 }).then(() => {
-                    this.afterQuery()
+                    this.afterRequestInternal()
                 })
             },
             executeQuery(sql) {
@@ -476,12 +473,11 @@
                 return axios.post(this.server + '/execute', {
                     sql: this.sql
                 }).then(response => {
-                    this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
                 }).then(() => {
-                    this.afterQuery()
+                    this.afterRequestInternal()
                 })
             },
             initTableObject(name) {
@@ -568,11 +564,11 @@
                     })
             },
             loadTableSchema(table) {
-                this.beforeRequestInternal(false)
+                let trackRequestTime = false
+                this.beforeRequestInternal(trackRequestTime)
                 return axios.post(this.server + '/schema', {
                     table: table
                 }).then(response => {
-                    this.afterRequestInternal(false)
                     this.querySuccess(response)
 
                     if (this.result !== null) {
@@ -594,6 +590,8 @@
                     return this.state.tables[table]
                 }).catch(error => {
                     this.queryError(error)
+                }).then(() => {
+                    this.afterRequestInternal(trackRequestTime)
                 })
             },
             getTableSchema(table) {
@@ -696,7 +694,8 @@
                 this.sql = sql
             },
             afterQuery() {
-                //
+                // eslint-disable-next-line
+                console.log('afterQuery() ... ')
             },
             querySuccess(response) {
                 this.response = response
@@ -725,9 +724,9 @@
                     errorText = error
                     if (error.response) {
                         errorText = error.response.statusText
-						if (error.response.status === 419) {
-                            // window.location = '/'
-							this.bus.$emit('expiredSession')
+                        if (error.response.status === 419 || error.response.status === 401) {
+                            this.bus.$emit('expiredSession')
+                            return
                         }
                         if (error.response.data) {
                             errorText = error.response.data

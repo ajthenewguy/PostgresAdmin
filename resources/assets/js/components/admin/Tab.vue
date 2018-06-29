@@ -32,6 +32,7 @@
             <content-filter
                     v-if="type === 'content' && (records && records.length > 0) || where"
                     id="contentFilter"
+                    :find="where"
                     @filterWhere="filterWhere"
                     :columns="columns"
             />
@@ -52,6 +53,7 @@
                     @insertRow="insertRow"
                     @updateRow="updateRow"
                     @deleteRow="deleteRow"
+                    @openTableRow="$emit('openTableRow', $event)"
                     @refresh="$emit('refresh', $event)"
             />
             <results-footer
@@ -72,7 +74,7 @@
 </template>
 <script>
     export default {
-        props: [ 'id', 'currentTab', 'type', 'table', 'loadedTables' ],
+        props: [ 'id', 'currentTab', 'type', 'table', 'loadedTables', 'find' ],
         mixins: [require('../../mixins/PostgresMixin.vue')],
         data() {
             return {
@@ -86,7 +88,7 @@
                 insertingRow: false,
                 order: null,
                 records: [],
-                where: null
+                where: this.find
             }
         },
         mounted() {
@@ -159,7 +161,9 @@
                     page = this.currentPage()
                 }
                 return this.selectQuery(sql, page).then(response => {
-                    this.records = this.result
+                    if (this.result !== null) {
+                        this.records = this.result
+                    }
                     this.$emit('loaded')
                 })
             },
@@ -170,14 +174,10 @@
                 if (this.type === "query") {
                     this.$refs.customQuery.run()
                 } else {
-                    this.loadTable(this.table, true).then(config => {
-                        this.state.tables[this.table] = config
-                        // this.$set($this.state.tables, this.table, config)
-                        this.bus.$emit('tabRefreshed', config)
+                    this.loadTable(this.table, true).then(() => {
+                        this.bus.$emit('tabRefreshed', this.state.tables[this.table])
                         this.getRecords()
                     })
-                    // this.getRecords()
-                    // this.$emit('refresh', e)
                 }
             },
             insertRow(data) {

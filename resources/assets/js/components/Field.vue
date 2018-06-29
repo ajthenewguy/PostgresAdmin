@@ -27,7 +27,7 @@
     <div v-else-if="(control === 'input' || control === 'el-input') && (type === 'checkbox' || type === 'radio')"
           :class="type">
         <div v-for="(option, key) in options" :key="key">
-            <label :for="name + '-' + key">
+            <label :for="input_id + '-' + key">
                 <input
                         v-model="input_value"
                         :type="type"

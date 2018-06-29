@@ -114756,6 +114756,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['csrfToken', 'selectedDatabase', 'loadedTables'],
@@ -114857,7 +114858,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             // load selected tab
-            this.$refs.tabs.loadTabs().then(function (data) {
+            this.$refs.tabs.loadTabs().then(function () {
                 window.session.get('selectedTab').then(function (selectedTabId) {
                     if (_this2.$refs.tabs.tabExists(selectedTabId)) {
                         _this2.changeTab(selectedTabId);
@@ -114874,28 +114875,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return this.newTab("query");
             }
         },
-        addTableTab: function addTableTab(table, type) {
+        addTableTab: function addTableTab(type, table, where) {
             var _this3 = this;
 
-            var tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type });
+            var title = table || this.titleCase(type);
+            var tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type, "where": where });
             this.clearTable();
             this.table = table;
             if (tab) {
-                this.changeTab(tab.id);
+                this.changeTab(tab.id, where);
             } else {
                 this.loadTable(table).then(function (config) {
-                    _this3.newTab(type, table, config);
+                    _this3.newTab(type, title, table, where);
                 });
             }
         },
         addStructureTab: function addStructureTab(table) {
-            this.addTableTab(table, "structure");
+            this.addTableTab("structure", table);
         },
         activeTab: function activeTab() {
             return this.$refs.tabs.activeTab();
         },
-        changeTab: function changeTab(id) {
-            this.$refs.tabs.changeTab(id);
+        changeTab: function changeTab(id, where) {
+            this.$refs.tabs.changeTab(id, where);
         },
         closeTab: function closeTab(id) {
             return this.$refs.tabs.closeTab(id);
@@ -114907,11 +114909,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.filter = null;
             this.records = [];
         },
-        newTab: function newTab(type, title, table) {
+        newTab: function newTab(type, title, table, where) {
             var _$refs$tabs;
 
+            console.log('Content.newTab(', 'type:', type, ', title:', title, ', table:', table, ', where:', where, ')');
+
             var tabId = (_$refs$tabs = this.$refs.tabs).newTab.apply(_$refs$tabs, arguments);
-            this.changeTab(tabId);
+            this.changeTab(tabId, where);
             return tabId;
         },
         onTabChange: function onTabChange(index) {
@@ -114921,13 +114925,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             //
         },
         openTable: function openTable(table) {
-            this.addTableTab(table, "content");
+            // eslint-disable-next-line
+            console.log('Content.openTable(', table, ')');
+            this.addTableTab("content", table);
+        },
+        openTableRow: function openTableRow(event) {
+            console.log(event);
+            this.addTableTab("content", event.table, event.where);
         },
         refreshTab: function refreshTab(index) {
             if (typeof index === "undefined") {
                 index = this.$refs.tabs.activeTabIndex();
             }
-            this.$refs.tabs.$refs['tab'][index].refresh();
+            this.$refs.tabs.refreshTab(index);
         },
         refreshTables: function refreshTables(connection) {
             var _this4 = this;
@@ -114974,8 +114984,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         postLogin: function postLogin() {
             var _this6 = this;
 
-            return axios.post(this.server + '/login', this.login).then(function (response) {
+            return axios.post(this.server + '/login', this.login).then(function () {
                 _this6.state.masked = false;
+                _this6.bus.$emit('loggedIn');
             }).catch(function (error) {
                 console.log('loginError', error);
                 _this6.bus.$emit('loginError');
@@ -114995,6 +115006,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         }
                     }
                 }
+            });
+        },
+        titleCase: function titleCase(string) {
+            return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, function (txt) {
+                return txt.toUpperCase();
             });
         },
         toggleListDisplay: function toggleListDisplay() {
@@ -115301,7 +115317,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         makeSelect: function makeSelect(table, where, conjunction, order) {
             var sql = 'SELECT * FROM ' + table;
             if (where) {
-                if (where.constructor === Array) {
+                if (where.constructor === Object) {
                     sql += ' ' + this.makeBindingsWhere(where, conjunction);
                 } else {
                     if (!where.toUpperCase().includes('WHERE')) {
@@ -115402,13 +115418,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 data.pluck = pluck;
             }
             return axios.post(this.server + '/select', data).then(function (response) {
-                _this.afterRequestInternal();
                 _this.querySuccess(response);
             }).catch(function (error) {
                 _this.result = null;
                 _this.queryError(error);
             }).then(function () {
-                _this.afterQuery();
+                _this.afterRequestInternal();
             });
         },
         insertQuery: function insertQuery(sql, bindings) {
@@ -115423,12 +115438,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/insert', data).then(function (response) {
-                _this2.afterRequestInternal();
                 _this2.querySuccess(response);
             }).catch(function (error) {
                 _this2.queryError(error);
             }).then(function () {
-                _this2.afterQuery();
+                _this2.afterRequestInternal();
             });
         },
         updateQuery: function updateQuery(sql, bindings) {
@@ -115463,12 +115477,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 data.bindings = bindings;
             }
             return axios.post(this.server + '/delete', data).then(function (response) {
-                _this4.afterRequestInternal();
                 _this4.querySuccess(response);
             }).catch(function (error) {
                 _this4.queryError(error);
             }).then(function () {
-                _this4.afterQuery();
+                _this4.afterRequestInternal();
             });
         },
         executeQuery: function executeQuery(sql) {
@@ -115479,12 +115492,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             return axios.post(this.server + '/execute', {
                 sql: this.sql
             }).then(function (response) {
-                _this5.afterRequestInternal();
                 _this5.querySuccess(response);
             }).catch(function (error) {
                 _this5.queryError(error);
             }).then(function () {
-                _this5.afterQuery();
+                _this5.afterRequestInternal();
             });
         },
         initTableObject: function initTableObject(name) {
@@ -115568,11 +115580,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         loadTableSchema: function loadTableSchema(table) {
             var _this9 = this;
 
-            this.beforeRequestInternal(false);
+            var trackRequestTime = false;
+            this.beforeRequestInternal(trackRequestTime);
             return axios.post(this.server + '/schema', {
                 table: table
             }).then(function (response) {
-                _this9.afterRequestInternal(false);
                 _this9.querySuccess(response);
 
                 if (_this9.result !== null) {
@@ -115594,6 +115606,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 return _this9.state.tables[table];
             }).catch(function (error) {
                 _this9.queryError(error);
+            }).then(function () {
+                _this9.afterRequestInternal(trackRequestTime);
             });
         },
         getTableSchema: function getTableSchema(table) {
@@ -115698,7 +115712,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.sql = sql;
         },
         afterQuery: function afterQuery() {
-            //
+            // eslint-disable-next-line
+            console.log('afterQuery() ... ');
         },
         querySuccess: function querySuccess(response) {
             this.response = response;
@@ -115727,9 +115742,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 errorText = error;
                 if (error.response) {
                     errorText = error.response.statusText;
-                    if (error.response.status === 419) {
-                        // window.location = '/'
+                    if (error.response.status === 419 || error.response.status === 401) {
                         this.bus.$emit('expiredSession');
+                        return;
                     }
                     if (error.response.data) {
                         errorText = error.response.data;
@@ -117704,6 +117719,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['id', 'tab', 'table', 'tableConfig', 'order', 'records', 'insertingRow', 'editingRow'],
@@ -118180,6 +118196,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
             }
         },
+        columnIsForeignKey: function columnIsForeignKey(column) {
+            var fk = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.find(this.tableConfig.foreignKeys, ['column_name', column]);
+            return typeof fk !== "undefined";
+        },
         valueDisplay: function valueDisplay(column) {
             var value = this.data[column];
             var config = null;
@@ -118190,6 +118210,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
             return value;
+        },
+        openForeignRow: function openForeignRow(column) {
+            var foreignKey = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.find(this.tableConfig.foreignKeys, ['column_name', column]);
+            this.$emit('openTableRow', {
+                table: foreignKey.foreign_table_name,
+                where: foreignKey.foreign_column_name + " = '" + this.row[column] + "'"
+            });
         },
         updatedValues: function updatedValues() {
             var original = this.row;
@@ -118333,51 +118360,75 @@ var render = function() {
         : _vm._e(),
       _vm._v(" "),
       _vm._l(_vm.data, function(value, name) {
-        return _c("td", [
-          _vm.tableConfig &&
-          _vm.tableConfig.primaryKey &&
-          _vm.editingRow === _vm.row[_vm.tableConfig.primaryKey]
-            ? _c(
-                "span",
-                [
-                  _c(_vm.getFormComponent(name), {
-                    tag: "component",
-                    attrs: {
-                      placeholder: _vm.getFieldDefault(name),
-                      type: _vm.getTypeAttr(name)
-                    },
-                    nativeOn: {
-                      keyup: function($event) {
-                        if (
-                          !("button" in $event) &&
-                          _vm._k(
-                            $event.keyCode,
-                            "enter",
-                            13,
-                            $event.key,
-                            "Enter"
-                          )
-                        ) {
-                          return null
-                        }
-                        return _vm.saveRow($event)
-                      }
-                    },
-                    model: {
-                      value: _vm.data[name],
-                      callback: function($$v) {
-                        _vm.$set(_vm.data, name, $$v)
+        return _c(
+          "td",
+          [
+            _vm.tableConfig &&
+            _vm.tableConfig.primaryKey &&
+            _vm.editingRow === _vm.row[_vm.tableConfig.primaryKey]
+              ? _c(
+                  "span",
+                  [
+                    _c(_vm.getFormComponent(name), {
+                      tag: "component",
+                      attrs: {
+                        placeholder: _vm.getFieldDefault(name),
+                        type: _vm.getTypeAttr(name)
                       },
-                      expression: "data[name]"
-                    }
-                  })
-                ],
-                1
-              )
-            : _c("span", {
-                domProps: { innerHTML: _vm._s(_vm.valueDisplay(name)) }
-              })
-        ])
+                      nativeOn: {
+                        keyup: function($event) {
+                          if (
+                            !("button" in $event) &&
+                            _vm._k(
+                              $event.keyCode,
+                              "enter",
+                              13,
+                              $event.key,
+                              "Enter"
+                            )
+                          ) {
+                            return null
+                          }
+                          return _vm.saveRow($event)
+                        }
+                      },
+                      model: {
+                        value: _vm.data[name],
+                        callback: function($$v) {
+                          _vm.$set(_vm.data, name, $$v)
+                        },
+                        expression: "data[name]"
+                      }
+                    })
+                  ],
+                  1
+                )
+              : [
+                  _c("span", {
+                    domProps: { innerHTML: _vm._s(_vm.valueDisplay(name)) }
+                  }),
+                  _vm.columnIsForeignKey(name) && _vm.data[name]
+                    ? _c("span", [
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                _vm.openForeignRow(name)
+                              }
+                            }
+                          },
+                          [_vm._v("...")]
+                        )
+                      ])
+                    : _vm._e()
+                ]
+          ],
+          2
+        )
       })
     ],
     2
@@ -118561,6 +118612,9 @@ var render = function() {
                                 "editing-row": _vm.editingRow
                               },
                               on: {
+                                openTableRow: function($event) {
+                                  _vm.$emit("openTableRow", $event)
+                                },
                                 editingRow: function($event) {
                                   _vm.$emit(
                                     "editingRow",
@@ -120056,6 +120110,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             bus: window.bus,
+            util: window.util,
             store: window.store,
             state: window.store.state,
             input_id: null,
@@ -120102,6 +120157,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             return this.layout === 'inline';
         }
     },
+    mounted: function mounted() {
+        this.init();
+    },
+
     watch: {
         errors: {
             handler: function handler() {
@@ -120112,6 +120171,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
+        init: function init() {
+            this.input_id = this.id || this.util.uuid();
+        },
         uuid: function uuid() {
             return Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
         }
@@ -120466,7 +120528,7 @@ var render = function() {
                 { class: _vm.type },
                 _vm._l(_vm.options, function(option, key) {
                   return _c("div", { key: key }, [
-                    _c("label", { attrs: { for: _vm.name + "-" + key } }, [
+                    _c("label", { attrs: { for: _vm.input_id + "-" + key } }, [
                       _vm.type === "checkbox"
                         ? _c("input", {
                             directives: [
@@ -120684,7 +120746,7 @@ var render = function() {
         ? _c("label", {
             class: _vm.labelClass,
             attrs: { for: _vm.input_id },
-            domProps: { innerHTML: _vm._s(_vm.label) }
+            domProps: { innerHTML: _vm._s(_vm.label || "_o0o_") }
           })
         : _vm._e(),
       _vm._v(" "),
@@ -120705,7 +120767,7 @@ var render = function() {
                 attrs: {
                   control: _vm.control,
                   multiple: _vm.multiple,
-                  id: _vm.id,
+                  id: _vm.input_id,
                   name: _vm.name,
                   label: _vm.label,
                   rules: _vm.rules,
@@ -120754,7 +120816,7 @@ var render = function() {
               attrs: {
                 control: _vm.control,
                 multiple: _vm.multiple,
-                id: _vm.id,
+                id: _vm.input_id,
                 name: _vm.name,
                 label: _vm.label,
                 rules: _vm.rules,
@@ -121553,7 +121615,7 @@ var render = function() {
               control: field.control,
               multiple: field.multiple,
               name: field.name,
-              label: field.label,
+              label: field.label || "",
               rules: field.rules,
               type: field.type,
               options: field.options,
@@ -123121,7 +123183,8 @@ var render = function() {
               on: {
                 loaded: _vm.onTabChange,
                 tabChanged: _vm.onTabChange,
-                refresh: _vm.refreshTab
+                refresh: _vm.refreshTab,
+                openTableRow: _vm.openTableRow
               }
             })
           ],
@@ -125266,6 +125329,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -125279,13 +125346,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             tabs: []
         };
     },
-    created: function created() {
-        var $this = this;
-        this.bus.$on('databaseConnected', function (config) {
-            $this.tabs = [];
-            $this.addTab('query');
+    mounted: function mounted() {
+        var _this = this;
 
-            console.log('@databaseConnected');
+        this.bus.$on('loggedIn', function () {
+            _this.storeTabs();
+            _this.refreshTab();
         });
     },
 
@@ -125304,7 +125370,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         addTab: function addTab() {
             this.changeTab(this.newTab.apply(this, arguments));
         },
-        changeTab: function changeTab(index) {
+        changeTab: function changeTab(index, where) {
+            var _this2 = this;
+
             var $this = this;
             var changeToTab = null;
             if (isNaN(index)) {
@@ -125314,14 +125382,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 this.activeTabIndex(null);
                 this.storeSelectedTab(null);
             } else {
-                //                    setTimeout(function() {
                 changeToTab = $this.getTab('index', index);
                 if (changeToTab) {
                     $('.nav-tabs a[data-id="' + changeToTab.id + '"]').tab('show');
                     $this.activeTabIndex(index);
                     this.storeSelectedTab(changeToTab.id);
+
+                    if (where) {
+                        this.$nextTick(function () {
+                            console.log('filterWhere', index, where);
+                            console.log(_this2.$refs.tab);
+                            _this2.$refs.tab[index].filterWhere(where);
+                        });
+                    }
                 }
-                //                    }, 5)
             }
         },
         tabExists: function tabExists(index) {
@@ -125376,20 +125450,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.findIndex(this.tabs, [key, value]);
         },
         loadTabs: function loadTabs() {
-            var _this = this;
+            var _this3 = this;
 
             return window.session.get('tabs').then(function (tabs) {
                 var promises = [];
                 var tabCount = tabs.length;
                 if (tabCount > 0) {
                     var _loop = function _loop(i) {
-                        if (tabs[i].connection === _this.state.connection && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.find(_this.tabs, { 'id': tabs[i].id })) {
-                            if (null === _this.getTableSchema(tabs[i].table)) {
-                                promises.push(_this.loadTableSchema(tabs[i].table).then(function (tableConfig) {
-                                    _this.tabs.push(tabs[i]);
+                        if (tabs[i].connection === _this3.state.connection && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.find(_this3.tabs, { 'id': tabs[i].id })) {
+                            if (null === _this3.getTableSchema(tabs[i].table)) {
+                                promises.push(_this3.loadTableSchema(tabs[i].table).then(function (tableConfig) {
+                                    _this3.tabs.push(tabs[i]);
                                 }));
                             } else {
-                                _this.tabs.push(tabs[i]);
+                                _this3.tabs.push(tabs[i]);
                                 promises.push(Promise.resolve(tabs[i]));
                             }
                         }
@@ -125400,19 +125474,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     }
                 }
 
-                return Promise.all(promises).then(function (tabs) {
-                    return _this.tabs;
+                return Promise.all(promises).then(function () {
+                    _this3.sortTabs();
+                    return _this3.tabs;
                 });
             }).catch(function () {
                 return Promise.resolve([]);
             });
         },
-        makeTab: function makeTab(tabId, connection, type, title, table) {
+        makeTab: function makeTab(tabId, connection, type, title, table, where) {
             var tab = {
                 id: tabId,
                 connection: connection,
                 type: type,
-                title: title
+                title: title,
+                table: table,
+                where: where,
+                index: this.tabs.length
             };
             if (table) {
                 if ((typeof table === 'undefined' ? 'undefined' : _typeof(table)) === "object" && table.hasOwnProperty('name')) {
@@ -125422,12 +125500,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }
             return tab;
         },
-        newTab: function newTab(type, title, table) {
+        newTab: function newTab(type, title, table, where) {
             if (!title) {
                 title = this.titleCase(type);
             }
             var tabId = this.uuid();
-            var tab = this.makeTab(tabId, this.state.connection, type, title, table);
+            var tab = this.makeTab(tabId, this.state.connection, type, title, table, where);
             this.tabs.push(tab);
             if (null === this.activeTabIndex()) {
                 this.activeTabIndex(this.getTabIndex('id', tabId));
@@ -125440,6 +125518,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onMoveTab: function onMoveTab(e) {
             var from = e.oldIndex;
             var to = e.newIndex;
+            var tabCount = this.tabs.length;
             if (from === this.activeTabIndex()) {
                 this.changeTab(to);
             } else if (to <= this.activeTabIndex()) {
@@ -125447,17 +125526,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             } else if (to > this.activeTabIndex() && from < this.activeTabIndex()) {
                 this.changeTab(Math.max(this.activeTabIndex() - 1, 0));
             }
+            for (var i = 0; i < tabCount; i++) {
+                this.tabs[i].index = i;
+            }
+            this.storeTabs();
+        },
+        refreshTab: function refreshTab(index) {
+            if (typeof index === "undefined") {
+                index = this.activeTabIndex();
+            }
+            this.$refs['tab'][index].refresh();
+        },
+        sortTabs: function sortTabs() {
+            this.tabs = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.orderBy(this.tabs, ['index']);
         },
 
         storeTabs: __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.debounce(function () {
             var tabs = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.filter(this.tabs, function (t) {
                 return t.type !== 'query';
             });
-            // console.log('>>> storeTabs:',tabs)
             window.session.set('tabs', tabs);
         }, 500),
         storeSelectedTab: __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.debounce(function (id) {
-            // console.log('[[ storeSelectedTab', id)
             window.session.set('selectedTab', id);
         }, 500),
         tabIcon: function tabIcon(type) {
@@ -127581,6 +127671,7 @@ var render = function() {
                   "current-tab": _vm.activeTabIndex(),
                   type: tab.type,
                   table: tab.table,
+                  find: tab.where,
                   "loaded-tables": _vm.loadedTables
                 },
                 on: {
@@ -127589,6 +127680,9 @@ var render = function() {
                   },
                   refresh: function($event) {
                     _vm.$emit("refresh", $event)
+                  },
+                  openTableRow: function($event) {
+                    _vm.$emit("openTableRow", $event)
                   }
                 }
               })
@@ -127596,31 +127690,34 @@ var render = function() {
           )
         ])
       ])
-    : _c(
-        "div",
-        { staticClass: "notabs" },
-        [
-          _c(
-            "el-button",
-            {
-              attrs: { type: "primary", icon: "search" },
-              on: {
-                click: function($event) {
-                  _vm.newTab("query")
-                }
-              }
-            },
-            [
-              _c("span", {
-                class: _vm.tabIcon("query"),
-                attrs: { "aria-hidden": "true" }
-              }),
-              _vm._v(" New Query")
-            ]
-          )
-        ],
-        1
-      )
+    : _c("div", { staticClass: "notabs" }, [
+        !_vm.state.processing
+          ? _c(
+              "div",
+              [
+                _c(
+                  "el-button",
+                  {
+                    attrs: { type: "primary", icon: "search" },
+                    on: {
+                      click: function($event) {
+                        _vm.newTab("query")
+                      }
+                    }
+                  },
+                  [
+                    _c("span", {
+                      class: _vm.tabIcon("query"),
+                      attrs: { "aria-hidden": "true" }
+                    }),
+                    _vm._v(" New Query")
+                  ]
+                )
+              ],
+              1
+            )
+          : _vm._e()
+      ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -127757,9 +127854,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['id', 'currentTab', 'type', 'table', 'loadedTables'],
+    props: ['id', 'currentTab', 'type', 'table', 'loadedTables', 'find'],
     mixins: [__webpack_require__(5)],
     data: function data() {
         return {
@@ -127773,7 +127872,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             insertingRow: false,
             order: null,
             records: [],
-            where: null
+            where: this.find
         };
     },
     mounted: function mounted() {
@@ -127849,7 +127948,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 page = this.currentPage();
             }
             return this.selectQuery(sql, page).then(function (response) {
-                _this.records = _this.result;
+                if (_this.result !== null) {
+                    _this.records = _this.result;
+                }
                 _this.$emit('loaded');
             });
         },
@@ -127862,14 +127963,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (this.type === "query") {
                 this.$refs.customQuery.run();
             } else {
-                this.loadTable(this.table, true).then(function (config) {
-                    _this2.state.tables[_this2.table] = config;
-                    // this.$set($this.state.tables, this.table, config)
-                    _this2.bus.$emit('tabRefreshed', config);
+                this.loadTable(this.table, true).then(function () {
+                    _this2.bus.$emit('tabRefreshed', _this2.state.tables[_this2.table]);
                     _this2.getRecords();
                 });
-                // this.getRecords()
-                // this.$emit('refresh', e)
             }
         },
         insertRow: function insertRow(data) {
@@ -128077,11 +128174,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['columns'],
+    props: ['columns', 'find'],
     created: function created() {},
     data: function data() {
         return {
-            where: null,
+            where: this.find,
             autocomplete: {
                 options: this.columns || Object.keys(window.store.state.tables),
                 selector: '.el-input__inner',
@@ -128097,6 +128194,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
 
+    watch: {
+        find: function find() {
+            if (this.find !== null) {
+                this.where = this.find;
+                // eslint-disable-next-line
+                console.log(this.find, this.where);
+            }
+        }
+    },
     mixins: [__webpack_require__(205)]
 });
 
@@ -128446,7 +128552,11 @@ var render = function() {
                 (_vm.records && _vm.records.length > 0)) ||
               _vm.where
                 ? _c("content-filter", {
-                    attrs: { id: "contentFilter", columns: _vm.columns },
+                    attrs: {
+                      id: "contentFilter",
+                      find: _vm.where,
+                      columns: _vm.columns
+                    },
                     on: { filterWhere: _vm.filterWhere }
                   })
                 : _vm._e(),
@@ -128478,6 +128588,9 @@ var render = function() {
                   insertRow: _vm.insertRow,
                   updateRow: _vm.updateRow,
                   deleteRow: _vm.deleteRow,
+                  openTableRow: function($event) {
+                    _vm.$emit("openTableRow", $event)
+                  },
                   refresh: function($event) {
                     _vm.$emit("refresh", $event)
                   }
@@ -128649,9 +128762,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 },
                 onError: function onError(error) {
                     var message = this.parseError(error);
-                    console.error(message);
-                    if (typeof message === "string") {
-                        alert(message);
+                    if (message) {
+                        console.error(message);
+                        if (typeof message === "string") {
+                            alert(message);
+                        }
                     }
                 },
                 parseError: function parseError(error) {
@@ -128660,8 +128775,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         errorText = error;
                         if (error.response) {
                             errorText = error.response.statusText;
-                            if (error.response.status === 419) {
-                                window.location = '/';
+                            if (error.response.status === 419 || error.response.status === 401) {
+                                this.bus.$emit('expiredSession');
+                                return;
                             }
                             if (error.response.data) {
                                 errorText = error.response.data;
@@ -128734,11 +128850,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
-        // this.session.init()
         this.init();
     },
     data: function data() {
         return {
+            bus: window.bus,
             cacheData: {},
             queueData: {},
             debounceUpdate: true,
@@ -128856,9 +128972,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
             onError: function onError(error) {
                 var message = this.parseError(error);
-                console.error(message);
-                if (typeof message === "string") {
-                    alert(message);
+                if (message) {
+                    console.error(message);
+                    if (typeof message === "string") {
+                        alert(message);
+                    }
                 }
             },
             parseError: function parseError(error) {
@@ -128867,8 +128985,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     errorText = error;
                     if (error.response) {
                         errorText = error.response.statusText;
-                        if (error.response.status === 419) {
-                            window.location = '/';
+                        if (error.response.status === 419 || error.response.status === 401) {
+                            this.bus.$emit('expiredSession');
+                            return;
                         }
                         if (error.response.data) {
                             errorText = error.response.data;
@@ -128897,7 +129016,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 } else {
                     return Promise.resolve(null);
                 }
-            }, 1000)
+            }, 1000, { 'leading': true })
         };
     }
 });
