@@ -114675,7 +114675,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 30px;\n}\n\n/*\n     * Global add-ons\n     */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n     * Top navigation\n     * Hide default border to remove 1px line.\n     */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n     * Sidebar\n     */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f9f9f9;\n    /*border-right: 1px solid #eee;*/\n}\n}\n.collapsed.sidebar {\n  left: -16.66666667%;\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n     * Main content\n     */\n.main {\n  height: 100%;\n  padding: 20px 0 0 0;\n}\n.main .page-header {\n  margin-top: 0;\n}\n.main .btn {\n  height: auto;\n}\n.btn.attach {\n  bottom: 5px;\n  left: -30px;\n  position: absolute;\n  z-index: 9999;\n}\n.btn.attach.pull-out {\n  left: 5px;\n}\n.content-mask {\n  position: fixed;\n  z-index: 9999;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  /*background-color: #000;*/\n  background: linear-gradient(135deg, #000, #3c3c3c);\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n.content-mask > * {\n  z-index: 10000;\n}\n#sessionRestoreLogin {\n  width: 50%;\n  left: 25%;\n  top: 25%;\n  position: fixed;\n}\n", ""]);
+exports.push([module.i, "\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n.glyphicon-star, .glyphicon-star-empty {\n  margin-right: 2px;\n}\n.rowButtons {\n  width: 90px;\n}\n.glyphicon.spinning {\n  animation: spin 1s infinite linear;\n  -webkit-animation: spin2 1s infinite linear;\n}\n@-webkit-keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@keyframes spin {\nfrom {\n    -webkit-transform: scale(1) rotate(0deg);\n            transform: scale(1) rotate(0deg);\n}\nto {\n    -webkit-transform: scale(1) rotate(360deg);\n            transform: scale(1) rotate(360deg);\n}\n}\n@-webkit-keyframes spin2 {\nfrom {\n    -webkit-transform: rotate(0deg);\n}\nto {\n    -webkit-transform: rotate(360deg);\n}\n}\n.table.processing tbody {\n  opacity: 0.8;\n}\n.closeTab {\n  margin-left: 5px;\n  visibility: hidden;\n}\n.nav-tab-item-a:hover .closeTab {\n  visibility: visible;\n}\n.empty {\n  color: #bcbcbc;\n  font-size: 1.5em;\n  padding: 15px;\n}\n#searchinput {\n  width: 200px;\n}\n#searchclear {\n  position: absolute;\n  right: 7px;\n  top: 0;\n  bottom: 0;\n  height: 14px;\n  margin: auto;\n  font-size: 14px;\n  cursor: pointer;\n  color: #bbb;\n}\n.row-no-padding [class*=\"col-\"] {\n  padding-left: 0 !important;\n  padding-right: 0 !important;\n}\nhtml {\n  min-height: 100%;\n  position: relative;\n}\n\n/* Move down content because we have a fixed navbar that is 50px tall */\nbody {\n  padding-top: 30px;\n}\n\n/*\n     * Global add-ons\n     */\n.sub-header {\n  padding-bottom: 10px;\n  border-bottom: 1px solid #eee;\n}\n\n/*\n     * Top navigation\n     * Hide default border to remove 1px line.\n     */\n.navbar-fixed-top {\n  border: 0;\n}\n\n/*\n     * Sidebar\n     */\n/* Hide for mobile, show later */\n.sidebar {\n  display: none;\n}\n@media (min-width: 768px) {\n.sidebar {\n    position: fixed;\n    top: 42px;\n    bottom: 0;\n    left: 0;\n    z-index: 1000;\n    display: block;\n    padding: 5px;\n    overflow-x: hidden;\n    overflow-y: auto;\n    /* Scrollable contents if viewport is shorter than content. */\n    background-color: #f9f9f9;\n    /*border-right: 1px solid #eee;*/\n    -webkit-transition: 0.5s;\n    transition: 0.5s;\n}\n}\n.collapsed.sidebar {\n  left: -16.66666667%;\n}\n\n/* Sidebar navigation */\n.nav-sidebar {\n  margin-right: -21px;\n  /* 20px padding + 1px border */\n  margin-bottom: 20px;\n  margin-left: -20px;\n}\n.nav-sidebar > li > a {\n  padding-right: 20px;\n  padding-left: 20px;\n}\n.nav-sidebar > .active > a,\n.nav-sidebar > .active > a:hover,\n.nav-sidebar > .active > a:focus {\n  color: #fff;\n  background-color: #428bca;\n}\n\n/*\n     * Main content\n     */\n.main {\n  height: 100%;\n  padding: 20px 0 0 0;\n  -webkit-transition: 0.5s;\n  transition: 0.5s;\n}\n.main .page-header {\n  margin-top: 0;\n}\n.main .btn {\n  height: auto;\n}\n.btn.attach {\n  bottom: 5px;\n  left: -30px;\n  outline: none;\n  position: absolute;\n  z-index: 9999;\n}\n.btn.attach.pull-out {\n  left: 5px;\n}\n.content-mask {\n  position: fixed;\n  z-index: 9999;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  /*background-color: #000;*/\n  background: linear-gradient(135deg, #000, #3c3c3c);\n  -webkit-transition: opacity .3s ease;\n  transition: opacity .3s ease;\n}\n.content-mask > * {\n  z-index: 10000;\n}\n#sessionRestoreLogin {\n  width: 50%;\n  left: 25%;\n  top: 25%;\n  position: fixed;\n}\n", ""]);
 
 // exports
 
@@ -114798,6 +114798,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     created: function created() {
         this.bus.$on('Connections.databaseSelected', this.refreshTables);
         this.bus.$on('App.databaseTablesLoaded', this.loadTabs);
+        window.addEventListener('keyup', this.registerKeyListener);
+        window.addEventListener('keydown', this.registerKeyListener);
     },
     mounted: function mounted() {
         var _this = this;
@@ -114854,6 +114856,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
+        registerKeyListener: function registerKeyListener(e) {
+
+            this.state.keyMap[e.keyCode] = e.type === 'keydown';
+
+            // (Cmd || Ctrl) + F
+            if ((this.state.keyMap[91] || this.state.keyMap[17]) && this.state.keyMap[70]) {}
+            //
+
+            // \ Toggle sidebar
+            if (this.state.keyMap[220]) {
+                var focusedElement = document.activeElement.tagName.toLowerCase();
+                if (focusedElement !== 'input' && focusedElement !== 'textarea' && focusedElement !== 'select') {
+                    this.toggleListDisplay();
+                }
+            }
+        },
         loadTabs: function loadTabs() {
             var _this2 = this;
 
@@ -116120,7 +116138,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             util: window.util,
-            list: [],
+            list: this.tables,
+            prevList: this.tables,
             newTableError: '',
             newTableName: '',
             showModal: false,
@@ -116128,13 +116147,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        this.list = this.tables;
         window.addEventListener('resize', this.onWindowResize);
     },
 
     computed: {
         computedList: function computedList() {
-            return this.computeList();
+            this.onWindowResize();
+            var list = this.computeList();
+            if (list.length < 1) {
+                list = this.prevList;
+            } else {
+                this.prevList = list;
+            }
+            return list;
         },
         toggleDisplayClass: function toggleDisplayClass() {
             var className = '';
@@ -116184,28 +116209,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
             }
         },
-
-        beforeEnter: function beforeEnter(el) {
-            el.style.opacity = 0;
-            el.style.height = 0;
-        },
-        enter: function enter(el, done) {
-            var delay = el.dataset.index * 150;
-            setTimeout(function () {
-                Velocity(el, { opacity: 1, height: '1.6em' }, { complete: done });
-            }, delay);
-        },
         computeList: function computeList() {
-            var vm = this;
-            var list = [];
-            if (vm.query) {
+            var list = this.list;
+            var query = this.query.toLowerCase();
+            if (query) {
                 list = this.list.filter(function (item) {
-                    return item.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1;
+                    return item.toLowerCase().indexOf(query) !== -1;
                 });
-            } else {
-                list = this.list;
             }
-            this.onWindowResize();
             return list;
         },
 
@@ -117642,7 +117653,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results .table {\n  font-size: 13px;\n  margin-bottom: 0;\n}\n.results .table td input {\n    border: 0;\n    height: 20px;\n    padding: 3px;\n}\n.results .table td span {\n    white-space: nowrap;\n}\n.results .table td.rowButtons {\n    width: 34px;\n    max-width: 75px;\n}\n.results .table .rowButtons > * {\n    visibility: hidden;\n}\n.results .table .rowButtons div.btn-group {\n    position: fixed;\n    z-index: 1000;\n}\n.results .table tr:hover .rowButtons > *, .results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    visibility: visible;\n}\n.results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n    width: 75px;\n}\n.results .table .el-input__prefix {\n    left: 1px;\n}\n.results .table .el-input__icon {\n    width: 22px;\n    line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n  .results .table .el-input--suffix .el-input__inner {\n    padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n  padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n[tooltip]:before {\n  position: absolute;\n  content: attr(tooltip);\n  opacity: 0;\n  bottom: 20px;\n  left: 0;\n  background: #000;\n  color: #fff;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  padding: 4px 8px;\n  z-index: 999;\n  /* hovering the tooltip itself dismisses it */\n  pointer-events: none;\n}\n[tooltip]:hover:before {\n  opacity: 1;\n}\n", ""]);
+exports.push([module.i, "\n.table th,\n.table .rowButtons {\n  white-space: nowrap;\n}\n.results {\n  height: 100%;\n}\n.results .table {\n    font-size: 13px;\n    margin-bottom: 0;\n}\n.results .table td input {\n      border: 0;\n      height: 20px;\n      padding: 3px;\n}\n.results .table td span {\n      white-space: nowrap;\n}\n.results .table td.rowButtons {\n      width: 34px;\n      max-width: 75px;\n}\n.results .table .rowButtons > * {\n      visibility: hidden;\n}\n.results .table .rowButtons div.btn-group {\n      position: fixed;\n      z-index: 1000;\n}\n.results .table tr:hover .rowButtons > *, .results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n      visibility: visible;\n}\n.results .table tr.warning .rowButtons > *, .results .table tr.success .rowButtons > * {\n      width: 75px;\n}\n.results .table .el-input__prefix {\n      left: 1px;\n}\n.results .table .el-input__icon {\n      width: 22px;\n      line-height: 20px;\n}\n.results .table .el-input--prefix .el-input__inner,\n    .results .table .el-input--suffix .el-input__inner {\n      padding-left: 22px;\n}\n.results .table-condensed > tbody > tr > td {\n    padding: 2px;\n}\n.fade-enter-active, .fade-leave-active {\n  -webkit-transition: opacity .5s;\n  transition: opacity .5s;\n}\n.fade-enter, .fade-leave-to {\n  opacity: 0;\n}\n[tooltip]:before {\n  position: absolute;\n  content: attr(tooltip);\n  opacity: 0;\n  bottom: 20px;\n  left: 0;\n  background: #000;\n  color: #fff;\n  border: 1px solid transparent;\n  border-radius: 4px;\n  padding: 4px 8px;\n  z-index: 999;\n  /* hovering the tooltip itself dismisses it */\n  pointer-events: none;\n}\n[tooltip]:hover:before {\n  opacity: 1;\n}\n", ""]);
 
 // exports
 
@@ -118252,7 +118263,7 @@ var render = function() {
     "tr",
     {
       class: {
-        warning:
+        info:
           _vm.tableConfig &&
           _vm.tableConfig.primaryKey &&
           _vm.editingRow === _vm.row[_vm.tableConfig.primaryKey]
@@ -118421,7 +118432,13 @@ var render = function() {
                               }
                             }
                           },
-                          [_vm._v("...")]
+                          [
+                            _c("span", {
+                              staticClass:
+                                "glyphicon glyphicon-option-vertical",
+                              attrs: { "aria-hidden": "true" }
+                            })
+                          ]
                         )
                       ])
                     : _vm._e()
@@ -123098,7 +123115,7 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control input-sm focus",
-                  attrs: { placeholder: "Search Tables" },
+                  attrs: { id: "tableFilter", placeholder: "Search Tables" },
                   domProps: { value: _vm.tableQuery },
                   on: {
                     input: function($event) {

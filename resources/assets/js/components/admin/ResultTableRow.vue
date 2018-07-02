@@ -1,5 +1,5 @@
 <template>
-    <tr :class="{ warning: (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
+    <tr :class="{ info: (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
         <td v-if="tab !== 'query'" class="rowButtons">
             <div>
                 <div class="btn-group" role="toolbar" aria-label="..." v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
@@ -31,7 +31,7 @@
                 />
             </span>
             <template v-else>
-                <span v-html="valueDisplay(name)"></span><span v-if="columnIsForeignKey(name) && data[name]">&nbsp;<a href="#" @click.prevent="openForeignRow(name)">...</a></span>
+                <span v-html="valueDisplay(name)"></span><span v-if="columnIsForeignKey(name) && data[name]">&nbsp;<a href="#" @click.prevent="openForeignRow(name)"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></span>
             </template>
         </td>
     </tr>

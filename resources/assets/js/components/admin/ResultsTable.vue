@@ -165,6 +165,8 @@
         white-space: nowrap;
     }
     .results {
+        height: 100%;
+
         .table {
             font-size: 13px;
             margin-bottom: 0;

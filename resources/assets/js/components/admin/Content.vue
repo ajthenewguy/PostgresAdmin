@@ -4,7 +4,7 @@
 			<transition name="slide">
 				<div :class="sidebarClass">
 					<div class="input-group">
-						<input v-model="tableQuery" class="form-control input-sm focus" placeholder="Search Tables">
+						<input v-model="tableQuery" id="tableFilter" class="form-control input-sm focus" placeholder="Search Tables">
 						<div class="input-group-addon">
 							<span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
 						</div>
@@ -111,6 +111,8 @@
         created() {
             this.bus.$on('Connections.databaseSelected', this.refreshTables)
             this.bus.$on('App.databaseTablesLoaded', this.loadTabs)
+            window.addEventListener('keyup', this.registerKeyListener)
+            window.addEventListener('keydown', this.registerKeyListener)
         },
         mounted() {
 			this.bus.$on('expiredSession', () => {
@@ -163,6 +165,22 @@
             }
         },
         methods: {
+            registerKeyListener(e) {
+
+                this.state.keyMap[e.keyCode] = e.type === 'keydown'
+
+                // (Cmd || Ctrl) + F
+                if ((this.state.keyMap[91] || this.state.keyMap[17]) && this.state.keyMap[70]) {
+                    //
+                }
+                // \ Toggle sidebar
+                if (this.state.keyMap[220]) {
+                    let focusedElement = document.activeElement.tagName.toLowerCase()
+                    if (focusedElement !== 'input' && focusedElement !== 'textarea' && focusedElement !== 'select') {
+                        this.toggleListDisplay()
+					}
+                }
+            },
             loadTabs() {
                 // load selected tab
                 this.$refs.tabs.loadTabs().then(() => {
@@ -427,6 +445,7 @@
             overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
             background-color: #f9f9f9;
             /*border-right: 1px solid #eee;*/
+			transition: 0.5s;
         }
     }
 	.collapsed.sidebar {
@@ -458,6 +477,7 @@
     .main {
         height: 100%;
         padding: 20px 0 0 0;
+		transition: 0.5s;
     }
     .main .page-header {
         margin-top: 0;
@@ -469,6 +489,7 @@
 	.btn.attach {
 		bottom: 5px;
 		left: -30px;
+		outline: none;
 		position: absolute;
 		z-index: 9999;
 	}
