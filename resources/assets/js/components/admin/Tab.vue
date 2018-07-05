@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-pane" :class="{ active: getTabIndex('id', id) === currentTab }" :id="'tab-' + id">
+    <div class="tab-pane" :class="{ active: getTabIndex('id', id) === currentTab, query: type === 'query' }" :id="'tab-' + id">
         <template v-if="type === 'structure'">
             <structure-table
 			 	v-if="table && schema()"
@@ -30,7 +30,7 @@
         />
         <table v-if="(type === 'query' || type === 'content')" class="results-table-container">
             <content-filter
-                    v-if="type === 'content' && (records && records.length > 0) || where"
+                    v-if="type === 'content'"
                     id="contentFilter"
                     :find="where"
                     @filterWhere="filterWhere"
@@ -196,16 +196,39 @@
                 })
             },
             deleteRow(primaryKey) {
-                if (confirm('Delete this row?')) {
+                this.$confirm('This will permanently delete the row. Continue?', 'Warning', {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                }).then(() => {
                     let where = {}
                     where[this.primaryKey()] = primaryKey
                     this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
                         this.getRecords(this.currentPage()).then(() => {
                             this.editingRow = null
-                            this.state.setProcessing(false)
+                            // this.state.setProcessing(false) // not a function... ?
+                            this.$message({
+                                type: 'success',
+                                message: 'Delete completed'
+                            })
                         })
                     })
-                }
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: 'Delete canceled'
+                    })
+                })
+                // if (confirm('Delete this row?')) {
+                //     let where = {}
+                //     where[this.primaryKey()] = primaryKey
+                //     this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
+                //         this.getRecords(this.currentPage()).then(() => {
+                //             this.editingRow = null
+                //             this.state.setProcessing(false)
+                //         })
+                //     })
+                // }
             },
             pushHistory(query) {
                 if (query !== this.history[this.history.length-1]) {

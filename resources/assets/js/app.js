@@ -17,11 +17,10 @@ window.Vue = require('vue');
 
 Vue.component('v-button', require('./components/Button.vue'))
 Vue.component('modal', require('./components/Modal.vue'))
-Vue.component('admin-content', require('./components/admin/Content.vue'))
-Vue.component('database-connections', require('./components/Connections.vue'))
+Vue.component('page-content', require('./components/Content.vue'))
+Vue.component('database-connections', require('./components/connections/Index.vue'))
 Vue.component('app-form', require('./components/forms/Form.vue'))
 Vue.component('multi-input-text', require('./components/forms/fields/MultiInputText'))
-Vue.component('primary-content', require('./components/Content.vue'))
 Vue.component('tabs', require('./components/Tabs.vue'))
 Vue.component('tab', require('./components/admin/Tab.vue'))
 

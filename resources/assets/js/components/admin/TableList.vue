@@ -179,7 +179,7 @@
             background-color: #e6e6e6;
         }
         li:first-child {
-            border-top: none;
+            /*border-top: none;*/
         }
     }
     .list-group > * {

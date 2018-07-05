@@ -1,6 +1,21 @@
 <template>
     <div id="query-wrapper">
-        <textarea v-model="query" class="form-control" rows="2" id="query_input"></textarea>
+        <textarea
+            v-if="inputFocus"
+            ref="queryTextarea"
+            @blur="blur"
+            v-model="query"
+            class="form-control"
+            rows="2"
+            id="query_input"></textarea>
+        <div-edit
+            v-else
+            ref="queryDiv"
+            v-model="query"
+            id="query_input"
+            language="SQL"
+            @focus="focus"
+        />
         <div class="btn-group">
             <button @click="run" type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Run Query
@@ -24,19 +39,22 @@
                 query: null,
                 autocomplete: {
                     options: this.loadedTables.concat(['SELECT', 'FROM', 'WHERE', 'AND']),
-                    selector: '#query_input',
+                    selector: 'textarea#query_input',
                     acceptKeys: [$.asuggestKeys.SPACE], // [$.asuggestKeys.RETURN, $.asuggestKeys.SPACE] : SHIFT, CTRL, ALT, LEFT, UP, RIGHT, DOWN, DEL, TAB, RETURN, ESC, COMMA, PAGEUP, PAGEDOWN, BACKSPACE and SPACE
                     cycleOnTab: false,
                     endingSymbols: ' ', // "space" is default
                     minChunkSize: 1,
                     delimeters: '\n ' // array of chars
-                }
+                },
+                inputFocus: false,
+                stripHtml: true
             }
         },
         mounted() {
             if (this.sql) {
                 this.query = this.sql
             }
+            this.init()
         },
         computed: {
             reversedHistory: function () {
@@ -44,12 +62,31 @@
             }
         },
         methods: {
+            blur() {
+                this.inputFocus = false
+                this.$nextTick(() => {
+                    this.$refs.queryDiv.format()
+                })
+            },
+            focus() {
+                this.inputFocus = true
+                this.$nextTick(() => {
+                    this.init()
+                    this.$refs.queryTextarea.focus()
+                })
+            },
             run() {
-                this.$emit('customQuery', this.query)
-                if (this.query) {
-                    this.$emit('beforeQuery', this.query)
+                let query = this.query
 
-                    let parsedQuery = this.$parent.parseSql(this.query)
+                if (this.stripHtml) {
+                    let doc = new DOMParser().parseFromString(query, 'text/html')
+                    query = doc.body.textContent || ""
+                }
+
+                this.$emit('customQuery', query)
+                if (query) {
+                    this.$emit('beforeQuery', query)
+                    let parsedQuery = this.$parent.parseSql(query)
                     // eslint-disable-next-line
                     console.log('@todo: use 3rd party lib', parsedQuery)
                     return this.executeParsedQuery(parsedQuery)
@@ -88,17 +125,23 @@
                 this.$emit('success', this.response)
             }
         },
-        mixins: [require('../../mixins/AutoComplete')]
+        mixins: [require('../../mixins/AutoComplete')],
+        components: {
+            'div-edit': require('./EditableDiv')
+        }
     }
 </script>
 <style>
     #query-wrapper {
-        margin-bottom: 10px;
+        background-color: #fff;
         padding: 10px;
-        position: relative;
+        position: absolute;
+        width: 100%;
     }
     #query_input {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        resize: vertical;
+        height: 60px;
         width: 100%;
     }
 </style>

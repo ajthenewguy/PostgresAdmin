@@ -1,5 +1,5 @@
 <template>
-    <tr :class="{ info: (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
+    <tr :class="{ 'info editing': (tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey]) }">
         <td v-if="tab !== 'query'" class="rowButtons">
             <div>
                 <div class="btn-group" role="toolbar" aria-label="..." v-if="(tableConfig && tableConfig.primaryKey && editingRow === row[tableConfig.primaryKey])">
@@ -109,8 +109,11 @@
                 }
             },
             columnIsForeignKey(column) {
-                let fk = _.find(this.tableConfig.foreignKeys, ['column_name', column])
-                return typeof fk !== "undefined"
+                if (this.tableConfig) {
+                    let fk = _.find(this.tableConfig.foreignKeys, ['column_name', column])
+                    return typeof fk !== "undefined"
+                }
+                return false
             },
             valueDisplay(column) {
                 let value = this.data[column]
