@@ -141,6 +141,7 @@
     #query_input {
         font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         resize: vertical;
+        line-height: 22px;
         height: 60px;
         width: 100%;
     }
