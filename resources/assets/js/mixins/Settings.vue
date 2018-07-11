@@ -52,7 +52,7 @@ export default {
                     console.log('CACHE MISS "' + key + '"')
 
 
-                    return axios.get('http://postgres:5433/settings', { params: { key: key }}).then(response => {
+                    return axios.get('/settings', { params: { key: key }}).then(response => {
                         this.cache(this.cacheSettingKey(key), response.data)
                         return response.data
                     }).catch(error => {
@@ -64,7 +64,7 @@ export default {
                 },
                 set(key, value) {
                     let payload = { key: key, value: value }
-                    return axios.post('http://postgres:5433/settings', payload).then(response => {
+                    return axios.post('/settings', payload).then(response => {
                         this.cache(this.cacheSettingKey(key), null)
                         return true
                     }).catch(error => {

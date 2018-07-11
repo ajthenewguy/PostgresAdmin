@@ -29,6 +29,9 @@ class QueryController extends AdminController
 
     public function tables(Request $request)
     {
+        if ($request->schema) {
+            $this->setSchema($request->schema, false);
+        }
         $this->collection = $this->setConnection($request->database);
         return response()->json($this->collection);
     }
@@ -179,7 +182,7 @@ class QueryController extends AdminController
             WHERE
                 pg_class.oid = \''.$request->table.'\'::regclass
                 AND indrelid = pg_class.oid
-                AND nspname = \'public\'
+                AND nspname = \''.$this->schema.'\'
                 AND pg_class.relnamespace = pg_namespace.oid
                 AND pg_attribute.attrelid = pg_class.oid
                 AND pg_attribute.attnum = any(pg_index.indkey)
