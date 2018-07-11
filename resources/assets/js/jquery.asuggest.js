@@ -187,6 +187,17 @@
                 e.stopPropagation();
                 this.focus();
                 $.asuggestFocused = this;
+
+                if ("createEvent" in document) {
+                    var evt = document.createEvent("HTMLEvents");
+                    evt.initEvent("change", false, true);
+                    evt.initEvent("input", false, true);
+                    area.dispatchEvent(evt);
+                } else {
+                    area.fireEvent("onchange");
+                    area.fireEvent("oninput");
+                }
+
                 return false;
             }
         });

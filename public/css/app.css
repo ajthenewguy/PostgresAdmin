@@ -8404,6 +8404,22 @@ body {
   padding-left: 5px;
 }
 
+#primaryTabContainer.nav.stacked > li > a {
+  padding: 10px 10px;
+  line-height: 1.0;
+}
+
+#primaryTabContainer.nav.stacked > li > a .close {
+  float: none;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+
 .form-horizontal .form-group {
   margin-left: 0;
   margin-right: 0;

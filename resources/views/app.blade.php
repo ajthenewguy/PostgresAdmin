@@ -2,9 +2,21 @@
 
 @section('content')
     @guest
-        <primary-content></primary-content>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Welcome</div>
+
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     @else
-        <admin-content csrf-token="{{ csrf_token() }}" selected-database="{{ ($selectedDatabase ?: '') }}" :loaded-tables="{{ (isset($tables) && $tables ? $tables : '{}') }}"></admin-content>
+        <page-content csrf-token="{{ csrf_token() }}" selected-database="{{ ($selectedDatabase ?: '') }}" :loaded-tables="{{ (isset($tables) && $tables ? $tables : '{}') }}"></page-content>
     @endguest
 @endsection
 

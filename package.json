@@ -23,6 +23,7 @@
         "ajv": "^6.5.0",
         "element-ui": "^2.3.2",
         "moment": "^2.22.0",
+        "syntax": "^1.4.6",
         "textarea-caret": "^3.1.0",
         "vee-validate": "^2.0.6",
         "vue-at": "^2.5.0-beta",

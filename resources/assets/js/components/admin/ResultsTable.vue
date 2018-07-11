@@ -1,14 +1,15 @@
 <template>
-    <tbody style="flex: 1; overflow: auto">
+    <tbody style="flex: 1; overflow: auto" class="fixed-table-container hidden-head">
         <div class="results table-responsive" v-if="(tab === 'query' || tab === 'content' && table)" :style="tableWrapperStyleLoading">
-            <table class="table table-hover table-condensed" :id="id">
+            <table class="table table-hover table-condensed table-striped" :id="id">
                 <thead>
-                <tr v-if="tab === 'query'">
-                    <th v-for="(value, name) in records[0]">
-                        <!--<span v-html="keyIcon(name)"></span>-->
-                        {{ name }}
-                    </th>
-                </tr>
+                <template v-if="tab === 'query'">
+                    <tr>
+                        <th v-for="(value, name) in records[0]">
+                            <div class="th-inner">{{ name }}</div>
+                        </th>
+                    </tr>
+                </template>
                 <tr v-else-if="tableConfig !== null">
                     <th>
                         <button @click="$emit('insertingRow', true)" type="button" class="btn btn-default btn-xs" aria-label="Insert Row">
@@ -23,34 +24,40 @@
                     </th>
                 </tr>
                 </thead>
-                <transition v-if="records && records.length > 0" name="fade">
-                    <tbody :class="{ 'loading': state.processing }">
-                        <insert-table-row
-                                v-if="table && insertingRow"
-                                :tab="tab"
-                                :table="table"
-                                :schema="tableConfig !== null && tableConfig.schema"
-                                @cancelInsertingRow="$emit('insertingRow', false)"
-                                @insertRow="insertRow"
-                        />
-                        <result-table-row
-                                v-show="records"
-                                v-for="row in records"
-                                :key="(tableConfig? row[tableConfig.primaryKey] : undefined)"
-                                :tab="tab"
-                                :table="table"
-                                :table-config="tableConfig"
-                                :row="row"
-                                :editing-row="editingRow"
-                                @openTableRow="$emit('openTableRow', $event)"
-                                @editingRow="$emit('editingRow', row[tableConfig.primaryKey])"
-                                @cancelEditingRow="$emit('editingRow', null)"
-                                @updateRow="updateRow"
-                                @deleteRow="$emit('deleteRow', row[tableConfig.primaryKey])"
-                        />
-                    </tbody>
-                </transition>
+                <tbody v-if="records && records.length > 0" :class="{ 'loading': state.processing }">
+                    <insert-table-row
+                            v-if="table && insertingRow"
+                            :tab="tab"
+                            :table="table"
+                            :schema="tableConfig !== null && tableConfig.schema"
+                            @cancelInsertingRow="$emit('insertingRow', false)"
+                            @insertRow="insertRow"
+                    />
+                    <result-table-row
+                            v-show="records"
+                            v-for="row in records"
+                            :key="(tableConfig? row[tableConfig.primaryKey] : undefined)"
+                            :tab="tab"
+                            :table="table"
+                            :table-config="tableConfig"
+                            :row="row"
+                            :editing-row="editingRow"
+                            @openTableRow="$emit('openTableRow', $event)"
+                            @editingRow="$emit('editingRow', row[tableConfig.primaryKey])"
+                            @cancelEditingRow="$emit('editingRow', null)"
+                            @updateRow="updateRow"
+                            @deleteRow="$emit('deleteRow', row[tableConfig.primaryKey])"
+                    />
+                </tbody>
                 <tbody v-else>
+                    <insert-table-row
+                            v-if="table && insertingRow"
+                            :tab="tab"
+                            :table="table"
+                            :schema="tableConfig !== null && tableConfig.schema"
+                            @cancelInsertingRow="$emit('insertingRow', false)"
+                            @insertRow="insertRow"
+                    />
                     <tr>
                         <td :colspan="colspan">
                             <div class="empty"><span v-if="state.processing">Processing...</span><span v-else>No records</span></div>
@@ -165,10 +172,18 @@
         white-space: nowrap;
     }
     .results {
+        height: 100%;
+
         .table {
+
+            tbody > tr > td {
+                border-top: none;
+            }
+
             font-size: 13px;
             margin-bottom: 0;
             td {
+                height: 26px;
                 input {
                     border: 0;
                     height: 20px;
@@ -178,8 +193,12 @@
                     white-space: nowrap;
                 }
             }
-            td.rowButtons {
-                width: 34px;
+            td.rowButtons > div {
+                width: 24px;
+                max-width: 75px;
+            }
+            .editing td.rowButtons > div {
+                width: 75px;
                 max-width: 75px;
             }
             .rowButtons > * {
@@ -189,7 +208,7 @@
                 position: fixed;
                 z-index: 1000;
             }
-            tr:hover, tr.warning, tr.success {
+            tr:hover, tr.editing {
                 .rowButtons > * {
                     visibility: visible;
                 }
@@ -198,6 +217,16 @@
                 .rowButtons > * {
                     width: 75px;
                 }
+            }
+            label {
+                margin: 0;
+            }
+            .el-input {
+                font-size: inherit;
+            }
+            .el-date-editor.el-input,
+            .el-date-editor.el-input__inner {
+                width: 170px;
             }
             .el-input__prefix {
                 left: 1px;
@@ -213,6 +242,9 @@
         }
         .table-condensed > tbody > tr > td {
             padding: 2px;
+        }
+        .table-condensed > tbody > tr > td:first-of-type {
+            padding: 2px 2px 2px 7px;
         }
     }
     .fade-enter-active, .fade-leave-active {
@@ -238,5 +270,9 @@
     }
     [tooltip]:hover:before {
         opacity: 1;
+    }
+
+    .tab-pane.query .table-responsive {
+        overflow-x: visible;
     }
 </style>

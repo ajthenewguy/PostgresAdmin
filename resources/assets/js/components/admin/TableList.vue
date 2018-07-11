@@ -59,7 +59,8 @@
         data() {
             return {
                 util: window.util,
-                list: [],
+                list: this.tables,
+                prevList: this.tables,
 				newTableError: '',
 				newTableName: '',
 				showModal: false,
@@ -67,12 +68,18 @@
             }
         },
         mounted() {
-            this.list = this.tables
             window.addEventListener('resize', this.onWindowResize)
         },
         computed: {
             computedList: function () {
-                return this.computeList()
+                this.onWindowResize()
+                let list = this.computeList()
+                if (list.length < 1) {
+                    list = this.prevList
+                } else {
+                    this.prevList = list
+                }
+                return list
             },
 			toggleDisplayClass: function() {
                 let className = ''
@@ -117,31 +124,14 @@
                     }
                 }
             },
-            beforeEnter: function (el) {
-                el.style.opacity = 0
-                el.style.height = 0
-            },
-            enter: function (el, done) {
-                var delay = el.dataset.index * 150
-                setTimeout(function () {
-                    Velocity(
-                        el,
-                        { opacity: 1, height: '1.6em' },
-                        { complete: done }
-                    )
-                }, delay)
-            },
             computeList() {
-                let vm = this
-                let list = []
-                if (vm.query) {
+                let list = this.list
+				let query = this.query.toLowerCase()
+                if (query) {
                     list = this.list.filter(function (item) {
-                        return item.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1
+                        return item.toLowerCase().indexOf(query) !== -1
                     })
-                } else {
-                    list = this.list
                 }
-                this.onWindowResize()
                 return list
             },
             leave: function (el, done) {
@@ -189,7 +179,7 @@
             background-color: #e6e6e6;
         }
         li:first-child {
-            border-top: none;
+            /*border-top: none;*/
         }
     }
     .list-group > * {

@@ -5,6 +5,7 @@
                     element="ul"
                     v-model="tabs"
                     class="nav nav-tabs" id="primaryTabContainer"
+                    :class="{ stacked: mixedConnection() }"
                     :options="{ draggable: '.nav-tab-item' }"
                     @end="onMoveTab"
             >
@@ -15,7 +16,7 @@
                         :class="{ active: getTabIndex('id', tab.id) === activeTabIndex() }"
                 >
                     <a class="nav-tab-item-a" :href="'#tab-' + tab.id" @click.prevent="changeTab(tab.id)" :data-key="tab.id">
-                        <span :class="tabIcon(tab.type)" aria-hidden="true"></span> {{ tab.title }}
+                        <span :class="tabIcon(tab.type)" aria-hidden="true"></span> <span class="subtitle" v-show="mixedConnection() && tab.type !== 'query'">{{ tab.connection }}.</span>{{ tab.title }}
                         <button @click="closeTab(tab.id)" class="close closeTab">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -66,6 +67,9 @@
                 tabs: []
             }
         },
+        // computed: {
+        //
+        // },
         mounted() {
             this.bus.$on('loggedIn', () => {
                 this.storeTabs()
@@ -275,6 +279,21 @@
                     }
                 }
             },
+            mixedConnection() {
+                let tabLength = this.tabs.length
+                let connection = this.state.connection
+                for (let i = 0; i < tabLength; i++) {
+                    if (this.tabs[i].type !== 'query') {
+                        if (connection === null) {
+                            connection = this.tabs[i].connection
+                        }
+                        if (this.tabs[i].connection !== connection) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            },
             titleCase(string) {
                 return string.replace(/_/g, ' ').replace(/(^[a-z])|(\s+[a-z])/g, txt => txt.toUpperCase())
             },
@@ -301,6 +320,10 @@
         height: 99%;
         max-height: 99%;
         flex-direction: column;
+    }
+    .query .results-table-container {
+        height: initial;
+        padding-top: 110px;
     }
     .notabs {
         margin: 15px 0;
