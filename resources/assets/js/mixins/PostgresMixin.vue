@@ -24,7 +24,7 @@
                 requestTimeStart: null,
                 response: null,
                 result: null,
-                server: 'http://postgres:5433',
+                server: '',
                 sql: '',
                 dataTypes: [
 					{
