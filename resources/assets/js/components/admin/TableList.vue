@@ -15,6 +15,17 @@
                 <span class="title"><p>{{ value }}</p></span>
             </li>
         </ul>
+		<field
+				v-if="schemas.length > 0"
+				:name="'schema_name'"
+				:control="'select'"
+				:id="'schema_switcher'"
+				:value="schema"
+				:options="schemaOptions"
+				container-class="small-select"
+				:disabled="schema && schemas.length < 2"
+				@input="changeSchema"
+		/>
         <a @click.prevent="showModal = true" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
             <span :class="util.icon('add')" aria-hidden="true"></span>
         </a>
@@ -55,7 +66,10 @@
 
 <script>
     export default {
-        props: [ 'tables', 'table', 'query' ],
+        components: {
+            'field': require('../forms/fields/Field')
+        },
+        props: [ 'schemas', 'schema', 'tables', 'table', 'query' ],
         data() {
             return {
                 util: window.util,
@@ -89,6 +103,17 @@
                     className = this.util.icon('menu-right')
 				}
 				return className
+			},
+            schemaOptions: function() {
+                let options = []
+				let schemaCount = this.schemas.length
+				for (let i = 0; i < schemaCount; i++) {
+                    options.push({
+						value: this.schemas[i],
+						text: this.schemas[i]
+					})
+				}
+				return options
 			}
         },
         watch: {
@@ -102,6 +127,9 @@
             openTable(table) {
                 this.$emit('openTable', table)
             },
+			changeSchema(e) {
+                this.$emit('changeSchema', e.target.value)
+			},
             addStructureTab(table) {
                 this.$emit('addStructureTab', table)
             },
@@ -219,6 +247,19 @@
     .sidebar .button-title {
         display: none
     }
+	.sidebar .form-group.small-select {
+		border-radius: 3px;
+		display: inline-block;
+		padding: 1px 1px;
+		font-size: 12px;
+		line-height: 1.5;
+		margin: 0;
+		width: 200px;
+
+		select {
+			height: 23px;
+		}
+	}
     .list-group-item {
         padding: 3px 3px 3px 8px;
         button:hover {

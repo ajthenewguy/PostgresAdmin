@@ -12,7 +12,7 @@ export default {
             initialized: false,
             namespace: '',
             namespace_key: '__NAMESPACE__',
-            server: 'http://postgres:5433',
+            server: '',
             endpoint: '/session',
             init() {
                 if (!this.initialized) {

@@ -202,7 +202,7 @@
 
 <script>
     export default {
-        props: [ 'table', 'schema', 'primaryKey', 'foreignKeys', 'indexes', 'processing', 'editMode', 'new' ],
+        props: [ 'table', 'schema', 'primaryKey', 'processing', 'foreignKeys', 'indexes', 'editMode', 'new' ],
         mixins: [require('../../mixins/PostgresMixin.vue')],
         components: {
             'field': require('../forms/fields/Field'),

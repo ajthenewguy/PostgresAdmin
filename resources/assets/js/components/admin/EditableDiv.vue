@@ -1,5 +1,5 @@
 <template>
-    <code contenteditable="true" type="text" @focus="$emit('focus', $event)" @blur="blur" @mouseleave="format" @paste="paste" class="form-control syntax" :id="id"></code>
+    <code contenteditable="true" @focus="$emit('focus', $event)" @blur="blur" @mouseleave="format" @paste="paste" class="form-control syntax" :id="id"></code>
 </template>
 
 <script>
@@ -9,6 +9,11 @@
         data() {
             return {
                 _onPaste_StripFormatting_IEPaste: false
+            }
+        },
+        watch: {
+            value: function(newVal) {
+                this.$el.innerText = newVal
             }
         },
         mounted() {

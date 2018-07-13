@@ -66,7 +66,7 @@
     export default {
         props: ['defaultConnection'],
         mixins: [
-            // require('../mixins/Session.vue')
+            // require('../../mixins/PostgresMixin')
         ],
         components: {
             'connection-list': require('./List'),
@@ -133,12 +133,12 @@
 					}
                     this.setConnection(connection.name).then(() => {
                         // eslint-disable-next-line
-                        console.log('Connected to ', connection.name)
+                        console.log('Connected to', connection.name)
 						this.connection = connection.name
                         window.session.setNamespace(connection.name)
 						this.bus.$emit('Connections.databaseSelected', connection.name)
 	                    this.route = 'index'
-						if (this.modalOpen()) {
+                        if (this.modalOpen()) {
 							this.closeModal()
 						}
 	                })
@@ -174,6 +174,7 @@
 				})
             },
 			handleDatabaseConnect() {
+			    console.log('handleDatabaseConnect')
 				this.connectionCache = null
 				this.state.connection = this.connection
 			},

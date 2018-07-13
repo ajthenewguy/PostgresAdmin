@@ -24,7 +24,7 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody v-if="records && records.length > 0" :class="{ 'loading': state.processing }">
+                <tbody v-if="records && records.length > 0" :class="{ 'loading': processing }">
                     <insert-table-row
                             v-if="table && insertingRow"
                             :tab="tab"
@@ -60,7 +60,7 @@
                     />
                     <tr>
                         <td :colspan="colspan">
-                            <div class="empty"><span v-if="state.processing">Processing...</span><span v-else>No records</span></div>
+                            <div class="empty"><span v-if="processing">Processing...</span><span v-else>No records</span></div>
                         </td>
                     </tr>
                 </tbody>
@@ -80,6 +80,7 @@
             'table',
             'tableConfig',
             'order',
+            'processing',
             'records',
             'insertingRow',
             'editingRow'
@@ -106,7 +107,7 @@
                 return span
             },
             tableWrapperStyleLoading: function () {
-                return (this.state.processing ? 'overflow: hidden;' : '')
+                return (this.processing ? 'overflow: hidden;' : '')
             }
         },
         mounted() {

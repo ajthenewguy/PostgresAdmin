@@ -7,6 +7,8 @@
                 state: window.store.state,
                 useElementUI: true,
                 customQuery: false,
+                filterInformationSchema: true,
+                filterSystemSchemas: true,
                 pagination: {
                     current_page: 1,
                     first_page_url: '',
@@ -24,7 +26,7 @@
                 requestTimeStart: null,
                 response: null,
                 result: null,
-                server: 'http://postgres:5433',
+                server: '',
                 sql: '',
                 dataTypes: [
 					{
@@ -489,6 +491,22 @@
                     foreignKeys: null
                 }
             },
+            loadSchemas() {
+                return this.selectQuery("SELECT schema_name AS name FROM information_schema.schemata").then(() => {
+                    let schemas = []
+                    let schema_count = this.result.length
+                    for (let i = 0; i < schema_count; i++) {
+                        if (this.filterInformationSchema && this.result[i].name === 'information_schema') {
+                            continue
+                        }
+                        if (this.filterSystemSchemas && this.result[i].name.indexOf('pg_') > -1) {
+                            continue
+                        }
+                        schemas.push(this.result[i].name)
+                    }
+                    return schemas
+                })
+            },
             loadTable(table, bustcache) {
                 if (typeof table === "object" && table.hasOwnProperty('name')) {
                     table = table.name
@@ -796,10 +814,12 @@
                 let skip = false
                 let subQuery = []
                 let token = ''
+                let nextToken = ''
+                let nextNextToken = ''
                 let tokens = []
                 let tokenLength = 0
                 if (sql) {
-                    tokens = sql.split(' ')
+                    tokens = this.tokenizeSql(sql)
                     tokenLength = tokens.length
                     query = {
                         verb: '',
@@ -814,6 +834,8 @@
                     tokenLength = tokens.length
                     for (let i = 0; i < tokenLength; i++) {
                         token = tokens[i]
+                        nextToken = tokens[i + 1]
+                        nextNextToken = tokens[i + 2]
                         if (query.verb == 'UPDATE') {
                             flags.table = true
                             lastFlag = 'table'
@@ -853,22 +875,40 @@
                                 break
                             }
                             case 'IN': {
+                                let h = i - 1
                                 let j = i
+                                let prevToken = tokens[h]
+                                let tokenIn = tokens[j]
+                                let nextTokenIn = tokens[j + 1]
+                                let nextNextTokenIn = tokens[j + 2]
+                                let isSubQuery = false
+                                let whereIndex = query.where.length
                                 skip = true
-                                i++
-                                j++
-                                if (tokens[j] === '(') {
-                                    for (; j < tokens.length; j++, i++) {
-                                        if (token !== ')') {
-                                            subQuery.push(tokens[j])
+                                // i++
+                                // j++
+                                if (nextTokenIn === 'NOT') {
+                                    // i++
+                                    j++
+                                    nextTokenIn = tokens[j + 1]
+                                    nextNextTokenIn = tokens[j + 2]
+                                }
+                                isSubQuery = nextTokenIn && nextTokenIn.toUpperCase() === 'SELECT'
+                                if (tokenIn === '(') {
+                                    for (; j < tokens.length; j++) {
+                                        if (token !== ')' && token !== ',') {
+                                            if (isSubQuery) {
+                                                subQuery.push(tokenIn)
+                                            } else {
+                                                if (whereIndex === 0) {
+                                                    query.where[whereIndex] = ''
+                                                }
+                                                query.where[whereIndex] += ' ' + tokenIn
+                                            }
                                         } else {
                                             query.sub = this.parseSql(subQuery.join(' '))
                                             break
                                         }
                                     }
-                                } else {
-                                    this.validationError('Sub queries must be enclosed in parentheses')
-                                    return
                                 }
                                 break
                             }
@@ -890,7 +930,7 @@
                                     i++
                                     j++
                                     for (; j < tokens.length; j++, i++) {
-                                        if (token !== ')') {
+                                        if (token !== ')' && token !== ',') {
                                             query.columns.push(tokens[j])
                                         } else {
                                             break
@@ -907,7 +947,7 @@
                                     j++
                                 }
                                 for (; j < tokens.length; j++, i++) {
-                                    if (token !== ')') {
+                                    if (token !== ')' && token !== ',') {
                                         query.values.push(tokens[j])
                                     } else {
                                         break
@@ -916,7 +956,6 @@
                                 break
                             }
                             case 'where': {
-                                console.log(query)
                                 query.where.push(token)
                                 break
                             }
@@ -928,6 +967,143 @@
                     }
                 }
                 return query
+            },
+            tokenizeSql(sql) {
+                let tokens = []
+
+                sql = this.tokenizeSqlPadAssignmentOperators(sql)
+                tokens = sql.split(' ')
+                tokens = this.tokenizeSqlCommas(tokens)
+                tokens = this.tokenizeSqlStatementTerminator(tokens)
+                tokens = this.tokenizeSqlParens(tokens)
+                tokens = this.tokenizeSqlStringConcatenation(tokens)
+
+                return tokens
+            },
+            tokenizeSqlPadAssignmentOperators(sql) {
+                let re = /(\S)=(\S)/g
+                return sql.replace(re, '$1 = $2')
+            },
+            tokenizeSqlCommas(tokens) {
+                let tokensLength = tokens.length
+                for (let i = 0; i < tokensLength; i++) {
+                    let token = tokens[i]
+                    if (typeof token === 'undefined' || token === '' || token === ',') {
+                        continue
+                    }
+                    if (token.charAt(token.length - 1) === ',') {
+                        tokens[i] = token.slice(0, -1)
+                        tokens.splice(i + 1, 0, ',')
+                    }
+                }
+                return tokens
+            },
+            tokenizeSqlParens(tokens) {
+                let tokensLength = tokens.length
+                let inParens = 0
+
+                // Parenthesis separation
+                for (let i = 0; i < tokensLength; i++) {
+                    let token = tokens[i]
+                    if (typeof token === 'undefined' || token === '' || token === '(' || token === ')') {
+                        continue
+                    }
+                    let tokenLength = token.length
+                    let lastChar = token.charAt(tokenLength - 1)
+
+                    if (token.indexOf('(') > -1) {
+                        inParens++
+                        let subtokens = tokens[i].split('(')
+                        tokens[i] = subtokens[0] + '('
+                        tokens.splice(i + 1, 0, subtokens[1])
+                        continue
+                    }
+                    if (lastChar === ')' && inParens > 0) {
+                        inParens--
+                        tokens[i] = tokens[i].slice(0, -1)
+                        tokens.splice(i + 1, 0, ')')
+                        continue
+                    }
+                }
+                return tokens
+            },
+            tokenizeSqlStatementTerminator(tokens) {
+                let tokensLength = tokens.length
+                let lastTokenIndex = tokensLength - 1
+                let token = tokens[lastTokenIndex]
+                let tokenLength = token.length
+
+                if (token.charAt(tokenLength - 1) === ';') {
+                    tokens[lastTokenIndex] = token.slice(0, -1)
+                    tokens.splice(tokensLength, 0, ';')
+                }
+                return tokens
+            },
+            tokenizeSqlStringConcatenation(tokens) {
+                let tokensLength = tokens.length
+                let firstBufferEntry = false
+                let stringStartIndex = null
+                let inString = false
+                let buffer = ''
+
+                // String token concatenation
+                for (let i = 0; i < tokensLength; i++) {
+                    let token = tokens[i]
+                    if (typeof token === 'undefined' || token === '') {
+                        continue
+                    }
+                    let tokenLength = token.length
+                    let firstChar = token.charAt(0)
+                    let lastChar = token.charAt(tokenLength - 1)
+
+                    // short-circuit self-contained string tokens
+                    if ((firstChar === '\'' && lastChar === '\'') || firstChar === '"' && lastChar === '"') {
+                        continue
+                    }
+
+                    if (firstChar === '\'' || firstChar === '"') {
+                        if (inString === false) {
+                            inString = firstChar
+                            stringStartIndex = i
+                        } else if (inString === firstChar) {
+                            inString = false
+                        }
+                    }
+
+                    if (inString) {
+                        if (buffer.length > 0) {
+                            firstBufferEntry = false
+                            buffer += ' '
+                        } else {
+                            firstBufferEntry = true
+                        }
+                        buffer += '' + token
+                        if (!firstBufferEntry) {
+                            tokens.splice(i, 1) // start deleting tokens (the first token will be overwritten)
+                        }
+                        // eslint-disable-next-line
+                        console.log('____ :', buffer)
+                    }
+
+                    if (lastChar === '\'' || lastChar === '"') {
+                        if (inString === lastChar) {
+                            tokens[stringStartIndex] = buffer
+                            stringStartIndex = null
+                            inString = false
+
+                            buffer = ''
+                            firstBufferEntry = false
+                            stringStartIndex = null
+                        }
+                    }
+
+                    // if (!inString && buffer.length && stringStartIndex) {
+                    //     buffer = ''
+                    //     firstBufferEntry = false
+                    //     stringStartIndex = null
+                    // }
+                }
+                return tokens
             }
         }
     }

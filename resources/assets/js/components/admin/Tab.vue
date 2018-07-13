@@ -7,11 +7,12 @@
                 :schema="schema()"
 				:indexes="indexes()"
                 :primary-key="primaryKey()"
+                :processing="processing"
                 :foreign-keys="foreignKeys()"
                 @refresh="$emit('refresh', $event)"
             />
             <div v-else>
-                <div v-if="!state.processing" class="empty">
+                <div v-if="!processing" class="empty">
                     No table selected
                 </div>
             </div>
@@ -22,6 +23,7 @@
                 :sql="customQuery"
                 :history="history"
                 :loaded-tables="loadedTables"
+                :processing="processing"
                 @beforeQuery="beforeQuery"
                 @customQuery="beforeCustomQuery"
                 @success="success"
@@ -44,6 +46,7 @@
                     :table="table"
                     :table-config="state.tables[table]"
                     :order="order"
+                    :processing="processing"
                     :records="records"
                     :editing-row="editingRow"
                     :inserting-row="insertingRow"
@@ -62,6 +65,7 @@
                     :executed="executed"
                     :records="records"
                     :pagination="(type === 'content' ? pagination : false)"
+                    :processing="processing"
                     :request-time="requestTime"
                     :tab="type"
                     :table="(type === 'content' ? table : false)"
@@ -88,7 +92,8 @@
                 insertingRow: false,
                 order: null,
                 records: [],
-                where: this.find
+                where: this.find,
+                processing: false
             }
         },
         mounted() {
@@ -121,11 +126,18 @@
         },
         methods: {
             beforeQuery(query) {
-                this.sql = query // !important
-                this.pushHistory(query)
+                this.processing = true
+                if (query) {
+                    this.sql = query
+                    this.pushHistory(query)
+                }
+            },
+            afterQuery() {
+                this.processing = false
             },
             beforeCustomQuery(query) {
                 this.executed = true
+                this.processing = true
                 this.$emit('beforeCustomQuery', query)
                 if (query) {
                     this.customQuery = query
@@ -135,6 +147,7 @@
             },
             afterCustomQuery(query) {
                 this.$emit('afterCustomQuery', query)
+                this.processing = false
                 if (this.result) {
                     this.records = this.result
                 }
@@ -155,6 +168,7 @@
             },
             getRecords(page) {
                 let sql = this.makeSelect(this.table, this.where, null, this.order)
+                this.beforeQuery(sql)
                 this.executed = true
                 console.log('Getting records:', sql)
                 if (typeof page === "undefined") {
@@ -164,6 +178,7 @@
                     if (this.result !== null) {
                         this.records = this.result
                     }
+                    this.afterQuery()
                     this.$emit('loaded')
                 })
             },
@@ -174,14 +189,19 @@
                 if (this.type === "query") {
                     this.$refs.customQuery.run()
                 } else {
+                    this.beforeQuery()
                     this.loadTable(this.table, true).then(() => {
+                        this.afterQuery()
                         this.bus.$emit('tabRefreshed', this.state.tables[this.table])
                         this.getRecords()
                     })
                 }
             },
             insertRow(data) {
-                return this.insertQuery(this.makeInsert(this.table, data), data).then(() => {
+                let query = this.makeInsert(this.table, data)
+                this.beforeQuery(query)
+                return this.insertQuery(query, data).then(() => {
+                    this.afterQuery()
                     this.setInsertingRow(false)
                     this.getRecords()
                 })
@@ -190,7 +210,10 @@
                 let where = {}
                 let primaryKey = this.state.tables[this.table].primaryKey
                 where[primaryKey] = payload.primaryKey
-                return this.updateQuery(this.makeUpdate(this.table, payload.data, where), payload.data).then(() => {
+                let query = this.makeUpdate(this.table, payload.data, where)
+                this.beforeQuery(query)
+                return this.updateQuery(query, payload.data).then(() => {
+                    this.afterQuery()
                     this.setEditingRow(null)
                     this.getRecords()
                 })
@@ -203,7 +226,10 @@
                 }).then(() => {
                     let where = {}
                     where[this.primaryKey()] = primaryKey
-                    this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
+                    let query = this.makeDelete(this.table, where)
+                    this.beforeQuery(query)
+                    this.deleteQuery(query, where).then(() => {
+                        this.afterQuery()
                         this.getRecords(this.currentPage()).then(() => {
                             this.editingRow = null
                             // this.state.setProcessing(false) // not a function... ?
@@ -219,16 +245,6 @@
                         message: 'Delete canceled'
                     })
                 })
-                // if (confirm('Delete this row?')) {
-                //     let where = {}
-                //     where[this.primaryKey()] = primaryKey
-                //     this.deleteQuery(this.makeDelete(this.table, where), where).then(() => {
-                //         this.getRecords(this.currentPage()).then(() => {
-                //             this.editingRow = null
-                //             this.state.setProcessing(false)
-                //         })
-                //     })
-                // }
             },
             pushHistory(query) {
                 if (query !== this.history[this.history.length-1]) {

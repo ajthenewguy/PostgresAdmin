@@ -4,6 +4,7 @@ export default {
         return {
             cache: {},
             settings: {
+                bus: window.bus,
                 cache(key, value) {
                     let argCount = arguments.length
                     let returnVal = null
