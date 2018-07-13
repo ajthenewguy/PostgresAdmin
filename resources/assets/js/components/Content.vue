@@ -10,10 +10,13 @@
 						</div>
 					</div>
 					<list
+						:schemas="schemas"
+						:schema="schema"
 						:tables="tables"
 						:table="table"
 						:query="tableQuery"
 						@openTable="openTable"
+						@changeSchema="changeSchema"
 						@toggleDisplay="toggleListDisplay"
 						@addStructureTab="addStructureTab"
 						@refreshTables="refreshTables"
@@ -85,6 +88,8 @@
                 records: [],
                 recordsCustom: [],
                 requestTimes: {},
+                schema: null,
+                schemas: [],
                 tableQuery: '',
                 order: null,
                 where: null,
@@ -98,7 +103,7 @@
             }
         },
         mixins: [
-            require( '../mixins/PostgresMixin.vue')
+            require( '../mixins/PostgresMixin')
         ],
         components: {
             'list': require('./admin/TableList'),
@@ -108,7 +113,7 @@
             'indices-table': require('./admin/IndicesTable')
         },
         created() {
-            this.bus.$on('Connections.databaseSelected', this.refreshTables)
+            this.bus.$on('Connections.databaseSelected', this.onDatabaseConnect)
             this.bus.$on('App.databaseTablesLoaded', this.loadTabs)
             window.addEventListener('keyup', this.registerKeyListener)
             window.addEventListener('keydown', this.registerKeyListener)
@@ -179,6 +184,14 @@
                         this.toggleListDisplay()
 					}
                 }
+                // / Focus table filter/search
+                if (this.state.keyMap[191]) {
+                    let focusedElement = document.activeElement.tagName.toLowerCase()
+                    if (focusedElement !== 'input' && focusedElement !== 'textarea' && focusedElement !== 'select') {
+                        this.focusTableFilter(e)
+                    }
+                }
+
             },
             loadTabs() {
                 // load selected tab
@@ -232,9 +245,6 @@
                 this.records = []
             },
             newTab(type, title, table, where) {
-
-                console.log('Content.newTab(', 'type:', type, ', title:', title, ', table:', table, ', where:', where, ')')
-
                 let tabId = this.$refs.tabs.newTab(...arguments)
                 this.changeTab(tabId, where)
 				return tabId
@@ -245,9 +255,24 @@
             onWindowResize() {
                 //
             },
-            openTable(table) {
+            changeSchema(schema) {
                 // eslint-disable-next-line
-                console.log('Content.openTable(', table, ')')
+                console.log('CHANGE SCHEMA:', schema)
+                this.refreshTables()
+			},
+			onDatabaseConnect() {
+                this.loadSchemas().then(schemas => {
+					this.schemas = schemas
+					if (this.schemas.length === 1) {
+						this.schema = this.schemas[0]
+					} else if (this.schemas.indexOf('public') > -1) {
+						let publicIndex = this.schemas.indexOf('public')
+						this.schema = this.schemas[publicIndex]
+					}
+					this.refreshTables()
+                })
+			},
+            openTable(table) {
                 this.addTableTab("content", table)
             },
             openTableRow(event) {
@@ -261,24 +286,24 @@
                 this.$refs.tabs.refreshTab(index)
             },
             refreshTables(connection) {
-                return axios.post(this.server + '/tables').then(response => {
-                    this.tables = response.data
+				return axios.post(this.server + '/tables', { schema: this.schema }).then(response => {
+					this.tables = response.data
 					let tableCount = response.data.length
 					for (let i = 0; i < tableCount; i++) {
-                        let table = response.data[i]
-                        this.state.tables[table] = this.initTableObject(table)
+						let table = response.data[i]
+						this.state.tables[table] = this.initTableObject(table)
 					}
 
 					this.bus.$emit('App.databaseTablesLoaded')
-                }).catch(error => {
+				}).catch(error => {
 					console.log('databaseConnectError', error)
-                    this.bus.$emit('databaseConnectError')
+					this.bus.$emit('databaseConnectError')
 					this.$notify.error({
 						title: 'Connection Error',
 						message: this.parseError(error),
 						type: 'success'
 					})
-                })
+				})
             },
 			refreshToken() {
 				axios.get(this.server + '/token').then(response => {
@@ -328,6 +353,15 @@
             },
             toggleListDisplay() {
                 this.displayTableList = ! this.displayTableList
+			},
+			focusTableFilter(e) {
+                if (!this.displayTableList) {
+                    this.displayTableList = true
+				}
+                $('#tableFilter').focus()
+                e.preventDefault()
+                e.stopPropagation()
+                return false
 			}
         }
     }
@@ -342,9 +376,6 @@
     }
     .glyphicon-star, .glyphicon-star-empty {
         margin-right: 2px;
-    }
-    .rowButtons {
-        width: 90px;
     }
     .glyphicon.spinning {
         animation: spin 1s infinite linear;

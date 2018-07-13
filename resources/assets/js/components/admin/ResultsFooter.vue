@@ -1,7 +1,7 @@
 <template>
     <tfoot v-show="executed">
         <div class="col-sm-2 request-time">
-            <span v-if="state.processing">
+            <span v-if="processing">
                 <span class="glyphicon glyphicon-refresh spinning"></span>
             </span>
             <span v-else>
@@ -29,7 +29,7 @@
 <script>
     import moment from 'moment'
     export default {
-        props: [ 'executed', 'pagination', 'records', 'requestTime', 'tab', 'table'  ],
+        props: [ 'executed', 'pagination', 'processing', 'records', 'requestTime', 'tab', 'table'  ],
         data() {
             return {
                 store: window.store,

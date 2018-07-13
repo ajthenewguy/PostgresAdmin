@@ -1,11 +1,10 @@
 <template>
     <div :class="wrapperClass">
-    <!--<div class="form-group" :class="groupSize">-->
         <label
-                v-if="(control !== 'input' && control !== 'el-input') || type !== 'checkbox'"
-                :class="labelClass"
-                :for="input_id"
-                v-html="label || '_o0o_'"
+            v-if="label.length > 0 && ((control !== 'input' && control !== 'el-input') || type !== 'checkbox')"
+            :class="labelClass"
+            :for="input_id"
+            v-html="label"
         />
         <div v-if="hasColumn" :class="columnClass">
             <field
@@ -60,6 +59,9 @@
                 type: String,
                 default: 'input'
             },
+            containerClass: {
+                type: String
+            },
             disabled: {
                 type: Boolean,
                 default: false
@@ -77,7 +79,7 @@
             },
             label: {
                 type: String,
-                required: true
+                default: ''
             },
             layout: {
                 type: String,
@@ -128,6 +130,9 @@
                 }
                 if (this.columnWidth) {
                     label_class += ' col-sm-' + this.columnWidth
+                }
+                if (this.containerClass) {
+                    label_class += ' ' + this.containerClass
                 }
                 return label_class
             },

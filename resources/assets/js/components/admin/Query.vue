@@ -1,7 +1,7 @@
 <template>
     <div id="query-wrapper">
         <textarea
-            v-if="inputFocus"
+            v-show="inputFocus"
             ref="queryTextarea"
             @blur="blur"
             v-model="query"
@@ -9,7 +9,7 @@
             rows="2"
             id="query_input"></textarea>
         <div-edit
-            v-else
+            v-show="!inputFocus"
             ref="queryDiv"
             v-model="query"
             id="query_input"
@@ -25,7 +25,7 @@
             </button>
             <ul v-if="history.length > 1" class="dropdown-menu">
                 <li v-for="priorQuery in reversedHistory">
-                    <a href="#" @click.prevent="query = priorQuery">{{ priorQuery }}</a>
+                    <a href="#" @click.prevent="setQuery(priorQuery)">{{ priorQuery }}</a>
                 </li>
             </ul>
         </div>
@@ -33,7 +33,7 @@
 </template>
 <script>
     export default {
-        props: [ 'sql', 'history', 'loadedTables' ],
+        props: [ 'sql', 'history', 'loadedTables', 'processing' ],
         data() {
             return {
                 query: null,
@@ -47,6 +47,8 @@
                     delimeters: '\n ' // array of chars
                 },
                 inputFocus: false,
+                inputHeight: null,
+                observer: null,
                 stripHtml: true
             }
         },
@@ -55,6 +57,7 @@
                 this.query = this.sql
             }
             this.init()
+            // this.sampleInputHeight()
         },
         computed: {
             reversedHistory: function () {
@@ -62,18 +65,32 @@
             }
         },
         methods: {
+            bindResizeOberver() {
+                this.observer = setInterval(() => {
+                    this.sampleInputHeight()
+                }, 100)
+            },
             blur() {
                 this.inputFocus = false
+                clearInterval(this.observer)
                 this.$nextTick(() => {
                     this.$refs.queryDiv.format()
+                    $('code#query_input').height(this.inputHeight)
                 })
             },
             focus() {
                 this.inputFocus = true
+                this.bindResizeOberver()
                 this.$nextTick(() => {
                     this.init()
                     this.$refs.queryTextarea.focus()
                 })
+            },
+            queryInputElement() {
+                return $('#query_input')
+            },
+            resultsTableElement() {
+                return $('#query_input').closest('.tab-pane.query').find('.results-table-container')
             },
             run() {
                 let query = this.query
@@ -89,10 +106,21 @@
                     let parsedQuery = this.$parent.parseSql(query)
                     // eslint-disable-next-line
                     console.log('@todo: use 3rd party lib', parsedQuery)
-                    return this.executeParsedQuery(parsedQuery)
+                    return this.executeParsedQuery(parsedQuery).then(() => {
+                        this.$emit('afterQuery')
+                    })
                 } else {
                     return Promise.resolve(null)
                 }
+            },
+            sampleInputHeight() {
+                return this.$nextTick(() => {
+                    let height = this.queryInputElement().height()
+                    if (this.inputHeight !== height) {
+                        this.inputHeight = height
+                        this.resultsTableElement().css('paddingTop', (this.inputHeight + 70) + 'px')
+                    }
+                })
             },
             executeParsedQuery(parsedQuery) {
                 switch(parsedQuery.verb) {
@@ -123,6 +151,12 @@
             afterRun() {
                 this.$emit('afterQuery')
                 this.$emit('success', this.response)
+            },
+            setQuery(priorQuery) {
+                this.query = priorQuery
+                this.$nextTick(() => {
+                    this.$refs.queryDiv.format()
+                })
             }
         },
         mixins: [require('../../mixins/AutoComplete')],

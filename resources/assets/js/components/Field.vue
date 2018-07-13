@@ -137,7 +137,9 @@
                 this.input_value = this.value
                 if (this.autofocus) {
                     this.$nextTick(() => {
-                        this.$refs[this.input_id].focus()
+                        if (this.$refs[this.input_id]) {
+                            this.$refs[this.input_id].focus()
+                        }
                     })
 
                 }
