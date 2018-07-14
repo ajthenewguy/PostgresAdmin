@@ -16,7 +16,7 @@ npm run watch
 
 ### Installing
 
-Clone this repository and set up the environmental variables in a .env file in the project root. Update the UsersTableSeeder to include at least on administrator account.
+Clone this repository, create a database to store users for this applicate, and set up the environmental variables in a .env file in the project root. Update the UsersTableSeeder to include at least one administrator account.
 Run the database migrations.
 
 ```
