@@ -31,7 +31,11 @@
                 />
             </span>
             <template v-else>
-                <span v-html="valueDisplay(name)"></span><span v-if="columnIsForeignKey(name) && data[name]">&nbsp;<a href="#" @click.prevent="openForeignRow(name)"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></span>
+                <span v-if="columnIsForeignKey(name) && data[name]">
+                    <a contenteditable="true" spellcheck="false" @click="foreignKeyClick" @dblclick.prevent="openForeignRow(name)" class="dblclick"><span v-html="valueDisplay(name)"></span></a>
+                </span>
+                <span v-else v-html="valueDisplay(name)"></span>
+                <!--<span v-html="valueDisplay(name)"></span><span v-if="columnIsForeignKey(name) && data[name]">&nbsp;<a href="#" @click.prevent="openForeignRow(name)"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></span>-->
             </template>
         </td>
     </tr>
@@ -82,6 +86,9 @@
             refreshRow() {
                 this.data = _.clone(this.row)
             },
+            foreignKeyClick() {
+                document.execCommand('selectAll',false,null)
+            },
             getFieldDefault(column) {
                 let config = this.getColumn(this.table, column)
                 return config.default_value ? config.default_value : ""
@@ -130,7 +137,8 @@
                 let foreignKey = _.find(this.tableConfig.foreignKeys, ['column_name', column])
                 this.$emit('openTableRow', {
                     table: foreignKey.foreign_table_name,
-                    where: foreignKey.foreign_column_name + " = '" + this.row[column] + "'"
+                    where: foreignKey.foreign_column_name + " = '" + this.row[column] + "'",
+                    pos: this.state.activeTab + 1
                 });
             },
             updatedValues() {
@@ -155,3 +163,16 @@
         }
     }
 </script>
+<style>
+    a.dblclick {
+        color: #636b6f;
+        border-bottom: 1px dashed #3097D1;
+    }
+    a.dblclick:hover {
+        text-decoration: none;
+    }
+    input.dblclick {
+        width: 100%;
+        background-color: transparent;
+    }
+</style>

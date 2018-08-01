@@ -84,7 +84,7 @@
             activeTabIndex(newIndex) {
                 if (typeof newIndex !== "undefined" && newIndex > -1 || newIndex === null) {
                     this.state.activeTab = newIndex
-                    this.$emit('tabChanged', newIndex)
+                    this.$emit('tabChanged', this.activeTab())
                 }
                 return this.state.activeTab
             },
@@ -143,6 +143,7 @@
                         $this.storeTabs()
                     }, 5)
                 }
+                this.reindexTabs()
                 return
             },
             countTabs() {
@@ -214,13 +215,18 @@
                 }
                 return tab
             },
-            newTab(type, title, table, where) {
+            newTab(type, title, table, where, pos) {
                 if (! title) {
                     title = this.titleCase(type)
                 }
                 let tabId = this.uuid()
                 let tab = this.makeTab(tabId, this.state.connection, type, title, table, where)
-                this.tabs.push(tab)
+                if (typeof pos !== "undefined") {
+                    this.tabs.splice(pos, 0, tab)
+                    this.reindexTabs()
+                } else {
+                    this.tabs.push(tab)
+                }
                 if (null === this.activeTabIndex()) {
                     this.activeTabIndex(this.getTabIndex('id', tabId))
                 }
@@ -232,7 +238,6 @@
             onMoveTab(e) {
                 let from = e.oldIndex
                 let to = e.newIndex
-                let tabCount = this.tabs.length
                 if (from === this.activeTabIndex()) {
                     this.changeTab(to)
                 } else if (to <= this.activeTabIndex()) {
@@ -240,9 +245,7 @@
                 } else if (to > this.activeTabIndex() && from < this.activeTabIndex()) {
                     this.changeTab(Math.max(this.activeTabIndex() - 1, 0))
                 }
-                for (let i = 0; i < tabCount; i++) {
-                    this.tabs[i].index = i
-                }
+                this.reindexTabs()
                 this.storeTabs()
             },
             refreshTab(index) {
@@ -250,6 +253,12 @@
                     index = this.activeTabIndex()
                 }
                 this.$refs['tab'][index].refresh()
+            },
+            reindexTabs() {
+                let tabCount = this.tabs.length
+                for (let i = 0; i < tabCount; i++) {
+                    this.tabs[i].index = i
+                }
             },
             sortTabs() {
                 this.tabs = _.orderBy(this.tabs, ['index'])

@@ -1,7 +1,7 @@
 <template>
     <div>
         <ul v-if="tables" class="list-group">
-            <li v-for="(value, key) in computedList" :key="value" class="list-group-item">
+            <li v-for="(value, key) in computedList" :key="value" class="list-group-item" :class="{ selected: value === selectedTable }">
                 <div class="btn-group btn-group-xs pull-right" role="group" aria-label="...">
                     <button type="button" class="btn btn-default" @click.prevent="addStructureTab(value)">
                         <span :class="util.icon('structure')" aria-hidden="true"></span>
@@ -69,7 +69,7 @@
         components: {
             'field': require('../forms/fields/Field')
         },
-        props: [ 'schemas', 'schema', 'tables', 'table', 'query' ],
+        props: [ 'schemas', 'schema', 'selectedTable', 'tables', 'table', 'query' ],
         data() {
             return {
                 util: window.util,
@@ -203,6 +203,9 @@
         margin-bottom: 5px;
         overflow: auto;
         white-space: nowrap;
+		li.selected {
+			background-color: #e7e7e7;
+		}
         li:hover {
             background-color: #e6e6e6;
         }

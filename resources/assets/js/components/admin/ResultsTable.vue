@@ -176,15 +176,16 @@
         height: 100%;
 
         .table {
+            font-size: 13px;
+            margin-bottom: 0;
 
             tbody > tr > td {
                 border-top: none;
             }
-
-            font-size: 13px;
-            margin-bottom: 0;
             td {
+                border-right: 1px dotted #ddd;
                 height: 26px;
+
                 input {
                     border: 0;
                     height: 20px;
@@ -242,7 +243,7 @@
             }
         }
         .table-condensed > tbody > tr > td {
-            padding: 2px;
+            padding: 2px 3px;
         }
         .table-condensed > tbody > tr > td:first-of-type {
             padding: 2px 2px 2px 7px;

@@ -12,6 +12,7 @@
 					<list
 						:schemas="schemas"
 						:schema="schema"
+						:selected-table="selectedTable"
 						:tables="tables"
 						:table="table"
 						:query="tableQuery"
@@ -90,6 +91,7 @@
                 requestTimes: {},
                 schema: null,
                 schemas: [],
+                selectedTable: null,
                 tableQuery: '',
                 order: null,
                 where: null,
@@ -202,6 +204,7 @@
 						} else {
                             this.changeTab(this.$refs.tabs.tabs[0].id)
 						}
+						this.$refs.tabs.reindexTabs()
 					}).catch(() => {
 					    this.changeTab(this.addDefaultTab())
 					})
@@ -212,16 +215,29 @@
                     return this.newTab("query")
                 }
             },
-            addTableTab(type, table, where) {
+            addTableTab(type, table, where, pos) {
                 let title = table || this.titleCase(type)
-                let tab = this.$refs.tabs.getTab({ "table": { "name": table }, "type": type, "where": where })
+                let tab = this.$refs.tabs.getTab({ "table": table, "type": type/*, "where": where*/ })
                 this.clearTable()
                 this.table = table
                 if (tab) {
                     this.changeTab(tab.id, where)
                 } else {
+                    if (!pos) {
+                        tab = this.$refs.tabs.getTab({ "table": table })
+
+						console.log('tab same table:', table, tab, type)
+
+						if (tab) {
+                            if (tab.type === "content" && type === "structure") {
+                                pos = tab.index
+							} else if (tab.type === "structure" && type === "content") {
+                                pos = tab.index + 1
+							}
+						}
+					}
                     this.loadTable(table).then(config => {
-                        this.newTab(type, title, table, where)
+                        this.newTab(type, title, table, where, pos)
                     })
                 }
             },
@@ -244,13 +260,19 @@
                 this.filter = null
                 this.records = []
             },
-            newTab(type, title, table, where) {
+            newTab(type, title, table, where, pos) {
                 let tabId = this.$refs.tabs.newTab(...arguments)
                 this.changeTab(tabId, where)
 				return tabId
             },
-            onTabChange(index) {
-                //
+            onTabChange(tab) {
+                if (tab) {
+                    if (tab.table) {
+                        this.selectedTable = tab.table
+                    } else {
+                        this.selectedTable = null
+                    }
+				}
             },
             onWindowResize() {
                 //
@@ -277,7 +299,7 @@
             },
             openTableRow(event) {
 				console.log(event)
-                this.addTableTab("content", event.table, event.where)
+                this.addTableTab("content", event.table, event.where, event.pos)
             },
             refreshTab(index) {
                 if (typeof index === "undefined") {
@@ -461,6 +483,7 @@
     /* Hide for mobile, show later */
     .sidebar {
         display: none;
+		border-right: 1px solid #eee;
     }
     @media (min-width: 768px) {
         .sidebar {
