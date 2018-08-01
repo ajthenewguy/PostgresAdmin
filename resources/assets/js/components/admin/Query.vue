@@ -178,5 +178,6 @@
         line-height: 22px;
         height: 60px;
         width: 100%;
+        white-space: normal;
     }
 </style>
