@@ -217,7 +217,7 @@
             },
             addTableTab(type, table, where, pos) {
                 let title = table || this.titleCase(type)
-                let tab = this.$refs.tabs.getTab({ "table": table, "type": type/*, "where": where*/ })
+                let tab = this.$refs.tabs.getTab({ "table": table, "type": type, "where": where })
                 this.clearTable()
                 this.table = table
                 if (tab) {
