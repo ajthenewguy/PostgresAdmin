@@ -285,11 +285,11 @@
 			onDatabaseConnect() {
                 this.loadSchemas().then(schemas => {
 					this.schemas = schemas
-					if (this.schemas.length === 1) {
-						this.schema = this.schemas[0]
-					} else if (this.schemas.indexOf('public') > -1) {
-						let publicIndex = this.schemas.indexOf('public')
-						this.schema = this.schemas[publicIndex]
+					if (schemas.length === 1) {
+						this.schema = schemas[0]
+					} else if (schemas.indexOf('public') > -1) {
+						let publicIndex = schemas.indexOf('public')
+						this.schema = schemas[publicIndex]
 					}
 					this.refreshTables()
                 })
