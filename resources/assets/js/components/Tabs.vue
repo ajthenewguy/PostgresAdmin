@@ -106,7 +106,7 @@
             addTab() {
                 this.changeTab(this.newTab(...arguments))
             },
-            changeTab(index, where) {
+            changeTab(index) {
                 let $this = this
                 let changeToTab = null
                 if (isNaN(index)) {
@@ -121,15 +121,6 @@
                         $('.nav-tabs a[data-id="' + changeToTab.id + '"]').tab('show')
                         $this.activeTabIndex(index)
                         this.storeSelectedTab(changeToTab.id)
-
-                        if (where) {
-                            this.$nextTick(() => {
-                                console.log('filterWhere', index, where)
-                                console.log(this.$refs.tab)
-                                this.$refs.tab[index].filterWhere(where)
-
-                            })
-                        }
                     }
                 }
             },

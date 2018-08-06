@@ -26,7 +26,6 @@
                 requestTimeStart: null,
                 response: null,
                 result: null,
-                server: '',
                 sql: '',
                 dataTypes: [
 					{
@@ -408,7 +407,7 @@
                 if (pluck) {
                     data.pluck = pluck
                 }
-                return axios.post(this.server + '/select', data).then(response => {
+                return axios.post('/select', data).then(response => {
                     this.querySuccess(response)
                 }).catch(error => {
                     this.result = null
@@ -426,7 +425,7 @@
                 if (bindings) {
                     data.bindings = bindings
                 }
-                return axios.post(this.server + '/insert', data).then(response => {
+                return axios.post('/insert', data).then(response => {
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -443,7 +442,7 @@
                 if (bindings) {
                     data.bindings = bindings
                 }
-                return axios.post(this.server + '/update', data).then(response => {
+                return axios.post('/update', data).then(response => {
                     this.afterRequestInternal()
                     this.querySuccess(response)
                 }).catch(error => {
@@ -461,7 +460,7 @@
                 if (bindings) {
                     data.bindings = bindings
                 }
-                return axios.post(this.server + '/delete', data).then(response => {
+                return axios.post('/delete', data).then(response => {
                     this.querySuccess(response)
                 }).catch(error => {
                     this.queryError(error)
@@ -472,7 +471,7 @@
             executeQuery(sql) {
                 this.beforeQuery(sql)
                 this.beforeRequestInternal()
-                return axios.post(this.server + '/execute', {
+                return axios.post('/execute', {
                     sql: this.sql
                 }).then(response => {
                     this.querySuccess(response)
@@ -584,7 +583,7 @@
             loadTableSchema(table) {
                 let trackRequestTime = false
                 this.beforeRequestInternal(trackRequestTime)
-                return axios.post(this.server + '/schema', {
+                return axios.post('/schema', {
                     table: table
                 }).then(response => {
                     this.querySuccess(response)
