@@ -14,7 +14,6 @@
 						:schema="schema"
 						:selected-table="selectedTable"
 						:tables="tables"
-						:table="table"
 						:query="tableQuery"
 						@openTable="openTable"
 						@changeSchema="changeSchema"
@@ -63,7 +62,7 @@
 						<button @click="postLogin" class="btn btn-primary">
 							Login
 						</button>
-						<a class="btn btn-link" :href="server + '/password/reset'">
+						<a class="btn btn-link" href="/password/reset">
 							Forgot Your Password?
 						</a>
 					</div>
@@ -80,14 +79,11 @@
             return {
                 bus: window.bus,
                 util: window.util,
-                table: null,
                 tables: this.loadedTables,
                 displayTableList: true,
                 editingRow: null,
                 filter: null,
                 insertingRow: false,
-                records: [],
-                recordsCustom: [],
                 requestTimes: {},
                 schema: null,
                 schemas: [],
@@ -233,10 +229,9 @@
 				} else {
                     tab = this.$refs.tabs.getTab({ "table": table, "type": type, "where": where })
 				}
-                this.clearTable()
-                this.table = table
+
                 if (tab) {
-                    this.changeTab(tab.id, where)
+                    this.changeTab(tab.id)
                 } else {
                     if (typeof pos === "undefined") {
                         tab = this.$refs.tabs.getTab({ "table": table })
@@ -259,22 +254,15 @@
             activeTab() {
                 return this.$refs.tabs.activeTab()
             },
-            changeTab(id, where) {
-                this.$refs.tabs.changeTab(id, where)
+            changeTab(id) {
+                this.$refs.tabs.changeTab(id)
             },
             closeTab(id) {
                 return this.$refs.tabs.closeTab(id)
             },
-            clearTable() {
-                this.table = null
-                this.schema = null
-                this.order = null
-                this.filter = null
-                this.records = []
-            },
             newTab(type, title, table, where, pos) {
                 let tabId = this.$refs.tabs.newTab(...arguments)
-                this.changeTab(tabId, where)
+                this.changeTab(tabId)
 				return tabId
             },
             onTabChange(tab) {
@@ -304,7 +292,6 @@
                 this.addTableTab("content", table)
             },
             openTableRow(event) {
-				console.log(event)
                 this.addTableTab("content", event.table, event.where, event.pos)
             },
             refreshTab(index) {
@@ -314,7 +301,7 @@
                 this.$refs.tabs.refreshTab(index)
             },
             refreshTables(connection) {
-				return axios.post(this.server + '/tables', { schema: this.schema }).then(response => {
+				return axios.post('/tables', { schema: this.schema }).then(response => {
 					this.tables = response.data
 					let tableCount = response.data.length
 					for (let i = 0; i < tableCount; i++) {
@@ -333,7 +320,7 @@
 				})
             },
 			refreshToken() {
-				axios.get(this.server + '/token').then(response => {
+				axios.get('/token').then(response => {
                     this.login._token = response.data
 					window.Laravel.csrfToken = response.data
 					window.axios.defaults.headers.common = {
@@ -351,7 +338,7 @@
                 })
 			},
 			postLogin() {
-				return axios.post(this.server + '/login', this.login).then(() => {
+				return axios.post('/login', this.login).then(() => {
 					this.state.masked = false
                     this.bus.$emit('loggedIn')
                 }).catch(error => {

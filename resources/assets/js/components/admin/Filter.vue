@@ -44,7 +44,7 @@
                 if (this.find !== null) {
                     this.where = this.find
                     // eslint-disable-next-line
-                    console.log(this.find, this.where)
+                    console.log('Filter.vue - watch: "find"', this.$parent.table, this.find, this.where)
                 }
             }
         },

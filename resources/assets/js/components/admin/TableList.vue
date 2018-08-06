@@ -74,7 +74,7 @@
         components: {
             'field': require('../forms/fields/Field')
         },
-        props: [ 'schemas', 'schema', 'selectedTable', 'tables', 'table', 'query' ],
+        props: [ 'schemas', 'schema', 'selectedTable', 'tables', 'query' ],
         data() {
             return {
                 util: window.util,
