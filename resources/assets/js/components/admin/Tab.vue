@@ -17,19 +17,6 @@
                 </div>
             </div>
         </template>
-        <query
-                ref="customQuery"
-                v-if="type === 'query'"
-                :sql="customQuery"
-                :history="history"
-                :loaded-tables="loadedTables"
-                :processing="processing"
-                @beforeQuery="beforeQuery"
-                @customQuery="beforeCustomQuery"
-                @success="success"
-                @afterQuery="afterCustomQuery"
-                @error="queryError"
-        />
         <table v-if="(type === 'query' || type === 'content')" class="results-table-container">
             <content-filter
                     v-if="type === 'content'"
@@ -38,18 +25,33 @@
                     @filterWhere="filterWhere"
                     :columns="columns"
             />
+            <query
+                    ref="customQuery"
+                    v-if="type === 'query'"
+                    :sql="customQuery"
+                    :history="history"
+                    :loaded-tables="loadedTables"
+                    :processing="processing"
+                    @beforeQuery="beforeQuery"
+                    @customQuery="beforeCustomQuery"
+                    @success="success"
+                    @afterQuery="afterCustomQuery"
+                    @error="queryError"
+            />
             <results-table
                     :class="{ 'tab-pane-content': type !== 'query' }"
                     v-show="type === 'query' || type === 'content'"
                     :tab="type"
                     :id="'results-table-' + id"
                     :table="table"
-                    :table-config="state.tables[table]"
+                    :table-config="tableConfig"
                     :order="order"
                     :processing="processing"
                     :records="records"
                     :editing-row="editingRow"
                     :inserting-row="insertingRow"
+                    :page="pagination.current_page"
+                    :per-page="pagination.per_page"
                     @sortColumn="sortColumn"
                     @insertingRow="setInsertingRow"
                     @editingRow="setEditingRow"
@@ -64,13 +66,13 @@
                     id="tabFooter"
                     :executed="executed"
                     :records="records"
-                    :pagination="(type === 'content' ? pagination : false)"
+                    :pagination="pagination"
                     :processing="processing"
                     :request-time="requestTime"
                     :tab="type"
                     :table="(type === 'content' ? table : false)"
                     @refresh="refresh"
-                    @changePage="getRecords"
+                    @changePage="changePage"
                     @changePerPage="handleSizeChange"
             />
         </table>
@@ -78,8 +80,8 @@
 </template>
 <script>
     export default {
-        props: [ 'id', 'currentTab', 'type', 'table', 'loadedTables', 'find' ],
-        mixins: [require('../../mixins/PostgresMixin.vue')],
+        props: [ 'id', 'currentTab', 'type', 'table', 'config', 'loadedTables', 'find' ],
+        mixins: [require('../../mixins/PostgresMixin')],
         data() {
             return {
                 bus: window.bus,
@@ -116,12 +118,19 @@
             columns: function() {
                 let columns = []
                 if (this.type !== 'query' && this.table) {
-                    columns = _.map(this.state.tables[this.table].schema, 'column_name')
+                    columns = _.map(this.tableConfig.schema, 'column_name')
                 }
                 return columns
             },
             loaded: function() {
-                return this.type === 'query' || this.state.tables[this.table] && this.state.tables[this.table].schema !== null
+                return this.type === 'query' || this.tableConfig && this.tableConfig.schema !== null
+            },
+            tableConfig: function() {
+                let config = this.getTableConfig()
+                if (!config || null === config.schema) {
+                    config = this.config
+                }
+                return config
             }
         },
         methods: {
@@ -152,12 +161,35 @@
                     this.records = this.result
                 }
             },
+            changePage(page) {
+                if (this.type === 'query') {
+                    this.updatePagination(page)
+                } else {
+                    this.getRecords(page)
+                }
+            },
             currentPage() {
                 return this.pagination.current_page
             },
             handleSizeChange(size) {
-                this.pagination.per_page = size
-                this.refresh()
+                this.updatePaginationPerPage(size)
+                if (this.type === 'content') {
+                    this.refresh()
+                }
+            },
+            setPagination() {
+                this.pagination.total = this.result.length
+                this.pagination.from = 1
+                this.pagination.last_page = Math.ceil(this.pagination.total / this.pagination.per_page)
+                this.updatePagination(1)
+            },
+            updatePagination(page) {
+                this.pagination.current_page = page
+                this.pagination.to = (page * this.pagination.per_page)
+            },
+            updatePaginationPerPage(per) {
+                this.pagination.per_page = per
+                this.pagination.last_page = Math.ceil(this.pagination.total / this.pagination.per_page)
             },
             filterWhere(where) {
                 this.where = where
@@ -192,7 +224,7 @@
                     this.beforeQuery()
                     this.loadTable(this.table, true).then(() => {
                         this.afterQuery()
-                        this.bus.$emit('tabRefreshed', this.state.tables[this.table])
+                        this.bus.$emit('tabRefreshed', this.tableConfig)
                         this.getRecords()
                     })
                 }
@@ -208,7 +240,7 @@
             },
             updateRow(payload) {
                 let where = {}
-                let primaryKey = this.state.tables[this.table].primaryKey
+                let primaryKey = this.tableConfig.primaryKey
                 where[primaryKey] = payload.primaryKey
                 let query = this.makeUpdate(this.table, payload.data, where)
                 this.beforeQuery(query)
@@ -254,20 +286,22 @@
                     }
                 }
             },
-            tableConfig() {
+            getTableConfig() {
                 return this.state.tables[this.table]
             },
             indexes() {
-                return this.state.tables[this.table].indexes
+                return this.tableConfig.indexes
             },
             schema() {
-                return this.state.tables[this.table].schema
+                let config = this.tableConfig
+                return config.schema
+                // return this.state.tables[this.table].schema
             },
             primaryKey() {
-                return this.state.tables[this.table].primaryKey
+                return this.tableConfig.primaryKey
             },
             foreignKeys() {
-                return this.state.tables[this.table].foreignKeys
+                return this.tableConfig.foreignKeys
             },
             setInsertingRow(row) {
                 this.editingRow = false

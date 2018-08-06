@@ -17,7 +17,6 @@ html {
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
   padding-top: 30px;
 }
@@ -115,6 +114,23 @@ tbody.loading {
   opacity: 0.75;
 }
 
+.results {
+  table.table {
+    tbody td {
+      p {
+        margin: 0;
+        white-space: nowrap;
+      }
+      p.pull-left {
+        padding-right: 20px;
+        width: -webkit-calc(100% - 38px);
+        width:    -moz-calc(100% - 38px);
+        width:         calc(100% - 38px);
+      }
+    }
+  }
+}
+
 #tabFooter {
   border-top: 1px solid #efefef;
   height: 37px;
@@ -133,3 +149,16 @@ tbody.loading {
 .col-md-12.main #tabFooter {
   padding-left: 25px;
 }
+.input-group-addon, .form-control {
+  border-color: #ccc;
+}
+
+#sessionRestoreLogin {
+  h2, label {
+    color: #efefef;
+  }
+  width: 50%;
+  left: 25%;
+  top: 25%;
+  position: fixed;
+ }

@@ -1,11 +1,12 @@
 <template>
     <tbody style="flex: 1; overflow: auto" class="fixed-table-container hidden-head">
         <div class="results table-responsive" v-if="(tab === 'query' || tab === 'content' && table)" :style="tableWrapperStyleLoading">
-            <table class="table table-hover table-condensed table-striped" :id="id">
+            <table class="table table-hover table-condensed table-sm table-striped" :id="id">
                 <thead>
                 <template v-if="tab === 'query'">
                     <tr>
-                        <th v-for="(value, name) in records[0]">
+                        <th></th>
+                        <th v-for="(value, name) in resultSet[0]">
                             <div class="th-inner">{{ name }}</div>
                         </th>
                     </tr>
@@ -24,7 +25,7 @@
                     </th>
                 </tr>
                 </thead>
-                <tbody v-if="records && records.length > 0" :class="{ 'loading': processing }">
+                <tbody v-if="resultSet && resultSet.length > 0" :class="{ 'loading': processing }">
                     <insert-table-row
                             v-if="table && insertingRow"
                             :tab="tab"
@@ -34,12 +35,12 @@
                             @insertRow="insertRow"
                     />
                     <result-table-row
-                            v-show="records"
-                            v-for="row in records"
+                            v-show="resultSet"
+                            v-for="(row, key) in resultSet"
+                            :index="(((page * perPage) - perPage) + key) + 1"
                             :key="(tableConfig? row[tableConfig.primaryKey] : undefined)"
                             :tab="tab"
                             :table="table"
-                            :table-config="tableConfig"
                             :row="row"
                             :editing-row="editingRow"
                             @openTableRow="$emit('openTableRow', $event)"
@@ -80,19 +81,14 @@
             'table',
             'tableConfig',
             'order',
+            'page',
+            'perPage',
             'processing',
             'records',
             'insertingRow',
             'editingRow'
         ],
         mixins: [require('../../mixins/PostgresMixin.vue')],
-        data() {
-            return {
-                // store: window.store,
-                // state: window.store.state,
-                // util: window.util
-            }
-        },
         components: {
             'insert-table-row': require('./InsertTableRow'),
             'result-table-row': require('./ResultTableRow')
@@ -100,14 +96,24 @@
         computed: {
             colspan: function () {
                 let span = 2
-                if (this.getTableSchema(this.table) !== null) {
-                    span = Object.keys(this.getTableSchema(this.table)).length
+                let config = this.tableConfig
+                let schema = config ? config.schema : this.getTableSchema(this.table)
+                if (schema) {
+                    span = Object.keys(schema).length
                     if (this.tab === 'content') span++
                 }
                 return span
             },
             tableWrapperStyleLoading: function () {
                 return (this.processing ? 'overflow: hidden;' : '')
+            },
+            resultSet: function() {
+                if (this.tab === 'content') {
+                    return this.records // SQL paginated
+                } else {
+                    let zeroIndexedPage = this.page - 1
+                    return this.records.slice(zeroIndexedPage * this.perPage, (zeroIndexedPage + 1) * this.perPage)
+                }
             }
         },
         mounted() {
@@ -194,16 +200,20 @@
                 span {
                     white-space: nowrap;
                 }
+                .index {
+                    color: #ccc;
+                    font-weight: bold;
+                }
             }
             td.rowButtons > div {
-                width: 24px;
                 max-width: 75px;
+                width: 24px;
             }
             .editing td.rowButtons > div {
                 width: 75px;
                 max-width: 75px;
             }
-            .rowButtons > * {
+            .rowButtons > div > div {
                 visibility: hidden;
             }
             .rowButtons div.btn-group {
@@ -211,8 +221,11 @@
                 z-index: 1000;
             }
             tr:hover, tr.editing {
-                .rowButtons > * {
+                .rowButtons > div > div {
                     visibility: visible;
+                }
+                .rowButtons > div > .index {
+                    display: none;
                 }
             }
             tr.warning, tr.success {

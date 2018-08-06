@@ -1,35 +1,37 @@
 <template>
-    <div id="query-wrapper">
-        <textarea
-            v-show="inputFocus"
-            ref="queryTextarea"
-            @blur="blur"
-            v-model="query"
-            class="form-control"
-            rows="2"
-            id="query_input"></textarea>
-        <div-edit
-            v-show="!inputFocus"
-            ref="queryDiv"
-            v-model="query"
-            id="query_input"
-            language="SQL"
-            @focus="focus"
-        />
-        <div class="btn-group">
-            <button @click="run" type="button" class="btn btn-default btn-sm">
-                <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Run Query
-            </button>
-            <button v-if="history.length > 1" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                History <span class="caret"></span>
-            </button>
-            <ul v-if="history.length > 1" class="dropdown-menu">
-                <li v-for="priorQuery in reversedHistory">
-                    <a href="#" @click.prevent="setQuery(priorQuery)">{{ priorQuery }}</a>
-                </li>
-            </ul>
+    <thead>
+        <div id="query-wrapper">
+            <textarea
+                v-show="inputFocus"
+                ref="queryTextarea"
+                @blur="blur"
+                v-model="query"
+                class="form-control"
+                rows="2"
+                id="query_input"></textarea>
+            <div-edit
+                v-show="!inputFocus"
+                ref="queryDiv"
+                v-model="query"
+                id="query_input"
+                language="SQL"
+                @focus="focus"
+            />
+            <div class="btn-group">
+                <button @click="run" type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> Run Query
+                </button>
+                <button v-if="history.length > 1" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    History <span class="caret"></span>
+                </button>
+                <ul v-if="history.length > 1" class="dropdown-menu">
+                    <li v-for="priorQuery in reversedHistory">
+                        <a href="#" @click.prevent="setQuery(priorQuery)">{{ priorQuery }}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </thead>
 </template>
 <script>
     export default {
@@ -48,8 +50,8 @@
                 },
                 inputFocus: false,
                 inputHeight: null,
-                observer: null,
-                stripHtml: true
+                stripHtml: true,
+                verb: null
             }
         },
         mounted() {
@@ -57,7 +59,6 @@
                 this.query = this.sql
             }
             this.init()
-            // this.sampleInputHeight()
         },
         computed: {
             reversedHistory: function () {
@@ -65,22 +66,11 @@
             }
         },
         methods: {
-            bindResizeOberver() {
-                this.observer = setInterval(() => {
-                    this.sampleInputHeight()
-                }, 100)
-            },
             blur() {
                 this.inputFocus = false
-                clearInterval(this.observer)
-                this.$nextTick(() => {
-                    this.$refs.queryDiv.format()
-                    $('code#query_input').height(this.inputHeight)
-                })
             },
             focus() {
                 this.inputFocus = true
-                this.bindResizeOberver()
                 this.$nextTick(() => {
                     this.init()
                     this.$refs.queryTextarea.focus()
@@ -104,8 +94,9 @@
                 if (query) {
                     this.$emit('beforeQuery', query)
                     let parsedQuery = this.$parent.parseSql(query)
-                    // eslint-disable-next-line
-                    console.log('@todo: use 3rd party lib', parsedQuery)
+
+                    // console.log('@todo: use 3rd party lib', parsedQuery)
+
                     return this.executeParsedQuery(parsedQuery).then(() => {
                         this.$emit('afterQuery')
                     })
@@ -113,50 +104,42 @@
                     return Promise.resolve(null)
                 }
             },
-            sampleInputHeight() {
-                return this.$nextTick(() => {
-                    let height = this.queryInputElement().height()
-                    if (this.inputHeight !== height) {
-                        this.inputHeight = height
-                        this.resultsTableElement().css('paddingTop', (this.inputHeight + 70) + 'px')
-                    }
-                })
-            },
             executeParsedQuery(parsedQuery) {
+                this.verb = parsedQuery.verb
                 switch(parsedQuery.verb) {
                     case 'SELECT': {
-                        // eslint-disable-next-line
-                        console.log(this.query)
                         return this.$parent.selectQuery(this.query).then(this.afterRun)
-                        break
                     }
                     case 'INSERT': {
                         return this.$parent.insertQuery(this.query).then(this.afterRun)
-                        break
                     }
                     case 'UPDATE': {
                         return this.$parent.updateQuery(this.query).then(this.afterRun)
-                        break
                     }
                     case 'DELETE': {
                         return this.$parent.deleteQuery(this.query).then(this.afterRun)
-                        break
                     }
                     default: {
                         return this.$parent.executeQuery(this.query).then(this.afterRun)
-                        break
                     }
                 }
             },
             afterRun() {
                 this.$emit('afterQuery')
-                this.$emit('success', this.response)
+                this.$emit('success', this.$parent.response)
+                if (this.verb === 'SELECT') {
+                    this.setPagination()
+                }
+                this.verb = null
             },
             setQuery(priorQuery) {
                 this.query = priorQuery
                 this.$nextTick(() => {
                     this.$refs.queryDiv.format()
                 })
+            },
+            setPagination() {
+                this.$parent.setPagination()
             }
         },
         mixins: [require('../../mixins/AutoComplete')],
@@ -168,8 +151,7 @@
 <style>
     #query-wrapper {
         background-color: #fff;
-        padding: 10px;
-        position: absolute;
+        padding: 10px 10px 5px 10px;
         width: 100%;
     }
     #query_input {

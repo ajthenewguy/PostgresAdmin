@@ -17,7 +17,7 @@
                     last_page_url: '',
                     next_page_url: '',
                     path: '',
-                    per_page: null,
+                    per_page: 25,
                     prev_page_url: '',
                     to: null,
                     total: 0

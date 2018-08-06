@@ -24,7 +24,7 @@
                 </li>
                 <li class="newTab">
                     <a @click.prevent="addTab('query')" href="">
-                        <span :class="tabIcon('query')" aria-hidden="true"></span>
+                        <span :class="tabIcon('add')" aria-hidden="true"></span>
                     </a>
                 </li>
             </draggable>
@@ -39,6 +39,7 @@
                         :current-tab="activeTabIndex()"
                         :type="tab.type"
                         :table="tab.table"
+                        :config="tab.config"
                         :find="tab.where"
                         :loaded-tables="loadedTables"
                         @loaded="$emit('loaded')"
@@ -49,8 +50,11 @@
         </tbody>
     </table>
     <div class="notabs" v-else>
-        <div v-if="!state.processing">
-            <el-button @click="newTab('query')" type="primary" icon="search"><span :class="tabIcon('query')" aria-hidden="true"></span> New Query</el-button>
+        <div v-if="connected && !state.processing" class="card">
+            <div class="card-body text-center">
+                <p>To get started select a table from the list or click the "New Query" button to write an SQL query.</p>
+                <el-button @click="newTab('query')" type="primary" icon="search">New Query</el-button>
+            </div>
         </div>
     </div>
 </template>
@@ -64,6 +68,7 @@
         data() {
             return {
                 bus: window.bus,
+                connected: false,
                 tabs: []
             }
         },
@@ -71,9 +76,19 @@
         //
         // },
         mounted() {
+            this.bus.$on('App.tabsLoaded', () => {
+                this.connected = true
+            })
             this.bus.$on('loggedIn', () => {
                 this.storeTabs()
                 this.refreshTab()
+            })
+            this.bus.$on('tabRefreshed', (config) => {
+                _.forEach(this.tabs, function(tab, key) {
+                    if (tab.table === config.name) {
+                        tab.config = config
+                    }
+                })
             })
         },
         methods: {
@@ -151,7 +166,15 @@
             },
             getTab(key, value) {
                 if (typeof key === "object" && typeof value === "undefined") {
-                    return _.find(this.tabs, key)
+                    let tabs = {}
+                    if (_.has(key, 'where')) {
+                        return _.find(this.tabs, key)
+                    } else {
+                        tabs = _.omitBy(this.tabs, function(t) {
+                            return _.has(t, 'where')
+                        })
+                        return _.find(tabs, key)
+                    }
                 } else {
                     if (key === 'index') {
                         return this.tabs[value]
@@ -171,13 +194,24 @@
                 return _.findIndex(this.tabs, [ key, value ])
             },
             loadTabs() {
-                return window.session.get('tabs').then(tabs => {
+                let connection = this.state.connection
+                return window.session.get(connection+'.tabs').then(tabs => {
                     let promises = []
                     let tabCount = tabs.length
                     if (tabCount > 0) {
                         for (let i = 0; i < tabCount; i++) {
                             if (tabs[i].connection === this.state.connection && !_.find(this.tabs, {'id': tabs[i].id})) {
-                                if (null === this.getTableSchema(tabs[i].table)) {
+                                let schema = null
+                                let config = tabs[i].config
+                                if (!config && tabs[i].connection === this.state.connection) {
+                                    schema = this.getTableSchema(tabs[i].table)
+                                } else if (config && config.schema !== null) {
+                                    schema = config.schema
+                                    if (!this.state.tables[tabs[i].table] || this.state.tables[tabs[i].table].schema === null) {
+                                        this.state.tables[tabs[i].table] = config
+                                    }
+                                }
+                                if (null === schema) {
                                     promises.push(this.loadTableSchema(tabs[i].table).then(tableConfig => {
                                         this.tabs.push(tabs[i])
                                     }))
@@ -191,6 +225,7 @@
 
                     return Promise.all(promises).then(() => {
                         this.sortTabs()
+                        this.reindexTabs()
                         return this.tabs
                     })
                 }).catch(() => {
@@ -204,8 +239,14 @@
                     type: type,
                     title: title,
                     table: table,
-                    where: where,
                     index: this.tabs.length
+                }
+                let tableConfig = this.tableConfig(table)
+                if (tableConfig) {
+                    tab.config = tableConfig
+                }
+                if (typeof where !== "undefined") {
+                    tab.where = where
                 }
                 if (table) {
                     if (typeof table === "object" && table.hasOwnProperty('name')) {
@@ -221,6 +262,7 @@
                 }
                 let tabId = this.uuid()
                 let tab = this.makeTab(tabId, this.state.connection, type, title, table, where)
+
                 if (typeof pos !== "undefined") {
                     this.tabs.splice(pos, 0, tab)
                     this.reindexTabs()
@@ -264,13 +306,16 @@
                 this.tabs = _.orderBy(this.tabs, ['index'])
             },
             storeTabs: _.debounce(function() {
+                let connection = this.state.connection
                 let tabs = _.filter(this.tabs, function(t) {
-                    return t.type !== 'query'
+                    return t.type !== 'query' && t.connection === connection
                 })
-                window.session.set('tabs', tabs)
+                window.session.set(connection+'.tabs', tabs)
             }, 500),
             storeSelectedTab: _.debounce(function(id) {
-                window.session.set('selectedTab', id)
+                let tab = this.getTab('id', id)
+                let connection = tab ? tab.connection : this.state.connection
+                window.session.set(connection+'.selectedTab', id)
             }, 500),
             tabIcon(type) {
                 switch (type) {
@@ -286,7 +331,21 @@
                     case "structure": {
                         return "glyphicon glyphicon-info-sign"
                     }
+                    default: {
+                        return "glyphicon glyphicon-" + type
+                    }
                 }
+            },
+            tableConfig(table) {
+                let tab = null
+                let config = this.state.tables[table]
+                if (!config) {
+                    tab = this.getTab('table', table)
+                    if (tab) {
+                        config = tab.config
+                    }
+                }
+                return config
             },
             mixedConnection() {
                 let tabLength = this.tabs.length
@@ -316,6 +375,7 @@
     .tab-content, .tab-pane {
         height: 100%;
         max-height: 100%;
+        width: 99.9999%;
     }
     .tab-pane-content {
         overflow-x: hidden;
@@ -330,11 +390,7 @@
         max-height: 99%;
         flex-direction: column;
     }
-    .query .results-table-container {
-        height: initial;
-        padding-top: 110px;
-    }
     .notabs {
-        margin: 15px 0;
+        padding: 10%;
     }
 </style>
