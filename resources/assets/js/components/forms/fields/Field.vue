@@ -138,7 +138,7 @@
             },
             labelClass: function () {
                 return {
-                    'col-sm-2 control-label': this.layout === 'horizontal'
+                    'col-sm-2 control-label col-form-label': this.layout === 'horizontal'
                 }
             },
             columnClass: function () {
@@ -147,7 +147,7 @@
                     if (this.type !== 'checkbox' && this.type !== 'radio') {
                         column_class = 'col-sm-10'
                     } else if (this.type === 'checkbox' || this.type === 'radio' || this.type === 'button' || this.type === 'action') {
-                        column_class = 'col-sm-offset-2'
+                        column_class = 'col-sm-offset-2 offset-sm-2'
                     }
                 }
                 return column_class

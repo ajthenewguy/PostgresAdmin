@@ -174,9 +174,9 @@
 				})
             },
 			handleDatabaseConnect() {
-			    console.log('handleDatabaseConnect')
 				this.connectionCache = null
 				this.state.connection = this.connection
+                this.bus.$emit('Connections.databaseConencted', this.connection)
 			},
 			handleDatabaseConnectError() {
 				this.connection = ''

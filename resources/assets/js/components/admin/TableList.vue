@@ -15,23 +15,28 @@
                 <span class="title"><p>{{ value }}</p></span>
             </li>
         </ul>
-		<field
-				v-if="schemas.length > 0"
-				:name="'schema_name'"
-				:control="'select'"
-				:id="'schema_switcher'"
-				:value="schema"
-				:options="schemaOptions"
-				container-class="small-select"
-				:disabled="schema && schemas.length < 2"
-				@input="changeSchema"
-		/>
-        <a @click.prevent="showModal = true" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
-            <span :class="util.icon('add')" aria-hidden="true"></span>
-        </a>
-        <a @click.prevent="$emit('refreshTables')" class="btn btn-default btn-xs" href="" title="Refresh tables" role="button">
-            <span :class="util.icon('refresh')" aria-hidden="true"></span>
-        </a>
+
+		<!-- Sidebar Footer -->
+		<div class="padded">
+			<field
+					v-if="schemas.length > 0"
+					:name="'schema_name'"
+					:control="'select'"
+					:id="'schema_switcher'"
+					:value="schema"
+					:options="schemaOptions"
+					container-class="small-select"
+					:disabled="schema && schemas.length < 2"
+					@input="changeSchema"
+			/>
+			<a @click.prevent="showModal = true" class="btn btn-default btn-xs" href="" title="Add new table" role="button">
+				<span :class="util.icon('add')" aria-hidden="true"></span>
+			</a>
+			<a @click.prevent="$emit('refreshTables')" class="btn btn-default btn-xs" href="" title="Refresh tables" role="button">
+				<span :class="util.icon('refresh')" aria-hidden="true"></span>
+			</a>
+		</div>
+
 		<modal v-if="showModal" @close="showModal = false">
 			<h3 slot="header">Add New Table</h3>
 			<template slot="body">
@@ -190,7 +195,7 @@
 				})
 			},
             onWindowResize() {
-                $(".sidebar .list-group").height($(".sidebar").height() - 60)
+                $(".sidebar .list-group").height($(".sidebar").height() - 72)
             }
         }
     }

@@ -4,7 +4,7 @@
 			<transition name="slide">
 				<div :class="sidebarClass">
 					<div class="input-group">
-						<input v-model="tableQuery" id="tableFilter" class="form-control input-sm focus" placeholder="Search Tables">
+						<input v-model="tableQuery" id="tableFilter" class="form-control input-sm form-control-sm focus" placeholder="Search Tables">
 						<div class="input-group-addon">
 							<span id="searchclear" @click="tableQuery = ''" class="glyphicon glyphicon-remove-circle"></span>
 						</div>
@@ -95,7 +95,6 @@
                 tableQuery: '',
                 order: null,
                 where: null,
-                tabs: [],
 				login: {
 					_token: '',
 					email: '',
@@ -116,7 +115,7 @@
         },
         created() {
             this.bus.$on('Connections.databaseSelected', this.onDatabaseConnect)
-            this.bus.$on('App.databaseTablesLoaded', this.loadTabs)
+            this.bus.$on('Connections.databaseConencted', this.loadTabs)
             window.addEventListener('keyup', this.registerKeyListener)
             window.addEventListener('keydown', this.registerKeyListener)
         },
@@ -165,14 +164,23 @@
         watch: {
             state: {
                 handler() {
-                    this.tabs = this.state.tabs
+                    let tab = null
+                    let active = this.state.activeTab
+
+					if (active === null) {
+                        this.selectedTable = null
+                    } else if (this.$refs.tabs) {
+						tab = this.$refs.tabs.tabs[active]
+						if (tab && tab.table) {
+							this.selectedTable = tab.table
+						}
+					}
                 },
                 deep: true
             }
         },
         methods: {
             registerKeyListener(e) {
-
                 this.state.keyMap[e.keyCode] = e.type === 'keydown'
 
                 // (Cmd || Ctrl) + F
@@ -196,38 +204,42 @@
 
             },
             loadTabs() {
+                let connection = this.state.connection
                 // load selected tab
                 this.$refs.tabs.loadTabs().then(() => {
-					window.session.get('selectedTab').then(selectedTabId => {
-					    if (this.$refs.tabs.tabExists(selectedTabId)) {
-                            this.changeTab(selectedTabId)
-						} else {
-                            this.changeTab(this.$refs.tabs.tabs[0].id)
+					window.session.get(connection+'.selectedTab').then(selectedTabId => {
+					    if (selectedTabId) {
+                            if (this.$refs.tabs.tabExists(selectedTabId)) {
+                                this.changeTab(selectedTabId)
+                            } else {
+                                let tab = this.$refs.tabs.getTab('connection', connection)
+                                this.changeTab(tab.id)
+                            }
 						}
-						this.$refs.tabs.reindexTabs()
 					}).catch(() => {
-					    this.changeTab(this.addDefaultTab())
+                        if (this.$refs.tabs.countTabs() < 1) {
+                            this.changeTab(this.newTab("query"))
+                        }
+					}).then(() => {
+                        this.bus.$emit('App.tabsLoaded')
 					})
                 })
 			},
-            addDefaultTab() {
-                if (this.$refs.tabs.countTabs() < 1) {
-                    return this.newTab("query")
-                }
-            },
             addTableTab(type, table, where, pos) {
                 let title = table || this.titleCase(type)
-                let tab = this.$refs.tabs.getTab({ "table": table, "type": type, "where": where })
+				let tab = {}
+				if (typeof where === "undefined") {
+                    tab = this.$refs.tabs.getTab({ "table": table, "type": type })
+				} else {
+                    tab = this.$refs.tabs.getTab({ "table": table, "type": type, "where": where })
+				}
                 this.clearTable()
                 this.table = table
                 if (tab) {
                     this.changeTab(tab.id, where)
                 } else {
-                    if (!pos) {
+                    if (typeof pos === "undefined") {
                         tab = this.$refs.tabs.getTab({ "table": table })
-
-						console.log('tab same table:', table, tab, type)
-
 						if (tab) {
                             if (tab.type === "content" && type === "structure") {
                                 pos = tab.index
@@ -266,20 +278,13 @@
 				return tabId
             },
             onTabChange(tab) {
-                if (tab) {
-                    if (tab.table) {
-                        this.selectedTable = tab.table
-                    } else {
-                        this.selectedTable = null
-                    }
-				}
+                //
             },
             onWindowResize() {
                 //
             },
             changeSchema(schema) {
-                // eslint-disable-next-line
-                console.log('CHANGE SCHEMA:', schema)
+                // console.log('CHANGE SCHEMA:', schema)
                 this.refreshTables()
 			},
 			onDatabaseConnect() {
@@ -468,6 +473,10 @@
         border-bottom: 1px solid #eee;
     }
 
+	.padded {
+		padding: 3px;
+	}
+
     /*
      * Top navigation
      * Hide default border to remove 1px line.
@@ -484,6 +493,11 @@
     .sidebar {
         display: none;
 		border-right: 1px solid #eee;
+		padding: 0;
+
+		> .input-group {
+			margin: 3px;
+		}
     }
     @media (min-width: 768px) {
         .sidebar {
@@ -493,7 +507,6 @@
             left: 0;
             z-index: 1000;
             display: block;
-            padding: 5px;
             overflow-x: hidden;
             overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
             background-color: #f9f9f9;
@@ -563,12 +576,5 @@
 	}
 	.content-mask > * {
 		z-index: 10000;
-	}
-
-	#sessionRestoreLogin {
-		width: 50%;
-	    left: 25%;
-	    top: 25%;
-	    position: fixed;
 	}
 </style>
