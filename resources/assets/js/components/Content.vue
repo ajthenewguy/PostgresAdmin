@@ -297,6 +297,7 @@
 						this.schema = schemas[publicIndex]
 					}
 					this.refreshTables()
+                    this.loadTabs()
                 })
 			},
             openTable(table) {
@@ -320,8 +321,7 @@
 						let table = response.data[i]
 						this.state.tables[table] = this.initTableObject(table)
 					}
-
-					this.bus.$emit('App.databaseTablesLoaded')
+					this.bus.$emit('App.databaseTablesRefreshed')
 				}).catch(error => {
 					console.log('databaseConnectError', error)
 					this.bus.$emit('databaseConnectError')

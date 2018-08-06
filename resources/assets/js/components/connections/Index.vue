@@ -121,7 +121,7 @@
             }).catch(error => {
                 console.error('error:', error)
             })
-			this.bus.$on('App.databaseTablesLoaded', this.handleDatabaseConnect)
+
 			this.bus.$on('databaseConnectError', this.handleDatabaseConnectError)
         },
         methods: {
@@ -132,9 +132,11 @@
 						this.connectionCache = _.clone(this.connection)
 					}
                     this.setConnection(connection.name).then(() => {
-                        // eslint-disable-next-line
                         console.log('Connected to', connection.name)
+
 						this.connection = connection.name
+                        this.connectionCache = null
+                        this.state.connection = connection.name
                         window.session.setNamespace(connection.name)
 						this.bus.$emit('Connections.databaseSelected', connection.name)
 	                    this.route = 'index'
